@@ -1,0 +1,260 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  font-family: "Inter", sans-serif;
+}
+#left_side {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 42vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#login_img {
+  height: 100%;
+  width: 42%;
+  z-index: -2;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#overlay_text_left {
+  z-index: 1;
+  height: 70%;
+  width: 70%;
+  position: relative;
+  top: 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+#overlay_text_left > span,
+#overlay_text_left > p,
+#overlay_text_left > h2,
+#left_overlay_imgntxt_div > span {
+  color: white;
+}
+#left_overlay_name {
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 2em;
+}
+#left_overlay_head {
+  font-size: 3em;
+  margin: 0;
+  margin-bottom: 14px;
+  line-height: 96%;
+}
+#left_overlay_par {
+  opacity: 80%;
+  margin: 0;
+  margin-bottom: 3em;
+}
+#left_overlay_imgntxt_div {
+  display: flex;
+}
+#left_overlay_imgntxt_div > span {
+  font-size: 12px;
+  font-weight: bold;
+}
+#left_overlay_compliance {
+  font-size: 10px;
+  position: relative;
+  top: 35%;
+  opacity: 70%;
+}
+
+/* RIGHT SIDE */
+
+#right_side {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  width: 58vw;
+  align-items: center;
+  justify-content: center;
+}
+
+#right_side_sub {
+  width: 50%;
+  height: 90%;
+  position: relative;
+  top: 4%;
+}
+
+#right_side_title {
+  margin: 0;
+  margin-bottom: 8px;
+}
+#right_side_info {
+  font-size: 14px;
+  opacity: 60%;
+}
+#login_form {
+  margin-top: 2em;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#email_label,
+#password_label {
+  font-weight: bold;
+  font-size: 14px;
+  opacity: 70%;
+}
+.input_field_divs {
+  padding: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  gap: 8px;
+}
+.input_field_divs > img {
+  width: 20px;
+  opacity: 80%;
+}
+#eye_icon {
+  width: 16px;
+  cursor: pointer;
+}
+#email_field,
+#password_field {
+  outline: none;
+  width: 100%;
+  border: none;
+}
+#right_side_rem_div {
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+#right_side_rem_div > div {
+  display: flex;
+  align-items: center;
+}
+
+#checkbox_input {
+  transform: scale(1.2);
+  margin-right: 8px;
+}
+#remember_label {
+  font-size: 14px;
+  opacity: 80%;
+}
+#forget_password_href {
+  text-decoration: none;
+  font-size: 14px;
+  color: #005fb8;
+  cursor: pointer;
+}
+#submit_button {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  height: 3em;
+  border: none;
+  background-color: #005fb8;
+  border-radius: 6px;
+  box-shadow: 2px 2px 4px #a6a7a7;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+#submit_button:hover {
+  background-color: #1c7dd7;
+}
+#submit_button:active {
+  background-color: #0e4980;
+  box-shadow: none;
+}
+#right_extra_option_label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2em;
+}
+#right_extra_option_label > div {
+  width: 100%;
+  border: 1px solid #cdcaca;
+  z-index: -2;
+  position: absolute;
+  background-color: blue;
+}
+#right_extra_option_label > span {
+  z-index: -1;
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #5f5d5d;
+}
+
+#extra_options {
+  height: 38px;
+  display: flex;
+  flex-direction: row;
+  padding-right: 2em;
+  gap: 1.5em;
+  margin-bottom: 2em;
+}
+#extra_options > button {
+  width: 46%;
+  height: 100%;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+  background-color: transparent;
+  font-size: 12px;
+  font-weight: bolder;
+  opacity: 60%;
+  cursor: pointer;
+}
+#no_account {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #414242;
+}
+#no_account > a {
+  text-decoration: none;
+  color: #005fb8;
+  font-weight: bold;
+}
+#right_bottom_refs {
+  display: flex;
+  position: absolute;
+  bottom: 6%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+}
+#right_bottom_refs > a {
+  text-decoration: none;
+  color: black;
+  opacity: 60%;
+  font-size: 12px;
+}

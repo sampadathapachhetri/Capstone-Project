@@ -1,0 +1,5 @@
+Django==6.0
+mod_wsgi==5.0.2
+psycopg==3.3.3
+bcrypt==5.0.0
+dotenv==0.9.9
