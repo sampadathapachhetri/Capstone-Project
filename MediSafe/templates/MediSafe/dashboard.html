@@ -1,3 +1,5 @@
+{% load static %}
+
 <body>
   <div id="dash_root">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -5,7 +7,7 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet" />
-    <link rel="stylesheet" href="../css/dashboard.css" />
+    <link rel="stylesheet" href="{% static 'MediSafe/css/dashboard.css' %}" />
     <div id="dash_top">
       <div id="dash_top_greet">
         <h2>Welcome back, User</h2>
@@ -377,6 +379,6 @@
         </div>
       </div>
     </div>
-    <script src="../js/dashboard.js"></script>
+    <script src="{% static 'MediSafe/js/dashboard.js' %}"></script>
   </div>
 </body>

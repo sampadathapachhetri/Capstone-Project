@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
   <head>
@@ -11,11 +12,11 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet" />
-    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="{% static 'MediSafe/css/login.css' %}" />
   </head>
   <body>
     <div id="left_side">
-      <img src="../images/login_img.png" id="login_img" />
+      <img src="{% static 'MediSafe/images/login_img.png' %}" id="login_img" />
       <div id="overlay_text_left">
         <span id="left_overlay_name">MediSafe</span>
         <h2 id="left_overlay_head">
@@ -41,7 +42,7 @@
         <form id="login_form">
           <label id="email_label" class="form_labels">Email Address</label>
           <div class="input_field_divs">
-            <img src="../images/mail_icon.svg" />
+            <img src="{% static 'MediSafe/images/mail_icon.svg' %}" />
             <input
               name="email"
               id="email_field"
@@ -51,21 +52,25 @@
           </div>
           <label id="password_label" class="form_labels">Password</label>
           <div class="input_field_divs">
-            <img src="../images/lock_icon.svg" />
+            <img src="{% static 'MediSafe/images/lock_icon.svg' %}" />
             <input
               name="password"
               id="password_field"
               type="text"
               placeholder="••••••••"
               required />
-            <img src="../images/eye_on_icon.svg" id="eye_icon" />
+            <img
+              src="{% static 'MediSafe/images/eye_on_icon.svg' %}"
+              id="eye_icon" />
           </div>
           <div id="right_side_rem_div">
             <div>
-              <input type="checkbox" id="checkbox_input" />
+              <input type="checkbox" id="checkbox_input" name="remember" />
               <label id="remember_label">Remember me</label>
             </div>
-            <a id="forget_password_href" href="#">Forgot password? </a>
+            <a id="forget_password_href" style="cursor: pointer">
+              Forgot password?
+            </a>
           </div>
           <input type="button" id="submit_button" value="Sign In" />
         </form>
@@ -78,8 +83,11 @@
           <button>Provider ID</button>
         </div>
         <span id="no_account"
-          >Dont have an account? <a href="#">Create an account</a></span
-        >
+          >Dont have an account?
+          <a id="redirect_to_register" style="cursor: pointer">
+            Create an account
+          </a>
+        </span>
         <div id="right_bottom_refs">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
@@ -88,6 +96,6 @@
       </div>
     </div>
 
-    <script src="" async defer></script>
+    <script src="{% static 'MediSafe/js/login.js' %}"></script>
   </body>
 </html>

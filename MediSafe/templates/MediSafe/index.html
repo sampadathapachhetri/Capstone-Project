@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html>
   <head>
@@ -11,13 +13,13 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet" />
-    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="{% static 'MediSafe/css/index.css' %}" />
   </head>
   <body>
     <div id="nav_menu">
       <div id="left_top">
         <div id="left_top_image_div">
-          <img src="../images/medisafe_icon.svg" />
+          <img src="{% static 'MediSafe/images/medisafe_icon.svg' %}" />
         </div>
         <div id="left_top_info">
           <h2>MediSafe</h2>
@@ -88,7 +90,8 @@
       </div>
       <div id="left_bottom">
         <button>
-          <img src="../images/add_outline_icon.svg" />Start New Check
+          <img src="{% static 'MediSafe/images/add_outline_icon.svg' %}" />Start
+          New Check
         </button>
       </div>
     </div>
@@ -115,13 +118,13 @@
               <span id="profile_name_span">Profile Name</span>
               <span id="profile_type_span">Patient Account</span>
             </div>
-            <img src="../images/profile_default.png" />
+            <img src="{% static 'MediSafe/images/profile_default.png' %}" />
           </div>
         </div>
       </div>
       <div id="contents_div"></div>
     </div>
 
-    <script src="../js/index.js"></script>
+    <script src="{% static 'MediSafe/js/index.js' %}"></script>
   </body>
 </html>

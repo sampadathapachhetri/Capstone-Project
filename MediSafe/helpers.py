@@ -7,7 +7,6 @@ def hash_password(plaintext):
 def auth_password(plaintext,pass_hash):
     return check_password(plaintext=plaintext,pass_hash=pass_hash)
 
-
 def sanitize_filename(filename,max_length=20):
     if "." in filename:
         name_parts=filename.rsplit(".",1)
@@ -25,4 +24,7 @@ def get_profile_upload_path(instance,filename):
     uploadPath=f'profile_pics/{uniqueId}/{sanitize_filename(filename=filename)}'
     return uploadPath
 
+def isValidEmail(email):
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$'
+    return bool(re.match(pattern, email))
 

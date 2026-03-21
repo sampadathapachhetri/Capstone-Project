@@ -53,14 +53,15 @@ async function fillActivePage() {
       throw new Error(`No page mapped for nav: ${activeNavId}`);
     }
 
-    const response = await fetch("/frontend/html/" + pageConfig.file);
+    const response = await fetch("/sub/" + pageConfig.pageName.toLowerCase());
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const htmlContent = await response.text();
-    console.log(`Loaded: ${pageConfig.filename}`, htmlContent);
+    // BELOW FOR DEBUGGINS, TOO LONG HTML CONTENTS
+    // console.log(`Loaded: ${pageConfig.filename}`, htmlContent);
 
     contents.innerHTML = htmlContent;
 
@@ -91,7 +92,7 @@ async function loadPageScript(pageName) {
     }
 
     const script = document.createElement("script");
-    script.src = `/frontend/js/${pageName.toLowerCase()}.js`;
+    script.src = `/static/MediSafe/js/${pageName.toLowerCase()}.js`;
     script.dataset.page = pageName;
 
     script.onload = () => {

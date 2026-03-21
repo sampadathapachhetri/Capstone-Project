@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html>
   <head>
@@ -11,13 +13,15 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet" />
-    <link rel="stylesheet" href="../css/resetAccount.css" />
+    <link
+      rel="stylesheet"
+      href="{% static 'MediSafe/css/resetAccount.css' %}" />
   </head>
   <body>
     <div id="left">
       <div id="left_top">
         <div id="left_top_image_div">
-          <img src="../images/medisafe_icon.svg" />
+          <img src="{% static 'MediSafe/images/medisafe_icon.svg' %}" />
         </div>
         <div id="left_top_info">
           <h2>MediSafe</h2>
@@ -25,7 +29,7 @@
         </div>
       </div>
       <div id="left_middle">
-        <img src="../images/shield_with_heart_icon.svg" />
+        <img src="{% static 'MediSafe/images/shield_with_heart_icon.svg' %}" />
         <h4>Secure & Trusted</h4>
         <p>
           Your clinical data is protected <br />
@@ -34,7 +38,9 @@
         </p>
       </div>
       <div id="left_bottom">
-        <img src="../images/profile_default.png" id="profile_image" />
+        <img
+          src="{% static 'MediSafe/images/profile_default.png' %}"
+          id="profile_image" />
         <div id="left_bottom_info">
           <h4>Support Center</h4>
           <span>help@medisafe.com</span>
@@ -43,13 +49,13 @@
     </div>
     <div id="right">
       <div id="right_sub">
-        <div id="go_back_div">
-          <img src="../images/left_arrow_icon.svg" />
+        <div id="go_back_div" style="cursor: pointer">
+          <img src="{% static 'MediSafe/images/left_arrow_icon.svg' %}" />
           <span>Back to Login</span>
         </div>
         <form name="forget_password_form" id="forget_password_form">
           <div id="form_top_icon_div">
-            <img src="../images/lock_reset_icon.svg" />
+            <img src="{% static 'MediSafe/images/lock_reset_icon.svg' %}" />
           </div>
           <h2>Forgot Password?</h2>
           <p>
@@ -61,7 +67,7 @@
             <label id="email_label">Email Address</label>
           </div>
           <div id="email_field_div">
-            <img src="../images/mail_icon.svg" />
+            <img src="{% static 'MediSafe/images/mail_icon.svg' %}" />
             <input
               type="text"
               placeholder="doctor@hospital.com"
@@ -71,7 +77,9 @@
           </div>
           <button id="confirm_button">
             Send Reset Link
-            <img src="../images/right_arrow_icon.svg" style="width: 16px" />
+            <img
+              src="{% static 'MediSafe/images/right_arrow_icon.svg' %}"
+              style="width: 16px" />
           </button>
           <div id="line"></div>
           <span id="form_bottom"
@@ -83,6 +91,6 @@
         >
       </div>
     </div>
-    <script src="" async defer></script>
+    <script src="{% static 'MediSafe/js/resetAccount.js' %}"></script>
   </body>
 </html>
