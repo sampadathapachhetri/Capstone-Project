@@ -60,8 +60,6 @@ async function fillActivePage() {
     }
 
     const htmlContent = await response.text();
-    // BELOW FOR DEBUGGINS, TOO LONG HTML CONTENTS
-    // console.log(`Loaded: ${pageConfig.filename}`, htmlContent);
 
     contents.innerHTML = htmlContent;
 
@@ -75,6 +73,12 @@ async function fillActivePage() {
   } catch (error) {
     console.error("Error loading page:", error);
     contents.innerHTML = `<div class="error">Failed to load page: ${error.message}</div>`;
+  }
+}
+
+function clearAllActive() {
+  for (let item of allNavs) {
+    item.classList.remove("active");
   }
 }
 
@@ -110,19 +114,4 @@ async function loadPageScript(pageName) {
     };
     document.head.appendChild(script);
   });
-}
-
-async function cleanupCurrentPage() {
-  const currentPageName = MedicalApp.currentPage;
-  if (currentPageName && MedicalApp.Pages[currentPageName]) {
-    if (MedicalApp.Pages[currentPageName].destroy) {
-      await MedicalApp.Pages[currentPageName].destory();
-    }
-  }
-}
-
-function clearAllActive() {
-  for (let item of allNavs) {
-    item.classList.remove("active");
-  }
 }

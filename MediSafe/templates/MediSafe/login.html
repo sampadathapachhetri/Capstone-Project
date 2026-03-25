@@ -18,15 +18,17 @@
     <div id="left_side">
       <img src="{% static 'MediSafe/images/login_img.png' %}" id="login_img" />
       <div id="overlay_text_left">
-        <span id="left_overlay_name">MediSafe</span>
+        <span id="left_overlay_name">
+          <img src="{% static 'MediSafe/images/medisafe_icon.svg' %}" />
+          <span> MediSafe </span>
+        </span>
         <h2 id="left_overlay_head">
           Your health data,<br />
           secured.
         </h2>
         <p id="left_overlay_par">
-          Access your medical records and manage your <br />safety with
-          MediSafe's encrypted platform. <br />Trusted by thousands of
-          healthcare <br />professionals.
+          Access your medical records and manage your safety with MediSafe's
+          encrypted platform. Trusted by thousands of healthcare professionals.
         </p>
         <div id="left_overlay_imgntxt_div">
           <div></div>
@@ -39,7 +41,8 @@
       <div id="right_side_sub">
         <h2 id="right_side_title">Welcome back</h2>
         <span id="right_side_info">Please enter your details to sign in</span>
-        <form id="login_form">
+        <form id="login_form" method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
           <label id="email_label" class="form_labels">Email Address</label>
           <div class="input_field_divs">
             <img src="{% static 'MediSafe/images/mail_icon.svg' %}" />
@@ -56,11 +59,13 @@
             <input
               name="password"
               id="password_field"
-              type="text"
+              type="password"
               placeholder="••••••••"
               required />
             <img
               src="{% static 'MediSafe/images/eye_on_icon.svg' %}"
+              data-eye-off-url="{% static 'MediSafe/images/eye_off_icon.svg' %}"
+              data-eye-on-url="{% static 'MediSafe/images/eye_on_icon.svg' %}"
               id="eye_icon" />
           </div>
           <div id="right_side_rem_div">
@@ -72,7 +77,11 @@
               Forgot password?
             </a>
           </div>
-          <input type="button" id="submit_button" value="Sign In" />
+          <input type="submit" id="submit_button" value="Sign In" />
+
+          {% if error %} {% for key,errorValue in error.items %}
+          <span style="color: red">{{ errorValue }}</span>
+          {% endfor %} {% endif %}
         </form>
         <div id="right_extra_option_label">
           <div></div>
@@ -95,7 +104,6 @@
         </div>
       </div>
     </div>
-
     <script src="{% static 'MediSafe/js/login.js' %}"></script>
   </body>
 </html>

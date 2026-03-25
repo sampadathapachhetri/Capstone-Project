@@ -5,7 +5,7 @@ def hash_password(plaintext):
     return make_password(plaintext)
 
 def auth_password(plaintext,pass_hash):
-    return check_password(plaintext=plaintext,pass_hash=pass_hash)
+    return check_password(plaintext,pass_hash)
 
 def sanitize_filename(filename,max_length=20):
     if "." in filename:

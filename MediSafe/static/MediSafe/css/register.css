@@ -44,10 +44,11 @@ body {
   color: white;
 }
 #left_overlay_head {
-  font-size: 3em;
+  text-align: start;
+  font-size: 3.5em;
   margin: 0;
-  margin-bottom: 14px;
-  line-height: 120%;
+  margin-bottom: 0.1em;
+  line-height: 110%;
   color: white;
 }
 #left_overlay_par {
@@ -69,11 +70,11 @@ body {
   gap: 6px;
 }
 #left_overlay_bottom > div > svg {
-  width: 20px;
+  width: 1.3em;
 }
 #left_overlay_bottom > div > span {
   color: #ededed;
-  font-size: 12px;
+  font-size: 0.8em;
 }
 
 /* RIGHT SIDE */
@@ -97,10 +98,10 @@ body {
 
 #right_side_title {
   margin: 0;
-  margin-bottom: 8px;
+  margin-bottom: 0.4em;
 }
 #right_side_info {
-  font-size: 14px;
+  font-size: 0.8em;
   opacity: 60%;
 }
 #register_form {
@@ -112,7 +113,7 @@ body {
 }
 .form_labels {
   font-weight: bold;
-  font-size: 14px;
+  font-size: 0.8em;
   opacity: 70%;
 }
 .input_field_divs {
@@ -121,7 +122,7 @@ body {
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 6px;
-  height: 40px;
+  height: 2.6em;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -131,15 +132,15 @@ body {
 }
 .input_field_divs > img,
 .input_password_field_divs > img {
-  width: 16px;
+  width: 1em;
   opacity: 80%;
 }
 .input_password_field_divs > img {
-  height: 14px;
+  height: 1em;
 }
 #passwordfield_row {
   display: flex;
-  height: 3.5em;
+  height: 3.45em;
   justify-content: space-between;
 }
 #passwordfield_row > div {
@@ -160,7 +161,7 @@ body {
   height: 100%;
 }
 #eye_icon {
-  width: 16px;
+  width: 0.9em;
   cursor: pointer;
 }
 .input_field {
@@ -176,10 +177,10 @@ body {
   margin-bottom: 1em;
 }
 #password_validation > img {
-  width: 14px;
+  width: 1em;
 }
 #password_validation > span {
-  font-size: 12px;
+  font-size: 0.8em;
   opacity: 60%;
 }
 
@@ -187,7 +188,6 @@ body {
   margin-bottom: 1em;
   margin-top: 0.5em;
   display: flex;
-  align-items: center;
   flex-direction: row;
 }
 
@@ -196,7 +196,7 @@ body {
   margin-right: 8px;
 }
 #policy_label {
-  font-size: 14px;
+  font-size: 0.8em;
   color: #686868;
 }
 #policy_label > a {
@@ -206,7 +206,7 @@ body {
 }
 #submit_button {
   color: white;
-  font-size: 14px;
+  font-size: 1em;
   font-weight: 500;
   height: 3em;
   border: none;
@@ -230,7 +230,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: 0.8em;
   color: #5e768d;
 }
 #yes_account > a {
@@ -247,7 +247,7 @@ body {
   gap: 2em;
 }
 .right_bottom_divs > img {
-  width: 20px;
+  width: 1.3em;
   opacity: 40%;
 }
 .right_bottom_divs {
@@ -257,7 +257,7 @@ body {
   gap: 4px;
 }
 .right_bottom_refs {
-  font-size: 10px;
+  font-size: 0.6em;
   text-decoration: none;
   color: black;
   opacity: 60%;

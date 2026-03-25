@@ -115,7 +115,14 @@
           </svg>
           <div id="profile_nav">
             <div>
-              <span id="profile_name_span">Profile Name</span>
+              {% if not profile.username_short %}
+              <script>
+                window.location.href = "/register";
+              </script>
+              {% else %}
+              <span id="profile_name_span">{{ profile.username_short }}</span>
+
+              {% endif %}
               <span id="profile_type_span">Patient Account</span>
             </div>
             <img src="{% static 'MediSafe/images/profile_default.png' %}" />

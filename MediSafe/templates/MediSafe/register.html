@@ -21,10 +21,7 @@
         <span id="left_overlay_top">MediSafe</span>
         <div id="left_overlay_middle">
           <h2 id="left_overlay_head">
-            Designed for<br />
-            HIPAA compliance<br />
-            & clinical<br />
-            efficiency.
+            Designed for HIPAA compliance & clinical efficiency.
           </h2>
           <p id="left_overlay_par">
             Join over 15,000 healthcare professionals<br />
@@ -101,12 +98,14 @@
                   name="password"
                   id="password_field"
                   class="input_field"
-                  type="text"
+                  type="password"
                   placeholder="••••••••"
                   required />
                 <img
                   src="{% static 'MediSafe/images/eye_on_icon.svg' %}"
-                  id="eye_icon" />
+                  id="eye_icon"
+                  data-eye-off-url="{% static 'MediSafe/images/eye_off_icon.svg' %}"
+                  data-eye-on-url="{% static 'MediSafe/images/eye_on_icon.svg' %}" />
               </div>
             </div>
             <div>
@@ -126,7 +125,10 @@
             </div>
           </div>
           <div id="password_validation">
-            <img src="{% static 'MediSafe/images/check_outline_icon.svg' %}" />
+            <img
+              src="{% static 'MediSafe/images/check_outline_icon.svg' %}"
+              id="password_valid_check_icon"
+              data-invalid-password-url="{% static 'MediSafe/images/cancel_outline_icon.svg' %}" />
             <span>At least 8 characters with 1 symbol</span>
           </div>
 
@@ -141,7 +143,9 @@
               <a href="#">Privacy Policy</a></label
             >
           </div>
-
+          {% if error %} {% for key, errorValue in error.items %}
+          <span style="color: red">{{ errorValue }} </span>
+          {% endfor %} {% endif %}
           <input type="submit" id="submit_button" value="Create Account " />
         </form>
 

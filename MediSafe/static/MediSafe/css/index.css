@@ -45,7 +45,7 @@ button {
 }
 #left_top_info > span {
   opacity: 60%;
-  font-size: 12px;
+  font-size: 0.7em;
   font-weight: 550;
 }
 #left_middle {
@@ -53,7 +53,7 @@ button {
   display: flex;
   flex-direction: column;
   padding-left: 1.2em;
-  gap: 8px;
+  gap: 0.4em;
   padding-right: 1.2em;
 }
 .left_middle_options {
@@ -74,11 +74,14 @@ button {
     color: #005fb8;
   }
 }
+.left_middle_options:hover {
+  background-color: #005fb812;
+}
 
 .left_middle_options > span {
   color: #475569;
   font-weight: 550;
-  font-size: 13px;
+  font-size: 0.8em;
 }
 
 #left_bottom {
@@ -101,13 +104,13 @@ button {
   justify-content: center;
   color: white;
   gap: 8px;
-  font-size: 14px;
+  font-size: 0.9em;
   font-weight: 550;
   letter-spacing: 1px;
   border-radius: 10px;
 }
 #left_bottom > button > img {
-  width: 18px;
+  width: 1.6em;
 }
 
 /* RIGHT */
@@ -141,7 +144,7 @@ button {
   li {
     list-style: none;
     opacity: 60%;
-    font-size: 14px;
+    font-size: 1em;
   }
   li:last-child {
     opacity: 100%;
@@ -185,12 +188,16 @@ button {
   }
 }
 #profile_name_span {
-  font-size: 14px;
-
+  font-size: 0.8em;
   font-weight: 600;
+  max-width: 8em;
+  max-lines: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
 }
 #profile_type_span {
-  font-size: 10px;
+  font-size: 0.6em;
   opacity: 60%;
   font-weight: 500;
 }
@@ -202,4 +209,3 @@ button {
   height: 94%;
   display: flex;
 }
-
