@@ -5,6 +5,7 @@
 This project is a **web-based drug interaction checker** developed using Django. It allows users to analyze potential interactions between different medications through a simple and accessible web interface.
 
 This is a **capstone project** developed collaboratively by a group of students.
+
 **Group Members:**
 
 - Sampada Thapa Chettri
@@ -15,6 +16,8 @@ This is a **capstone project** developed collaboratively by a group of students.
 
 > ⚠️ Note: This project is still under development and may not be fully complete.
 
+---
+
 ## 📖 Description
 
 The system is designed to:
@@ -22,16 +25,16 @@ The system is designed to:
 - Provide users with drug interaction information
 - Offer a user-friendly interface for input and results
 
-## ⚙️ Installation Guide (Development Setup)
+---
 
-Follow these steps to set up the project locally for development:
+# ⚙️ Installation Guide (Development Setup)
 
 ### 1. Install Python
 
 Make sure you have **Python 3.14** installed on your system.
 
 Download from:
-https://www.python.org/downloads/
+[https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 ---
 
@@ -44,7 +47,7 @@ cd capstone
 
 ---
 
-### 3. Create Virtual Environment (Recommended)
+### 3. Create Virtual Environment (Optional, breaks sometime for whatever reasons IDK its annoying)
 
 ```bash
 python -m venv venv
@@ -68,8 +71,6 @@ source venv/bin/activate
 
 ### 4. Install Dependencies
 
-Install required modules from the provided `requirements.txt`:
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -84,15 +85,12 @@ Create a `.env` file in the root directory using `.env.example` as a template.
 cp .env.example .env
 ```
 
-Fill in the required values such as:
+⚠️ **Important:**
 
-- `SECRET_KEY`
-- Database credentials
-- Debug settings
+- Paste your generated **Django SECRET_KEY** into the `.env` file exactly as shown in `.env.example`
+- Fill in all required values (database, debug, etc.)
 
 #### Generate Django Secret Key
-
-You can generate a secure secret key using:
 
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
@@ -101,10 +99,6 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 ---
 
 ### 6. Database Setup (Development)
-
-This development setup uses **SQL-based database (default Django setup)**.
-
-Run the following commands:
 
 ```bash
 python manage.py makemigrations
@@ -119,19 +113,15 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-Follow the prompts to create your admin credentials.
-
 ---
 
-## ▶️ Execution Guide
-
-Run the development server:
+## ▶️ Run Development Server
 
 ```bash
 python manage.py runserver
 ```
 
-Then open your browser and go to:
+Open in browser:
 
 ```
 http://127.0.0.1:8000/
@@ -139,36 +129,121 @@ http://127.0.0.1:8000/
 
 ---
 
-## 🚀 Production Setup (Recommended)
+# 🐳 Docker Setup Guide
 
-For deploying in production:
+This project also supports running using **Docker**.
+
+## 📦 Prerequisites
+
+Make sure you have installed:
+
+- Docker
+- Docker Compose
+
+---
+
+## 🧱 Project Structure (Important)
+
+Inside the project (`capstone`) folder:
+
+```
+capstone/
+│
+├── docker-compose.yaml
+├── docker/
+│   └── apache/
+│       ├── apache2.conf
+│       ├── django.conf
+│       └── ssl/
+│           ├── cert.pem
+│           └── key.pem
+```
+
+---
+
+## 🔐 Generate SSL Certificates
+
+The `ssl` directory **must contain** `cert.pem` and `key.pem`.
+
+Run this command from the project root:
+
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout docker/apache/ssl/key.pem -out docker/apache/ssl/cert.pem -days 365 -nodes -subj "/CN=localhost"
+```
+
+---
+
+## ⚙️ Environment Setup for Docker
+
+Create `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+⚠️ Make sure:
+
+- You paste the Django `SECRET_KEY` correctly (same format as `.env.example`)
+- Database and debug values are properly set
+
+---
+
+## ▶️ Run with Docker
+
+Build and start the containers:
+
+```bash
+docker-compose up --build
+```
+
+Run in background (optional):
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 🌐 Access the Application
+
+After containers start, open:
+
+```
+http://localhost/
+```
+
+(or the configured port if different)
+
+---
+
+## 🛑 Stop Containers
+
+```bash
+docker-compose down
+```
+
+---
+
+# 🚀 Production Setup (Recommended)
 
 ### 1. Install Apache with mod_wsgi
 
-Guide:
-https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/modwsgi/
-
----
+[https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/modwsgi/](https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/modwsgi/)
 
 ### 2. Install PostgreSQL
 
-Download and setup PostgreSQL:
-https://www.postgresql.org/download/
+[https://www.postgresql.org/download/](https://www.postgresql.org/download/)
 
----
-
-### 3. Configure Production Environment
+### 3. Configure Production
 
 - Update `.env` with production values
-- Use PostgreSQL as database
-- Configure Apache + mod_wsgi with Django project
+- Use PostgreSQL database
+- Configure Apache + mod_wsgi
 
 ---
 
 ## 📝 Notes
 
-- This project is intended for educational purposes.
-- Not intended for real medical decision-making.
-- Contributions and improvements are welcome.
-
----
+- This project is for educational purposes only
+- Not intended for real medical decisions
+- Contributions are welcome
