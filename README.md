@@ -139,6 +139,7 @@ Make sure you have installed:
 
 - Docker
 - Docker Compose
+- Docker Desktop (If in windows)
 
 ---
 
@@ -224,7 +225,7 @@ docker-compose down
 
 ---
 
-# 🚀 Production Setup (Recommended)
+# 🚀 Production Setup (NOT REQUIRED IF RUNNING WITH DOCKER)
 
 ### 1. Install Apache with mod_wsgi
 
