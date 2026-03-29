@@ -3,3 +3,5 @@ mod_wsgi==5.0.2
 psycopg==3.3.3
 bcrypt==5.0.0
 dotenv==0.9.9
+django-allauth==65.15.0
+Pillow==12.1.1

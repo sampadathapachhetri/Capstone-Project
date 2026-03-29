@@ -84,7 +84,9 @@ def register(request):
                 email=email,
                 pass_hash=helpers.hash_password(password))
             newUser.save()
-            return render(request=request,template_name='MediSafe/index.html',context={})
+            request.session['user_id']=f"{newUser.id}"
+            request.session.set_expiry(0)
+            return redirect('index')
         
         if error:
             context["error"]=error
