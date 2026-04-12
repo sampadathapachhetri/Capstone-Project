@@ -1,5 +1,4 @@
 {% load static %}
-
 <!doctype html>
 <html>
   <head>
@@ -89,7 +88,7 @@
         </div>
       </div>
       <div id="left_bottom">
-        <button>
+        <button id="go_dc_button">
           <img src="{% static 'MediSafe/images/add_outline_icon.svg' %}" />Start
           New Check
         </button>
@@ -115,14 +114,7 @@
           </svg>
           <div id="profile_nav">
             <div>
-              {% if not profile.username_short %}
-              <script>
-                window.location.href = "/register";
-              </script>
-              {% else %}
-              <span id="profile_name_span">{{ profile.username_short }}</span>
-
-              {% endif %}
+              <span id="profile_name_span">Profile Name</span>
               <span id="profile_type_span">Patient Account</span>
             </div>
             <img src="{% static 'MediSafe/images/profile_default.png' %}" />

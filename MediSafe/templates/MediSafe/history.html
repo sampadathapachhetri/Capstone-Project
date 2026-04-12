@@ -1,9 +1,140 @@
-<div>
+{% load static %}
+<body>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'MediSafe/css/history.css' %}" />
 
-  History
-</div>
+  <div id="history_root">
+    <div id="history_topfirst">
+      <div id="history_text">
+        <h2>Interaction History</h2>
+        <span>
+          Review and manage your previous drug-drug interaction reports.
+        </span>
+      </div>
+      <div id="history_top_buttons">
+        <button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#585858">
+            <path
+              d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+          </svg>
+          Export CSV
+        </button>
+        <button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#585858">
+            <path
+              d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-51 35-85.5t85-34.5h560q51 0 85.5 34.5T880-520v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-560H200q-17 0-28.5 11.5T160-520v160h80v-80h480v80h80Z" />
+          </svg>
+          Print All
+        </button>
+      </div>
+    </div>
+    <div id="history_topsecond">
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#585858">
+          <path
+            d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+        </svg>
+        <input type="text" placeholder="Search drug name or date..." />
+      </div>
+      <select class="history_top_buttons">
+        <option>Severity: All</option>
+      </select>
+      <button class="history_top_buttons">
+        Date Range
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="16px"
+          fill="#585858">
+          <path
+            d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-188.5-11.5Q280-423 280-440t11.5-28.5Q303-480 320-480t28.5 11.5Q360-457 360-440t-11.5 28.5Q337-400 320-400t-28.5-11.5ZM640-400q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-188.5-11.5Q280-263 280-280t11.5-28.5Q303-320 320-320t28.5 11.5Q360-297 360-280t-11.5 28.5Q337-240 320-240t-28.5-11.5ZM640-240q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
+        </svg>
+      </button>
+      <button id="filter_button">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#000000">
+          <path
+            d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
+        </svg>
+      </button>
+    </div>
+    <div id="history_main">
+      <div id="history_main_columns">
+        <span> DATE CHECKED </span>
+        <span>DRUGS CHECKED</span>
+        <span>HIGHEST SEVERITY</span>
+        <span>ACTION</span>
+      </div>
+      <div id="history_main_table">
+        <div class="history_card">
+          <div class="history_card_date">
+            <h3>Oct 24, 2023</h3>
+            <span>10:45 AM</span>
+          </div>
+          <div class="history_card_drugs">
+            <span>Warfarin</span>
+            <span>Aspirin</span>
+          </div>
+          <div class="history_card_risk_high">
+            <div class="dot"></div>
+            <span>High Risk</span>
+          </div>
+          <a href="#">View Report</a>
+        </div>
+      </div>
+      <div id="history_main_bottom">
+        <span>Showing 1 to 5 of 24 checks</span>
+        <div>
+          <button><</button>
+          <button>1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>></button>
+        </div>
+      </div>
+    </div>
+    <div id="history_bottom">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="34px"
+        fill="#005fb8">
+        <path
+          d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+      </svg>
+      <div>
+        <span>Need to re-run a check?</span>
+        <p>
+          You don't need to remember or re-enter drugs from previous searches.
+          Simply click on the drug tags in the table to quickly start a new
+          check with those sasme medications.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>

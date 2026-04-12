@@ -27,9 +27,13 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG",'False')=='True'
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS",'').split(',')
+ALLOWED_HOSTS = [
+    "localhost","127.0.0.1","0.0.0.0","bombaclatt.dpdns.org"
+]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://bombaclatt.dpdns.org",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,18 +79,16 @@ WSGI_APPLICATION = 'capstone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {}
-}
 
 if os.environ.get("DB_ENGINE")=='django.db.backends.sqlite3':
-    DATABASES['default']={
+    DATABASES={'default':{
         'ENGINE':'django.db.backends.sqlite3',
         'NAME':BASE_DIR/os.environ.get("DB_NAME","db.sqlite3"),
     }
+    }
 
-elif os.environ.get("DB_ENGINE")=='django.db.backends.postgresql':
-    DATABASES['default']={
+elif os.environ.get("DB_ENGINE")=='django.db.backends.postgres':
+    DATABASES={'default':{
         'ENGINE':'django.db.backends.postgresql',
         'NAME':os.environ.get("DB_NAME"),
         'USER':os.environ.get(("DB_USER")),
@@ -94,11 +96,6 @@ elif os.environ.get("DB_ENGINE")=='django.db.backends.postgresql':
         'HOST':os.environ.get("DB_HOST"),
         'PORT':os.environ.get("DB_PORT","5432"),
     }
-
-else:
-    DATABASES['default']={
-        'ENGINE':'django.db.backends.sqlite3',
-        'NAME':BASE_DIR/ "db.sqlite3",
     }
 
 

@@ -1,0 +1,401 @@
+#analysis_root {
+  font-family: "Inter", "sans-sarif";
+  display: flex;
+  box-sizing: border-box;
+  padding: 1em 0em 0em 0em;
+  flex-direction: column;
+  gap: 1em;
+  > div {
+  }
+  #analysis_header {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 2em;
+    #analysis_head_left {
+      display: flex;
+      flex-direction: column;
+      > h3 {
+        margin: 0;
+        font-size: 1.7em;
+        font-weight: 700;
+        margin-bottom: 1em;
+      }
+      > div {
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        gap: 1em;
+        > label {
+          font-weight: 600;
+          font-size: 0.9em;
+          opacity: 60%;
+        }
+        > span {
+          display: flex;
+          height: 2em;
+          align-items: center;
+          justify-content: center;
+          padding: 4px 1em;
+          border: 2px solid #005fb830;
+          text-align: center;
+          background-color: #005fb810;
+          border-radius: 6px;
+          font-size: 12px;
+          width: fit-content;
+          gap: 4px;
+          font-weight: 600;
+        }
+      }
+    }
+    #analysis_head_right {
+      width: 40%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      height: 50%;
+      gap: 1em;
+      > button {
+        height: 100%;
+        width: 40%;
+        outline: none;
+        border-radius: 12px;
+        border: 2px solid #e2e2e2;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 0.7em;
+        font-size: 0.9em;
+        font-weight: 650;
+        background-color: white;
+      }
+      #analysis_head_ratings {
+        background-color: white;
+        border: 2px solid #e2e2e2;
+        box-sizing: border-box;
+        height: 100%;
+        display: flex;
+        gap: 1em;
+        border-radius: 12px;
+        width: fit-content;
+        padding: 1em;
+        align-items: center;
+        > label {
+          box-sizing: border-box;
+          display: flex;
+          gap: 0.6em;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          > span {
+            color: black;
+            opacity: 60%;
+            font-weight: 550;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+  #analysis_main {
+    overflow: hidden;
+    padding-left: 2em;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    border-top: 2px solid #e2e2e2;
+    height: 100%;
+    padding-right: 6em;
+
+    #analysis_list {
+      width: 34%;
+      height: 100%;
+      border-right: 2px solid #e2e2e2;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+
+      #analysis_list_col {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1em;
+        font-weight: 650;
+        opacity: 60%;
+        border-bottom: 2px solid #e2e2e2;
+      }
+      > li {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        padding: 1em 1em;
+        border-bottom: 2px solid #e2e2e2;
+        height: 4em;
+        > div {
+          display: flex;
+          flex-direction: column;
+          > label {
+            font-weight: 750;
+            font-size: 0.8em;
+          }
+          > h4 {
+            margin: 0;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            font-size: 1em;
+          }
+          > span {
+            font-size: 0.9em;
+            opacity: 70%;
+          }
+        }
+      }
+    }
+    #analysis_desc {
+      padding-top: 1em;
+      width: 62%;
+      display: flex;
+      flex-direction: column;
+      #analysis_card {
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        height: 80%;
+        margin-bottom: 1em;
+        box-sizing: border-box;
+        padding: 1.4em 2em;
+        #analysis_card_header {
+          display: flex;
+          gap: 1em;
+          > svg {
+            padding: 0.6em;
+            border-radius: 10px;
+          }
+          > h3 {
+            margin-top: 0;
+            margin-right: 6em;
+            display: flex;
+            flex-direction: column;
+            > span {
+              font-size: 0.8em;
+              font-weight: 550;
+              opacity: 70%;
+            }
+          }
+          > span {
+            font-weight: 550;
+            font-size: 0.8em;
+            height: fit-content;
+            padding: 6px 1em;
+            border-radius: 16px;
+            color: white;
+          }
+        }
+        > span {
+          font-size: 0.8em;
+          font-weight: 700;
+          opacity: 50%;
+        }
+
+        > p {
+          border: 2px sollid #e2e2e2;
+          height: fit-content;
+          box-sizing: border-box;
+          padding: 1em 1em;
+          border-radius: 14px;
+          width: 84%;
+          background-color: #f2f2f2;
+          font-weight: 500;
+          opacity: 70%;
+        }
+        #recommendations {
+          height: fit-content;
+          box-sizing: border-box;
+          width: 84%;
+          padding: 1em;
+          margin-bottom: 1em;
+          border-radius: 14px;
+          > span {
+            display: flex;
+            gap: 1em;
+            font-weight: 600;
+          }
+          > p {
+            font-weight: 500;
+            font-size: 0.9em;
+            text-align: justify;
+          }
+        }
+        #analysis_card_footer {
+          display: flex;
+          align-items: end;
+          gap: 1em;
+
+          > a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #005fb8;
+            font-weight: 600;
+            gap: 4px;
+            font-size: 12px;
+            > svg {
+              height: 50%;
+              width: 1em;
+            }
+          }
+          > span {
+            margin-left: 8em;
+            font-size: 12px;
+            opacity: 50%;
+            font-weight: 600;
+          }
+        }
+      }
+      #analysis_footer {
+        height: 10%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1em;
+        > a {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          text-decoration: none;
+          font-weight: 600;
+          color: #005fb8;
+        }
+      }
+    }
+  }
+}
+
+li {
+  list-style: none;
+}
+
+.high_rating {
+  color: #ea3323;
+}
+.moderate_rating {
+  color: #da954b;
+}
+.low_rating {
+  color: #019601;
+}
+.high_sev_li {
+  border-left: 4px solid #ea3323;
+  > svg {
+    fill: #ea3323;
+  }
+  > div > label {
+    color: #a7190c;
+  }
+}
+.mod_sev_li {
+  border-left: 4px solid #da954b;
+  > svg {
+    fill: #da954b;
+  }
+  > div > label {
+    color: #bc6f1d;
+  }
+}
+.low_sev_li {
+  border-left: 4px solid #019601;
+  > svg {
+    fill: #019601;
+  }
+  > div > label {
+    color: #019601;
+  }
+}
+
+.analysis_card_high {
+  border: 2px solid #e2e2e2;
+  border-left: 8px solid #ea3323;
+  #analysis_card_header {
+    > svg {
+      fill: #ea3323;
+      background-color: #ffe0de;
+    }
+    > span {
+      background-color: #b61a0b;
+    }
+  }
+}
+.recommendation_high {
+  background-color: #fdebea;
+
+  > span {
+    fill: #ea3323;
+    color: #99160a;
+  }
+  > p {
+    color: #841309;
+  }
+}
+
+.analysis_card_mod {
+  border: 2px solid #e2e2e2;
+  border-left: 8px solid #d29a0c;
+  #analysis_card_header {
+    > svg {
+      fill: #d29a0c;
+      background-color: #fbf3e0;
+    }
+    > span {
+      background-color: #d29a0c;
+    }
+  }
+}
+.recommendation_mod {
+  background-color: #fbf3e0;
+
+  > span {
+    color: #d29a0c;
+
+    > svg {
+      fill: #d29a0c;
+    }
+  }
+  > p {
+    color: #d29a0c;
+  }
+}
+
+.analysis_card_low {
+  border: 2px solid #e2e2e2;
+  border-left: 8px solid #10940e;
+  #analysis_card_header {
+    > svg {
+      fill: #10940e;
+      background-color: #e3fbe0;
+    }
+    > span {
+      background-color: #10940e;
+    }
+  }
+}
+.recommendation_low {
+  background-color: #e3fbe0;
+
+  > span {
+    color: #10940e;
+
+    > svg {
+      fill: #10940e;
+    }
+  }
+  > p {
+    color: #10940e;
+  }
+}
+
+.high_sev_li:active,
+.mod_sev_li:active,
+.low_sev_li:active {
+  background-color: white;
+}

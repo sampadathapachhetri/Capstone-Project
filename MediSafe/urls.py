@@ -10,4 +10,7 @@ urlpatterns=[
     path('sub/history',view=views.history,name="history"),
     path('sub/medications',view=views.medications,name='medications'),
     path('sub/settings',view=views.settings,name="settings"),
+    path('sub/addmedications',view=views.addMedications,name="add_medications"),
+    path('sub/intanalysis',view=views.intAnalysis,name="int_analysis"),
+
 ]

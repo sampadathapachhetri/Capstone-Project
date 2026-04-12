@@ -148,10 +148,8 @@
             .dash_drug_interaction {
               font-size: 0.7em;
               font-weight: 600;
-              background-color: #ffdf90;
               padding: 4px 1em;
               border-radius: 10px;
-              color: #935600;
             }
             .dash_li_eye {
               cursor: pointer;
@@ -306,5 +304,23 @@
 #dash_weekcheck_text {
   span {
     color: #06b128;
+  }
+}
+.dash_drug_interaction_high {
+  > span {
+    background-color: #ffecec;
+    color: red;
+  }
+}
+.dash_drug_interaction_mod {
+  > span {
+    background-color: #f9e6d5;
+    color: #f97f14;
+  }
+}
+.dash_drug_interaction_low {
+  > span {
+    background-color: #e1ffd8;
+    color: #085a13;
   }
 }

@@ -1,12 +1,15 @@
+// Declaring namespaces
 window.MedicalApp = window.MedicalApp || {};
 window.MedicalApp.Pages = window.MedicalApp.Pages || {};
 window.MedicalApp.currentPage = null;
 
+// Left side navigation buttons
 let dashboard_nav = document.getElementById("dashboard_nav_button");
 let drugcheck_nav = document.getElementById("drug_checker_nav_button");
 let history_nav = document.getElementById("history_nav_button");
 let medications_nav = document.getElementById("medications_nav_button");
 let settings_nav = document.getElementById("settings_nav_button");
+let go_dc_button = document.getElementById("go_dc_button");
 
 let allNavs = [
   dashboard_nav,
@@ -16,6 +19,7 @@ let allNavs = [
   settings_nav,
 ];
 
+// mapping all buttons to respective page via filename
 let navToPageMap = {
   dashboard_nav_button: { file: "dashboard.html", pageName: "Dashboard" },
   drug_checker_nav_button: { file: "drugCheck.html", pageName: "DrugCheck" },
@@ -24,13 +28,16 @@ let navToPageMap = {
   settings_nav_button: { file: "settings.html", pageName: "Settings" },
 };
 
+// active nav button
 let activeNav = null;
+// the container in index.html where all these small pages are pushed
 let contents = document.getElementById("contents_div");
 
 document.addEventListener("DOMContentLoaded", async (e) => {
+  //triggers upon load
   activeNav = dashboard_nav;
-  setupNavigation();
-  await fillActivePage();
+  setupNavigation(); //setup navigation buttons i.e add event listeners and set the clicked button as activeNav
+  await fillActivePage(); // function to fill the sub container with a page (dashboard.html as first)
 });
 function setupNavigation() {
   allNavs.forEach((nav) => {
@@ -40,6 +47,10 @@ function setupNavigation() {
         await fillActivePage();
       });
     }
+  });
+  go_dc_button.addEventListener("click", async () => {
+    activeNav = drugcheck_nav;
+    await fillActivePage();
   });
 }
 
@@ -53,7 +64,7 @@ async function fillActivePage() {
       throw new Error(`No page mapped for nav: ${activeNavId}`);
     }
 
-    const response = await fetch("/sub/" + pageConfig.pageName.toLowerCase());
+    const response = await fetch("sub/" + pageConfig.pageName.toLowerCase());
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -96,7 +107,7 @@ async function loadPageScript(pageName) {
     }
 
     const script = document.createElement("script");
-    script.src = `/static/MediSafe/js/${pageName.toLowerCase()}.js`;
+    script.src = `static/medisafe/js/${pageName.toLowerCase()}.js`;
     script.dataset.page = pageName;
 
     script.onload = () => {

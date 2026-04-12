@@ -1,11 +1,11 @@
 let redirect_to_register = document.getElementById("redirect_to_register");
 
 redirect_to_register.addEventListener("click", (e) => {
-  window.location.href = "/register/";
+  window.location.href = "register.html";
 });
 let forget_password_href = document.getElementById("forget_password_href");
 forget_password_href.addEventListener("click", (e) => {
-  window.location.href = "/reset password/";
+  window.location.href = "resetAccount.html";
 });
 
 let password_field = document.getElementById("password_field");

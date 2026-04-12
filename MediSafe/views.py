@@ -14,7 +14,10 @@ def index(request):
             user=models.Users.objects.get(id=userId)
             username=user.full_name
             profile["username"]=username
-            shortName=username.split(" ")[0]+" " +username.split(" ")[1][0]+"."
+            if " " in username:
+                shortName=username.split(" ")[0]+" " +username.split(" ")[1][0]+"."
+            else:
+                shortName=username
             profile['username_short']=shortName
             context["profile"]=profile
             return render(request=request,template_name="MediSafe/index.html", context=context)
@@ -25,7 +28,6 @@ def index(request):
 
 def login(request):
     context={}
-
     # Error K-V sample
     error={
         # "invalid_cred":"invalid email or password",
@@ -33,6 +35,7 @@ def login(request):
         # "unknown":"Unknown Error occured",
     }
     if(request.method=="POST"):
+        
         email=request.POST.get("email")
         if( not helpers.isValidEmail(email=email)):
             error["invalid_cred"]="Invalid email or password"
@@ -112,6 +115,12 @@ def medications(request):
 
 def settings(request):
     return render(request=request,template_name='MediSafe/settings.html',context={})
+
+def addMedications(request):
+    return render(request=request,template_name='MediSafe/addMedications.html',context={})
+
+def intAnalysis(request):
+    return render(request=request,template_name='MediSafe/intAnalysis.html',context={})
 
 
 
