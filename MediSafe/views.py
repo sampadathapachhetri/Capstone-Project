@@ -7,6 +7,7 @@ def index(request):
     error={}
     message={}
     profile={}
+    page={'current':"dashboard"}
     try:
         request.session['user_id']
         userId=request.session['user_id']
@@ -19,7 +20,9 @@ def index(request):
             else:
                 shortName=username
             profile['username_short']=shortName
+            
             context["profile"]=profile
+            context['page']=page
             return render(request=request,template_name="MediSafe/index.html", context=context)
         except:
             return redirect("login")
@@ -34,6 +37,7 @@ def login(request):
         # "empty_field":"The fields must not be empty",
         # "unknown":"Unknown Error occured",
     }
+    info={}
     if(request.method=="POST"):
         
         email=request.POST.get("email")
@@ -51,6 +55,14 @@ def login(request):
             error["invalid_cred"]='Invalid email or password'
     if(error):
         context["error"]=error
+    try:
+        info["session_exists"]=request.session['user_id']
+        username=models.Users.objects.get(id=info['session_exists']).full_name
+        info['username']=username
+        context["info"]=info
+    except:
+        print("ERROR ")
+        pass
     return render(request=request,template_name="MediSafe/login.html",context=context)
 
 def register(request):
@@ -82,11 +94,10 @@ def register(request):
         elif (email_exists(email=email)):
             error['invalid_cred']='Email Already exists'
         else:
-            newUser=models.Users.objects.create(
+            newUser=models.Users.objects.create_user_and_profile(
                 full_name=fullName,
                 email=email,
-                pass_hash=helpers.hash_password(password))
-            newUser.save()
+                password=password)
             request.session['user_id']=f"{newUser.id}"
             request.session.set_expiry(0)
             return redirect('index')
@@ -111,10 +122,45 @@ def history(request):
     return render(request=request,template_name='MediSafe/history.html',context={})
 
 def medications(request):
+
     return render(request=request,template_name='MediSafe/medications.html',context={})
 
 def settings(request):
-    return render(request=request,template_name='MediSafe/settings.html',context={})
+    context={}
+    error={}
+    try:
+        userId=request.session['user_id']
+    except:
+        return redirect("login")
+    if(request.method == "POST"):
+        print("POST request: ",request.POST)
+        fullname=request.POST.get("fullname")
+        if len(fullname)<4:
+            error['name']="Too Short name"
+        email=request.POST.get("email")
+        if(not helpers.isValidEmail(email)):
+            error['email']="Invalid email"
+        else:
+            if(email_exists(email)):
+                error['email']="Email already exists"
+
+        if error:
+            return render(request=request,template_name='MediSafe/settings.html',context=context)
+
+        tfa=request.POST.get("tfa")=="on"
+        safetyAlerts=request.POST.get("safety_alerts")=="on"
+        monthlyUsageReports=request.POST.get("monthly_usage_reports")=="on"
+        print(fullname,email,tfa,safetyAlerts,monthlyUsageReports)
+        return redirect('index')
+    else:
+        try:
+            user=models.Users.objects.select_related('profile').get(id=userId)
+            context['user']=user
+        except:
+            return redirect("login")
+    return render(request=request,template_name='MediSafe/settings.html',context=context)
+
+    
 
 def addMedications(request):
     return render(request=request,template_name='MediSafe/addMedications.html',context={})
