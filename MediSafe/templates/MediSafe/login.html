@@ -105,5 +105,15 @@
       </div>
     </div>
     <script src="{% static 'MediSafe/js/login.js' %}"></script>
+    {% if info %}
+    <script>
+      response = window.confirm(
+        `A user is currently logged in already with name '{{ info.username }}'\n Do you want to log in as this user? `,
+      );
+      if (response) {
+        location.href = "/";
+      }
+    </script>
+    {% endif %}
   </body>
 </html>

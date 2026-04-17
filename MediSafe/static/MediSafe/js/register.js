@@ -1,7 +1,7 @@
 let redirect_to_login = document.getElementById("redirect_to_login");
 
 redirect_to_login.addEventListener("click", (e) => {
-  window.location.href = "login.html";
+  window.location.href = "/login/";
 });
 let password_field = document.getElementById("password_field");
 let eye_icon = document.getElementById("eye_icon");

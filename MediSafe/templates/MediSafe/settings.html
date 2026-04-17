@@ -1,10 +1,5 @@
 {% load static %}
 <body>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'MediSafe/css/settings.css' %}" />
   <div id="settings_root">
     <div id="settings_header">
@@ -14,8 +9,12 @@
         safety alerts.
       </span>
     </div>
-
-    <div id="settings_body">
+    <form
+      id="settings_body"
+      name="settings_form"
+      method="POST"
+      action="{% url 'settings' %}">
+      {% csrf_token %}
       <div id="settings_info">
         <div class="settings_sub_headers">
           <span>Personal Information</span>
@@ -34,46 +33,13 @@
             <span>Full Name</span>
             <input
               type="text"
-              placeholder="Your Full Name"
               name="fullname"
-              required />
+              placeholder="{{ user.full_name }}" />
           </div>
           <div class="settings_input_divs">
             <span>Professional Email</span>
-            <input
-              type="email"
-              placeholder="abc@xyz.com"
-              name="email"
-              required />
+            <input type="email" name="email" placeholder="{{ user.email }}" />
           </div>
-        </div>
-      </div>
-      <div id="settings_creds">
-        <div class="settings_sub_headers">
-          <span>Professional Credentials</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#9CA3AF">
-            <path
-              d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z" />
-          </svg>
-        </div>
-        <div id="settings_creds_body">
-          <div class="settings_input_divs">
-            <span>License Number (NPI)</span>
-            <input type="text" placeholder="1234567890" />
-          </div>
-          <div class="settings_input_divs">
-            <span>Speciality</span>
-            <input type="text" placeholder="Orthopedic, etc..." />
-          </div>
-        </div>
-        <div class="settings_input_divs" id="settings_big_input">
-          <span>Hospital Affiliation</span>
-          <input type="text" placeholder="Hospital name here" />
         </div>
       </div>
       <div id="settings_security">
@@ -104,7 +70,14 @@
             </span>
           </h4>
           <label class="toggle-switch">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              name="tfa"
+              
+              {% if user.profile.two_factor_auth %}
+              checked
+              
+              {% endif %} />
             <span class="slider"></span>
           </label>
         </div>
@@ -131,7 +104,12 @@
             </span>
           </h4>
           <label class="toggle-switch">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              name="safety_alerts"
+              {% if user.profile.safety_alerts %}
+              checked
+              {% endif %} />
             <span class="slider"></span>
           </label>
         </div>
@@ -143,7 +121,12 @@
             </span>
           </h4>
           <label class="toggle-switch">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              name="monthly_usage_reports"
+              {% if user.profile.monthly_usage_reports %}
+              checked
+              {% endif %} />
             <span class="slider"></span>
           </label>
         </div>
@@ -198,7 +181,7 @@
       <div id="settings_footer">
         <button type="button" id="logout_button">Log Out</button>
         <button type="button" id="cancel_button">Cancel & Discard</button>
-        <button type="button" id="save_button">
+        <button type="submit" id="save_button">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
@@ -211,6 +194,6 @@
           Save Changes
         </button>
       </div>
-    </div>
+    </form>
   </div>
 </body>
