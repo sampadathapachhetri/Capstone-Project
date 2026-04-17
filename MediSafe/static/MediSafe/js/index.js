@@ -1,15 +1,14 @@
-// Declaring namespaces
 window.MedicalApp = window.MedicalApp || {};
 window.MedicalApp.Pages = window.MedicalApp.Pages || {};
 window.MedicalApp.currentPage = null;
 
-// Left side navigation buttons
 let dashboard_nav = document.getElementById("dashboard_nav_button");
 let drugcheck_nav = document.getElementById("drug_checker_nav_button");
 let history_nav = document.getElementById("history_nav_button");
 let medications_nav = document.getElementById("medications_nav_button");
 let settings_nav = document.getElementById("settings_nav_button");
 let go_dc_button = document.getElementById("go_dc_button");
+let path_nav = document.getElementById("path_nav");
 
 let allNavs = [
   dashboard_nav,
@@ -19,7 +18,6 @@ let allNavs = [
   settings_nav,
 ];
 
-// mapping all buttons to respective page via filename
 let navToPageMap = {
   dashboard_nav_button: { file: "dashboard.html", pageName: "Dashboard" },
   drug_checker_nav_button: { file: "drugCheck.html", pageName: "DrugCheck" },
@@ -28,28 +26,56 @@ let navToPageMap = {
   settings_nav_button: { file: "settings.html", pageName: "Settings" },
 };
 
-// active nav button
 let activeNav = null;
-// the container in index.html where all these small pages are pushed
 let contents = document.getElementById("contents_div");
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-  //triggers upon load
-  activeNav = dashboard_nav;
-  setupNavigation(); //setup navigation buttons i.e add event listeners and set the clicked button as activeNav
-  await fillActivePage(); // function to fill the sub container with a page (dashboard.html as first)
+  const urlParams = new URLSearchParams(window.location.search);
+  const page = urlParams.get("page");
+
+  if (page === "dashboard") {
+    activeNav = dashboard_nav;
+  } else if (page === "drugcheck") {
+    activeNav = drugcheck_nav;
+  } else if (page === "history") {
+    activeNav = history_nav;
+  } else if (page === "medications") {
+    activeNav = medications_nav;
+  } else if (page === "settings") {
+    activeNav = settings_nav;
+  } else {
+    activeNav = dashboard_nav;
+    const pageName = navToPageMap[activeNav.id].pageName.toLowerCase();
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", pageName);
+    window.history.pushState({}, "", url);
+  }
+  setupNavigation();
+  await fillActivePage();
+});
+
+window.addEventListener("popstate", () => {
+  window.location.reload();
 });
 function setupNavigation() {
   allNavs.forEach((nav) => {
     if (nav) {
       nav.addEventListener("click", async () => {
         activeNav = nav;
+        const pageName = navToPageMap[activeNav.id].pageName.toLowerCase();
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", pageName);
+        window.history.pushState({}, "", url);
         await fillActivePage();
       });
     }
   });
   go_dc_button.addEventListener("click", async () => {
     activeNav = drugcheck_nav;
+    const pageName = navToPageMap[activeNav.id].pageName.toLowerCase();
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", pageName);
+    window.history.pushState({}, "", url);
     await fillActivePage();
   });
 }
@@ -66,6 +92,13 @@ async function fillActivePage() {
 
     const response = await fetch("sub/" + pageConfig.pageName.toLowerCase());
 
+    // ONLY added from backend
+    if (response.url && response.url.includes("/login/")) {
+      window.location.href = "/login/";
+      return;
+    }
+    // END ONLY
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -81,6 +114,9 @@ async function fillActivePage() {
     activeNav.classList.add("active");
 
     MedicalApp.currentPage = pageConfig.pageName;
+    path_nav.innerHTML = `<li>Home</li>
+          <li>></li>
+          <li>${pageConfig.pageName}</li>`;
   } catch (error) {
     console.error("Error loading page:", error);
     contents.innerHTML = `<div class="error">Failed to load page: ${error.message}</div>`;

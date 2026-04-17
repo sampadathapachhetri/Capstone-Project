@@ -42,9 +42,7 @@
 
         // Load the script for the new page
         await this.loadPageScript(pageConfig);
-
-        // Optional: Update active nav styling if you have a nav button for IntAnalysis
-        // this.updateActiveNav("intanalysis_nav_button");
+        path_nav.innerHTML += `<li>><li> <li>${pageConfig.pageName}</li>`;
       } else {
         console.error("Invalid page configuration");
       }
