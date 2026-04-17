@@ -4,7 +4,7 @@ urlpatterns=[
     path('',view=views.index,name='index'),
     path('login/',view=views.login,name='login'),
     path('register/',view=views.register,name='register'),
-    path('reset password/',views.resetPassword,name="reset_password"),
+    path('resetAccount/',views.resetPassword,name="reset_password"),
     path('sub/dashboard/',view=views.dashboard,name='dashboard'),
     path('sub/drugcheck/',view=views.drugCheck,name='drug_check'),
     path('sub/history',view=views.history,name="history"),
