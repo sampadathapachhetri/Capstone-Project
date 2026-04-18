@@ -16,6 +16,10 @@
           e.stopPropagation();
           e.preventDefault();
           activeNav = dashboard_nav;
+          const pageName = navToPageMap[activeNav.id].pageName.toLowerCase();
+          const url = new URL(window.location.href);
+          url.searchParams.set("page", pageName);
+          window.history.pushState({}, "", url);
           await fillActivePage();
         });
       }
