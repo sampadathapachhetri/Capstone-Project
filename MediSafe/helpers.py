@@ -28,3 +28,5 @@ def isValidEmail(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$'
     return bool(re.match(pattern, email))
 
+def createActivityLog():
+    pass
