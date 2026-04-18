@@ -12,5 +12,6 @@ urlpatterns=[
     path('sub/settings',view=views.settings,name="settings"),
     path('sub/addmedications',view=views.addMedications,name="add_medications"),
     path('sub/intanalysis',view=views.intAnalysis,name="int_analysis"),
+    path('logout/',view=views.logout,name='logout')
 
 ]
