@@ -12,7 +12,7 @@
       </span>
     </div>
     <div id="addmeds_main">
-      <form method="POST" id="addmeds_form" name="addmeds_form">
+      <form method="POST" id="addmeds_form" name="addmeds_form" action="{% url 'add_medications' %}">
         {% csrf_token %}
         <div class="input_fields" id="long_input_field">
           <span>Medication Name</span>
@@ -29,6 +29,7 @@
             <input
               type="text"
               placeholder="Search medication name (e.g. Amoxicillin, Lisinopril)"
+              name="medication_name"
               required />
           </div>
         </div>
@@ -36,8 +37,8 @@
           <div class="input_fields">
             <span>Dosage</span>
             <div id="dosage_box">
-              <input type="text" placeholder="e.g. 500" required />
-              <select>
+              <input type="text" placeholder="e.g. 500" required name="dosage_value" />
+              <select name="dosage_unit">
                 <option>mg</option>
                 <option>g</option>
               </select>
@@ -45,20 +46,22 @@
           </div>
           <div class="input_fields" id="frequency_box">
             <span>Frequency</span>
-            <select>
+            <select name="dosage_frequency">
               <option>Select frequency</option>
-              <option>Once per dayt</option>
+              <option>Once per day</option>
               <option>Twice per day</option>
             </select>
           </div>
         </div>
-        <div class="input_fields" id="big_input_box">
+        <div class="input_fields" id="big_input_box" >
           <span>Additional Notes / Instrustions</span>
           <textarea
-            placeholder="Optional instructions (e.g. Take with food, avoid alcohol...)"></textarea>
+            placeholder="Optional instructions (e.g. Take with food, avoid alcohol...)"
+            name="medication_more"
+            ></textarea>
         </div>
         <div id="bottom_buttons">
-          <button type="button" id="cancel_btn">Cancel</button>
+          <button type="button" id="cancel_btn" onclick="window.location.href=`{% url 'index' %}?page=medications`">Cancel</button>
           <button type="submit" id="submit_btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"

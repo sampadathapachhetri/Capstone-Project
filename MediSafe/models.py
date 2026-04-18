@@ -62,7 +62,8 @@ class Users(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-        help_text="Unique Identifier for the user"
+        help_text="Unique Identifier for the user",
+        db_index=True
     )
 
     full_name=models.CharField(
@@ -101,9 +102,6 @@ class Users(models.Model):
         help_text="Timestamp of user's last login"
     )
     class Meta:
-        ordering=['-created_at']
-        verbose_name='User'
-        verbose_name_plural="Users"
         indexes=[
             models.Index(fields=['email'])
         ]
@@ -160,7 +158,6 @@ class UserMedications(models.Model):
         Users,
         on_delete=models.CASCADE,
         related_name="usersMedications",
-        db_index=True
     )
     name=models.CharField(
         max_length=100,
@@ -173,6 +170,7 @@ class UserMedications(models.Model):
     )
     dosage_frequency=models.CharField(
         max_length=100,
+        default="unknown"
     )
     last_refill=models.DateTimeField(
         auto_now_add=True,
@@ -184,9 +182,75 @@ class UserMedications(models.Model):
         max_length=100,
         default="UnIdentified"
     )
-
+    medication_more=models.TextField(
+        blank=True,
+        default=""
+    )
+    def __str__(self):
+        return f"{self.name} , {self.dosage_amount_mg} , {self.dosage_frequency}"
+    
     class Meta:
         indexes=[
-            models.Index(fields=['last_refill'])
+            models.Index(fields=['user','last_refill'])
+        ]
+    
+class Drug(models.Model):
+    name=models.CharField(max_length=100,db_index=True,unique=True)
+    smile_structure=models.CharField(max_length=100)
+    drug_bank_id=models.CharField(max_length=50,unique=True,db_index=True)
+    drug_synonym=models.CharField(max_length=100)
+    def __str__(self):
+        return f'{self.name}, {self.drug_synonym}'
+
+
+class Severity(models.Model):
+    level=models.CharField(max_length=20,unique=True)
+    info=models.TextField()
+
+class Drug_Interactions(models.Model):
+    first_drug=models.ForeignKey(
+        Drug,
+        on_delete=models.CASCADE,
+        related_name="first_drug"
+    )
+    second_drug=models.ForeignKey(
+        Drug,
+        on_delete=models.CASCADE,
+        related_name="second_drug"
+    )
+    description=models.TextField()
+    mechanism=models.TextField()
+    recommendation=models.TextField()
+
+    severity=models.ForeignKey(
+        to=Severity,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    class Meta:
+        indexes=[
+            models.Index(fields=['first_drug','second_drug'])
         ]
 
+class UserHistory(models.Model):
+    user=models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE,
+        related_name='history'
+        
+    )
+    date_time=models.DateTimeField(
+        auto_now_add=True,
+
+    )
+    interaction=models.ForeignKey(Drug_Interactions,on_delete=models.CASCADE,
+                                  related_name='interaction')
+    
+    
+    class Meta:
+        ordering=['-date_time']
+        indexes = [
+        models.Index(fields=['user', '-date_time']),
+    ]
+    def __str__(self):
+        return f"{self.date_time}"
