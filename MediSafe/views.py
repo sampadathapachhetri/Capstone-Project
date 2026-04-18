@@ -76,7 +76,6 @@ def login(request):
         info['username']=username
         context["info"]=info
     except:
-        print("ERROR ")
         pass
     return render(request=request,template_name="MediSafe/login.html",context=context)
 
@@ -137,8 +136,23 @@ def history(request):
     return render(request=request,template_name='MediSafe/history.html',context={})
 
 def medications(request):
+    user=models.Users.objects.get(id=request.session.get("user_id"))
+    userMedications=models.UserMedications.objects.filter(user=user)
+    context={}
+    medications=userMedications
+    context['medications']=medications
+    return render(request=request,template_name='MediSafe/medications.html',context=context)
 
-    return render(request=request,template_name='MediSafe/medications.html',context={})
+def deleteMedication(request,medicationId):
+    if(medicationId):
+        try:
+            user=models.Users.objects.get(id=request.session.get('user_id'))
+            medication=models.UserMedications.objects.filter(id=medicationId,user=user)
+            medication.delete()
+            return redirect(reverse('index')+"?page=medications")
+        except:
+            pass
+    return redirect('index')
 
 def settings(request):
     context={}
@@ -148,7 +162,6 @@ def settings(request):
     except:
         return redirect("login")
     if(request.method == "POST"):
-        print("POST request: ",request.POST)
         fullname=request.POST.get("fullname")
         email=request.POST.get("email")
         if(fullname!=""):
@@ -186,7 +199,39 @@ def settings(request):
     
 
 def addMedications(request):
-    return render(request=request,template_name='MediSafe/addMedications.html',context={})
+    error={}
+    if request.method=="POST":
+        try:
+            medication_name=request.POST.get("medication_name")
+            dosage_unit=request.POST.get("dosage_unit")
+            dosage_value=request.POST.get("dosage_value")
+            dosage_frequency=request.POST.get("dosage_frequency")
+            medication_more=request.POST.get("medication_more")
+            try:
+                float(dosage_value)
+            except :
+                error['msg']="INVALID medication input (dosage value)"
+                request.session['error']={'addmedications':error}
+                return redirect(reverse('index')+"?page=medications")
+            if dosage_unit=='g':
+                dosage_value=float(dosage_value)*1000
+            user=models.Users.objects.get(id=request.session.get("user_id"))
+
+            # FROM HERE NEED TO CALL ML MODEL TO GET CATEGORY
+            medicationRow=models.UserMedications.objects.get_or_create(
+                user=user,
+                name=medication_name,
+                dosage_amount_mg=dosage_value,
+                dosage_frequency=dosage_frequency,
+                medication_more=medication_more
+            )
+        except:
+            pass
+
+        return redirect(reverse('index')+"?page=medications")
+        
+    else:
+        return render(request=request,template_name='MediSafe/addMedications.html',context={})
 
 def intAnalysis(request):
     return render(request=request,template_name='MediSafe/intAnalysis.html',context={})

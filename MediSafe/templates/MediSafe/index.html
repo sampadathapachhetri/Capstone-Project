@@ -23,6 +23,15 @@
       </script>
       {% endif %}
     {% endif %}
+
+    {% if error %}
+      {% if error.addmedications %}
+      <script>
+        alert(`Failed to Add medication \n
+        Reason: {{ error.addmedications.msg }}`)
+      </script>
+      {% endif %}
+    {% endif %}
     <div id="nav_menu">
       <div id="left_top">
         <div id="left_top_image_div">
