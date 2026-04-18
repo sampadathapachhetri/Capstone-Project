@@ -21,6 +21,10 @@ class UserManager(models.Manager):
     def update_user_settings(self,user_id, email=None,full_name=None,safety_alerts=None,two_factor_auth=None,monthly_usage_reports=None):
         with transaction.atomic():
             user=self.get(id=user_id)
+            if full_name=="":
+                full_name=user.full_name
+            if email=="":
+                email=user.email
             updated_user_fields=[]
             if full_name is not None :
                 user.full_name=full_name

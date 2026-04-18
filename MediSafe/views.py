@@ -1,7 +1,16 @@
 from django.shortcuts import render,redirect
 from django.http import Http404,HttpRequest,HttpResponse
 from . import helpers,models
+from django.urls import reverse
 # Create your views here.
+
+def logout(request):
+    try:
+        request.session.flush()
+    except:
+        pass
+    return redirect('login')
+
 def index(request):
     context={}
     error={}
@@ -11,6 +20,12 @@ def index(request):
     try:
         request.session['user_id']
         userId=request.session['user_id']
+        try:
+            error=request.session.get("error")
+            context['error']=error
+            del request.session['error']
+        except:
+            pass
         try:
             user=models.Users.objects.get(id=userId)
             username=user.full_name
@@ -135,30 +150,38 @@ def settings(request):
     if(request.method == "POST"):
         print("POST request: ",request.POST)
         fullname=request.POST.get("fullname")
-        if len(fullname)<4:
-            error['name']="Too Short name"
         email=request.POST.get("email")
-        if(not helpers.isValidEmail(email)):
-            error['email']="Invalid email"
-        else:
-            if(email_exists(email)):
-                error['email']="Email already exists"
-
+        if(fullname!=""):
+            if len(fullname)<4:
+                error['msg']="Too Short name"
+        if(email!=""):
+            if(not helpers.isValidEmail(email)):
+                error["msg"]+=" , " 
+                error['msg']+="Invalid email"
+            else:
+                if(email_exists(email)):
+                    error["msg"]+=" , "
+                    error['msg']+="Email already exists"
         if error:
-            return render(request=request,template_name='MediSafe/settings.html',context=context)
+            request.session['error']={'settings':error}
+            return redirect(reverse('index')+"?page=settings")
 
         tfa=request.POST.get("tfa")=="on"
         safetyAlerts=request.POST.get("safety_alerts")=="on"
         monthlyUsageReports=request.POST.get("monthly_usage_reports")=="on"
-        print(fullname,email,tfa,safetyAlerts,monthlyUsageReports)
-        return redirect('index')
+        userId=request.session.get("user_id")
+        user=models.Users.objects.update_user_settings(
+            user_id=userId, email=email,full_name=fullname,safety_alerts=safetyAlerts,two_factor_auth=tfa,monthly_usage_reports=monthlyUsageReports
+        )
+        return redirect(reverse('index')+"?page=settings")
     else:
         try:
             user=models.Users.objects.select_related('profile').get(id=userId)
             context['user']=user
+            return render(request=request,template_name='MediSafe/settings.html',context=context)
+
         except:
             return redirect("login")
-    return render(request=request,template_name='MediSafe/settings.html',context=context)
 
     
 

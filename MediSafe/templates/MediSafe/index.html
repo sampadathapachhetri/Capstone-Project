@@ -15,6 +15,14 @@
     <link rel="stylesheet" href="{% static 'MediSafe/css/index.css' %}" />
   </head>
   <body>
+    {% if error %}
+      {% if error.settings %}
+      <script>
+        alert(`Failed to Update User Information \n
+        Reason: {{ error.settings.msg }}`)
+      </script>
+      {% endif %}
+    {% endif %}
     <div id="nav_menu">
       <div id="left_top">
         <div id="left_top_image_div">
