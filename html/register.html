@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="../css/register.css" />
+  </head>
+  <body>
+    <div id="left_side">
+      <img src="../images/reg_img.png" id="login_img" />
+      <div id="overlay_text_left">
+        <span id="left_overlay_top">MediSafe</span>
+        <div id="left_overlay_middle">
+          <h2 id="left_overlay_head">
+            Designed for HIPAA compliance & clinical efficiency.
+          </h2>
+          <p id="left_overlay_par">
+            Join over 15,000 healthcare professionals<br />
+            managing patient safety with our secure <br />infrastructure.
+          </p>
+        </div>
+        <div id="left_overlay_bottom">
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#ffffff">
+              <path
+                d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z" /></svg
+            ><span>Enterprise Grade Security</span>
+          </div>
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#ffffff">
+              <path
+                d="m414-280 226-226-58-58-169 169-84-84-57 57 142 142ZM260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-240Z" />
+            </svg>
+            <span>Real-time sync</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of left -->
+    <div id="right_side">
+      <div id="right_side_sub">
+        <h2 id="right_side_title">Create Your Account</h2>
+        <span id="right_side_info">
+          Secure access for healthcare professionals.
+        </span>
+        <form id="register_form" method="POST">
+          <label id="email_label" class="form_labels">Full Name</label>
+          <div class="input_field_divs">
+            <img src="../images/profile_icon.svg" />
+            <input
+              name="fullname"
+              id="name_field"
+              class="input_field"
+              type="text"
+              placeholder="Raghav Raj Shrestha"
+              required />
+          </div>
+
+          <label id="email_label" class="form_labels">Professional Email</label>
+          <div class="input_field_divs">
+            <img src="../images/mail_icon.svg" />
+            <input
+              name="email"
+              id="email_field"
+              class="input_field"
+              type="email"
+              placeholder="name@hospital.com"
+              required />
+          </div>
+
+          <div id="passwordfield_row">
+            <div>
+              <label id="password_label" class="form_labels">Password</label>
+              <div class="input_password_field_divs">
+                <img src="../images/lock_icon.svg" />
+                <input
+                  name="password"
+                  id="password_field"
+                  class="input_field"
+                  type="password"
+                  placeholder="••••••••"
+                  required />
+                <img
+                  src="../images/eye_on_icon.svg"
+                  id="eye_icon"
+                  data-eye-off-url="../images/eye_off_icon.svg"
+                  data-eye-on-url="../images/eye_on_icon.svg" />
+              </div>
+            </div>
+            <div>
+              <label id="confirm_password_label" class="form_labels">
+                Confirm Password
+              </label>
+              <div class="input_password_field_divs">
+                <img src="../images/lock_reset_icon.svg" />
+                <input
+                  name="confirm_password"
+                  id="password_field"
+                  class="input_field"
+                  type="password"
+                  placeholder="••••••••"
+                  required />
+              </div>
+            </div>
+          </div>
+          <div id="password_validation">
+            <img
+              src="../images/check_outline_icon.svg"
+              id="password_valid_check_icon"
+              data-invalid-password-url="../images/cancel_outline_icon.svg" />
+            <span>At least 8 characters with 1 symbol</span>
+          </div>
+
+          <div id="right_side_policy_div">
+            <input
+              type="checkbox"
+              id="checkbox_input"
+              name="agreement"
+              required />
+            <label id="policy_label"
+              >I agree to the <a href="#">Terms of Service </a> and
+              <a href="#">Privacy Policy</a></label
+            >
+          </div>
+          <input type="submit" id="submit_button" value="Create Account " />
+        </form>
+
+        <span id="yes_account"
+          >Already have an account?
+          <a id="redirect_to_login" style="cursor: pointer">Log In</a></span
+        >
+        <div id="right_bottom_refs_container">
+          <div class="right_bottom_divs">
+            <img src="../images/security_icon.svg" />
+            <a class="right_bottom_refs" href="#">HIPPA READY</a>
+          </div>
+
+          <div class="right_bottom_divs">
+            <img src="../images/encryption_icon.svg" />
+            <a class="right_bottom_refs" href="#">SSL ENCRYPTED</a>
+          </div>
+
+          <div class="right_bottom_divs">
+            <img src="../images/policy_icon.svg" />
+            <a class="right_bottom_refs" href="#">GDPR COMPLIANT</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/register.js"></script>
+  </body>
+</html>

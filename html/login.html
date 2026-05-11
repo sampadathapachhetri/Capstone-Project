@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="../css/login.css" />
+  </head>
+  <body>
+    <div id="left_side">
+      <img src="../images/login_img.png" id="login_img" />
+      <div id="overlay_text_left">
+        <span id="left_overlay_name">
+          <img src="../images/medisafe_icon.svg" />
+          <span> MediSafe </span>
+        </span>
+        <h2 id="left_overlay_head">Your health data secured.</h2>
+        <p id="left_overlay_par">
+          Access your medical records and manage your safety with MediSafe's
+          encrypted platform. Trusted by thousands of healthcare professionals.
+        </p>
+        <div id="left_overlay_imgntxt_div">
+          <div></div>
+          <span>Joined by 10k+ providers</span>
+        </div>
+        <span id="left_overlay_compliance">HIPPA COMPLIANT & ENCRYPTED</span>
+      </div>
+    </div>
+    <div id="right_side">
+      <div id="right_side_sub">
+        <h2 id="right_side_title">Welcome back</h2>
+        <span id="right_side_info">Please enter your details to sign in</span>
+        <form id="login_form" method="POST">
+          <label id="email_label" class="form_labels">Email Address</label>
+          <div class="input_field_divs">
+            <img src="../images/mail_icon.svg" />
+            <input
+              name="email"
+              id="email_field"
+              type="text"
+              placeholder="name@hospital.com"
+              required />
+          </div>
+          <label id="password_label" class="form_labels">Password</label>
+          <div class="input_field_divs">
+            <img src="../images/lock_icon.svg" />
+            <input
+              name="password"
+              id="password_field"
+              type="password"
+              placeholder="••••••••"
+              required />
+            <img
+              src="../images/eye_on_icon.svg"
+              data-eye-off-url="../images/eye_off_icon.svg"
+              data-eye-on-url="../images/eye_on_icon.svg"
+              id="eye_icon" />
+          </div>
+          <div id="right_side_rem_div">
+            <div>
+              <input type="checkbox" id="checkbox_input" name="remember" />
+              <label id="remember_label">Remember me</label>
+            </div>
+            <a id="forget_password_href" style="cursor: pointer">
+              Forgot password?
+            </a>
+          </div>
+          <input type="submit" id="submit_button" value="Sign In" />
+        </form>
+        <div id="right_extra_option_label">
+          <div></div>
+          <span>OR CONTINUE WITH</span>
+        </div>
+        <div id="extra_options">
+          <button>Google</button>
+          <button>Provider ID</button>
+        </div>
+        <span id="no_account"
+          >Dont have an account?
+          <a id="redirect_to_register" style="cursor: pointer">
+            Create an account
+          </a>
+        </span>
+        <div id="right_bottom_refs">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Support</a>
+        </div>
+      </div>
+    </div>
+    <script src="../js/login.js"></script>
+  </body>
+</html>

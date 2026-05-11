@@ -1,0 +1,264 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  font-family: "Inter", sans-serif;
+}
+#left_side {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 42vw;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+#login_img {
+  height: 100%;
+  width: 42%;
+  z-index: -2;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#overlay_text_left {
+  z-index: 1;
+  height: 90%;
+  width: 70%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: space-between;
+  left: 10%;
+}
+
+#left_overlay_top {
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 2em;
+  color: white;
+}
+#left_overlay_head {
+  text-align: start;
+  font-size: 3.5em;
+  margin: 0;
+  margin-bottom: 0.1em;
+  line-height: 110%;
+  color: white;
+}
+#left_overlay_par {
+  opacity: 80%;
+  margin: 0;
+  margin-bottom: 3em;
+  color: #f4f4f4;
+}
+
+#left_overlay_bottom {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#left_overlay_bottom > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#left_overlay_bottom > div > svg {
+  width: 1.3em;
+}
+#left_overlay_bottom > div > span {
+  color: #ededed;
+  font-size: 0.8em;
+}
+
+/* RIGHT SIDE */
+
+#right_side {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  width: 58vw;
+  align-items: center;
+  justify-content: center;
+}
+
+#right_side_sub {
+  width: 50%;
+  height: 90%;
+  position: relative;
+  top: 4%;
+}
+
+#right_side_title {
+  margin: 0;
+  margin-bottom: 0.4em;
+}
+#right_side_info {
+  font-size: 0.8em;
+  opacity: 60%;
+}
+#register_form {
+  margin-top: 2em;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.form_labels {
+  font-weight: bold;
+  font-size: 0.8em;
+  opacity: 70%;
+}
+.input_field_divs {
+  padding: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  height: 2.6em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  gap: 8px;
+}
+.input_field_divs > img,
+.input_password_field_divs > img {
+  width: 1em;
+  opacity: 80%;
+}
+.input_password_field_divs > img {
+  height: 1em;
+}
+#passwordfield_row {
+  display: flex;
+  height: 3.45em;
+  justify-content: space-between;
+}
+#passwordfield_row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+}
+.input_password_field_divs {
+  border: 1px solid black;
+  display: flex;
+  padding: 4px;
+  box-sizing: border-box;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  gap: 8px;
+  align-items: center;
+  height: 100%;
+}
+#eye_icon {
+  width: 0.9em;
+  cursor: pointer;
+}
+.input_field {
+  outline: none;
+  width: 100%;
+  border: none;
+}
+#password_validation {
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1em;
+}
+#password_validation > img {
+  width: 1em;
+}
+#password_validation > span {
+  font-size: 0.8em;
+  opacity: 60%;
+}
+
+#right_side_policy_div {
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: row;
+}
+
+#checkbox_input {
+  transform: scale(1.2);
+  margin-right: 8px;
+}
+#policy_label {
+  font-size: 0.8em;
+  color: #686868;
+}
+#policy_label > a {
+  text-decoration: none;
+  font-weight: bolder;
+  color: #3b7dbb;
+}
+#submit_button {
+  color: white;
+  font-size: 1em;
+  font-weight: 500;
+  height: 3em;
+  border: none;
+  background-color: #005fb8;
+  border-radius: 6px;
+  box-shadow: 2px 2px 4px #a6a7a7;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+#submit_button:hover {
+  background-color: #1c7dd7;
+}
+#submit_button:active {
+  background-color: #0e4980;
+  box-shadow: none;
+}
+
+#yes_account {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8em;
+  color: #5e768d;
+}
+#yes_account > a {
+  text-decoration: none;
+  color: #005fb8;
+  font-weight: bold;
+}
+#right_bottom_refs_container {
+  display: flex;
+  margin-top: 2em;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 2em;
+}
+.right_bottom_divs > img {
+  width: 1.3em;
+  opacity: 40%;
+}
+.right_bottom_divs {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.right_bottom_refs {
+  font-size: 0.6em;
+  text-decoration: none;
+  color: black;
+  opacity: 60%;
+}

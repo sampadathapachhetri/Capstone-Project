@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scrollable Table</title>
+    <style>
+      .table-container {
+        overflow-y: auto;
+        /* Optional: set a specific height for the container if needed */
+        height: 400px; /* Remove this line if you don't want any height limit */
+        border: 1px solid #ddd;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f5f5f5;
+        position: sticky;
+        top: 0; /* Keeps header visible while scrolling */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Active</td>
+          </tr>
+          <!-- Add more rows here -->
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

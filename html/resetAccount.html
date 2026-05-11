@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="../css/resetAccount.css" />
+  </head>
+  <body>
+    <div id="left">
+      <div id="left_top">
+        <div id="left_top_image_div">
+          <img src="../images/medisafe_icon.svg" />
+        </div>
+        <div id="left_top_info">
+          <h2>MediSafe</h2>
+          <span>CLINICAL DECISION SUPPORT</span>
+        </div>
+      </div>
+      <div id="left_middle">
+        <img src="../images/shield_with_heart_icon.svg" />
+        <h4>Secure & Trusted</h4>
+        <p>
+          Your clinical data is protected <br />
+          with exterprise-grade security<br />
+          protocols.
+        </p>
+      </div>
+      <div id="left_bottom">
+        <img src="../images/profile_default.png" id="profile_image" />
+        <div id="left_bottom_info">
+          <h4>Support Center</h4>
+          <span>help@medisafe.com</span>
+        </div>
+      </div>
+    </div>
+    <div id="right">
+      <div id="right_sub">
+        <div id="go_back_div" style="cursor: pointer">
+          <img src="../images/left_arrow_icon.svg" />
+          <span>Back to Login</span>
+        </div>
+        <form name="forget_password_form" id="forget_password_form">
+          <div id="form_top_icon_div">
+            <img src="../images/lock_reset_icon.svg" />
+          </div>
+          <h2>Forgot Password?</h2>
+          <p>
+            Don't worry, it happens. Enter you registered<br />email address and
+            we'll send you a link to reset<br />
+            your password.
+          </p>
+          <div id="email_label_div">
+            <label id="email_label">Email Address</label>
+          </div>
+          <div id="email_field_div">
+            <img src="../images/mail_icon.svg" />
+            <input
+              type="text"
+              placeholder="doctor@hospital.com"
+              name="email"
+              id="email_field"
+              required />
+          </div>
+          <button id="confirm_button">
+            Send Reset Link
+            <img src="../images/right_arrow_icon.svg" style="width: 16px" />
+          </button>
+          <div id="line"></div>
+          <span id="form_bottom"
+            >Having trouble? <a href="#">Contact Administrator</a></span
+          >
+        </form>
+        <span id="copyright_stuff"
+          >© 2024 MediSafe Technologies. All Rights Reserved.</span
+        >
+      </div>
+    </div>
+    <script src="../js/resetAccount.js"></script>
+  </body>
+</html>

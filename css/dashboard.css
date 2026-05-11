@@ -1,0 +1,326 @@
+::-webkit-scrollbar {
+  background-color: transparent;
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: grey;
+}
+
+#dash_root {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1em 2.5em 4px 2em;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 1em;
+
+  #dash_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    #dash_top_greet {
+      h2 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 2em;
+        margin-bottom: 0.3em;
+      }
+      span {
+        font-size: 1em;
+        opacity: 70%;
+      }
+    }
+
+    #dash_top_buttons {
+      width: 34%;
+      display: flex;
+      height: 70%;
+      align-items: center;
+      justify-content: space-between;
+      button {
+        border-radius: 8px;
+        display: flex;
+        flex-direction: row;
+        width: 44%;
+        height: 94%;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-size: 0.8em;
+        font-weight: 550;
+      }
+      #dash_history_button {
+        background-color: white;
+        border: 2px solid #e2e8f0;
+        color: #334155;
+      }
+      #dash_new_button {
+        color: white;
+        background-color: #005fb8;
+        border: none;
+        box-shadow: 2px 2px 4px #6183d9;
+      }
+    }
+  }
+  #dash_middle {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.2em;
+  }
+
+  #dash_bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 1.6%;
+    padding-right: 2%;
+    height: max-content;
+    box-sizing: border-box;
+    #dash_bottom_left {
+      background-color: white;
+      border: 2px solid #e1e1e1;
+      border-radius: 12px;
+      width: 68%;
+      display: flex;
+      padding-bottom: 1em;
+      flex-direction: column;
+      gap: 1em;
+      height: fit-content;
+      max-height: 72%;
+
+      box-sizing: border-box;
+      overflow-y: auto;
+      #dash_botleft_header {
+        padding: 0px 1.2em;
+        display: flex;
+        border-bottom: 2px solid #e6e6e6;
+        align-items: center;
+        justify-content: space-between;
+        height: 3em;
+        h3 {
+          font-weight: 600;
+          font-size: 1em;
+          color: black;
+        }
+        span {
+          font-size: 0.8em;
+          font-weight: 600;
+          color: #005fb8;
+          cursor: pointer;
+        }
+      }
+      #dash_botleft_list {
+        padding: 0px 1.3em;
+        display: flex;
+        flex-direction: column;
+        gap: 1.6em;
+        padding-bottom: 2em;
+        overflow-y: auto;
+        .dash_recent_li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-left: 8px;
+
+          .dash_li_img_div {
+            svg {
+              width: 2em;
+              height: 2em;
+              background-color: #f1f5f9;
+              padding: 6px;
+              border-radius: 8px;
+            }
+          }
+
+          .dash_li_left {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+          }
+          .dash_li_right {
+            display: flex;
+            justify-content: end;
+            gap: 2em;
+            .dash_drug_interaction {
+              font-size: 0.7em;
+              font-weight: 600;
+              padding: 4px 1em;
+              border-radius: 10px;
+            }
+            .dash_li_eye {
+              cursor: pointer;
+            }
+            .dash_li_eye:hover {
+              fill: #005fb8;
+            }
+          }
+        }
+      }
+    }
+    #dash_bottom_right {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      height: 74%;
+      gap: 0.5em;
+      #dash_tip_card {
+        border-radius: 14px;
+        height: 54%;
+        padding: 1.4em;
+        background: linear-gradient(135deg, #005fb8 0, #004a8f 100%);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: space-between;
+        span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.7em;
+          font-weight: 550;
+          svg {
+            width: 1.5em;
+          }
+        }
+        h3 {
+          margin: 0;
+          font-size: 1em;
+        }
+        p {
+          margin: 0;
+          font-size: 0.8em;
+          font-weight: 300;
+          text-align: start;
+          padding-right: 4px;
+          overflow-y: auto;
+        }
+        button {
+          height: 3em;
+          border-radius: 8px;
+          border: none;
+          width: 100%;
+          color: #1571c6;
+          font-weight: 650;
+          background-color: white;
+          font-size: 0.8em;
+          letter-spacing: 1px;
+        }
+      }
+
+      #dash_undo_card {
+        border-radius: 12px;
+        background-color: white;
+        border: 2px solid #e8e8e8;
+        height: 34%;
+        box-sizing: border-box;
+        padding: 1em;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.8em;
+          font-weight: 700;
+        }
+        p {
+          font-size: 0.7em;
+          overflow-y: auto;
+          color: #94a3b8;
+          font-weight: 400;
+        }
+        div {
+          cursor: pointer;
+          font-size: 0.7em;
+          display: flex;
+          align-items: center;
+          color: #94a3b8;
+          font-weight: 550;
+          svg {
+            width: 16px;
+            fill: #94a3b8;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dash_drug_names {
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+.dash_drugcheck_time {
+  font-size: 13px;
+}
+
+.dash_middle_cards {
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5em;
+  width: 27%;
+  display: flex;
+  flex-direction: column;
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.6em;
+    span {
+      font-size: 14px;
+      font-weight: 660;
+      opacity: 60%;
+    }
+  }
+  svg {
+    padding: 2px;
+    border-radius: 6px;
+  }
+  h3 {
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 4px;
+    span {
+      font-size: 14px;
+      opacity: 60%;
+    }
+  }
+}
+#analytics_icon {
+  background-color: #aecae5;
+}
+#pending_icon {
+  background-color: #ffe2b9;
+}
+#safety_icon {
+  background-color: #c7ffc7;
+}
+#dash_weekcheck_text {
+  span {
+    color: #06b128;
+  }
+}
+.dash_drug_interaction_high {
+  > span {
+    background-color: #ffecec;
+    color: red;
+  }
+}
+.dash_drug_interaction_mod {
+  > span {
+    background-color: #f9e6d5;
+    color: #f97f14;
+  }
+}
+.dash_drug_interaction_low {
+  > span {
+    background-color: #e1ffd8;
+    color: #085a13;
+  }
+}
