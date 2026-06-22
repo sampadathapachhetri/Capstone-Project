@@ -3,10 +3,10 @@ import uuid
 from . import helpers
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
-from django.db import transaction
+from django.db import transaction,IntegrityError
 # Create your models here.
 class UserManager(models.Manager):
-    def create_user_and_profile(self,email,full_name,password,):
+    def create_user_and_profile(self,email:str,full_name:str,password:str):
         if not email or not helpers.isValidEmail(email=email):
             raise ValueError("Email invalid")
         with transaction.atomic():
@@ -54,7 +54,39 @@ class UserManager(models.Manager):
             if updated_profile_fields:
                 profile.save(update_fields=updated_profile_fields)
             return user
-                
+    def create_oauth_user_and_profile(self,full_name:str,provider:str,provider_user_id:str,access_token:str,provider_name,refresh_token=None,token_expires_at=None):
+        with transaction.atomic():
+            try: 
+                acc=OAuthAccount.objects.get(
+                    provider=provider,
+                    provider_user_id=provider_user_id
+                )
+                user=Users.objects.get(id=acc.user.id)
+            
+            except (OAuthAccount.DoesNotExist, IntegrityError):
+                    user=self.model(
+                        full_name=full_name,
+                        is_oauth_user=True
+                    )
+                    user.save(using=self._db)
+                    UserProfile.objects.create(user=user)
+                    acc=OAuthAccount.objects.create(
+                        provider=provider,
+                        provider_name=provider_name,
+                        provider_user_id=provider_user_id,
+                        access_token=access_token,
+                        user=user,
+                    )
+            except Users.DoesNotExist:
+                # user doesnot exist error, unexpected
+                return
+            acc.user = user
+            acc.provider_name = provider_name
+            acc.access_token = access_token
+            acc.token_expires_at = token_expires_at
+            acc.refresh_token = refresh_token
+            acc.save()
+        return user
 
 class Users(models.Model):
     objects=UserManager()
@@ -74,19 +106,18 @@ class Users(models.Model):
 
     pass_hash=models.CharField(
         max_length=255,
-        blank=False,
+        blank=True,
+        null=True,
         help_text="hashed password for user"
     )
 
     email=models.EmailField(
         max_length=255,
         unique=True,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         error_messages={
             'unique':'A user with this email already exists.',
-            'blank':"Email field cannot be empty",
-            'null':"Email field cannot be null",
         },
         help_text="User's email"
     )
@@ -101,6 +132,10 @@ class Users(models.Model):
         blank=True,
         help_text="Timestamp of user's last login"
     )
+    is_oauth_user=models.BooleanField(
+        default=False,
+        help_text="Does user use OAuth for authentication?"
+    )
     class Meta:
         indexes=[
             models.Index(fields=['email'])
@@ -112,6 +147,77 @@ class Users(models.Model):
         from django.utils import timezone
         self.last_logged_in_at=timezone.now()
         self.save(update_fields=['last_logged_in_at'])
+    def has_password(self):
+        return bool(self.pass_hash)
+
+class OAuthAccount(models.Model):
+    OAUTH_PROVIDERS=[
+        ('google','Google'),
+        ('github','GitHub')
+    ]
+    id=models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
+    user=models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE,
+        related_name="oauth_accounts",
+        help_text="Reference to main user account"
+    )
+    provider=models.CharField(
+        max_length=50,
+        choices=OAUTH_PROVIDERS,
+        help_text="OAuth provider name"
+    )
+    provider_user_id=models.CharField(
+        max_length=255,
+        help_text="User ID from the OAuth Provider"
+    )
+    access_token=models.TextField(
+        help_text="OAuth access token"
+    )
+    refresh_token=models.TextField(
+        blank=True,
+        null=True,
+        help_text="OAuth refresh token (if available)"
+    )
+    token_expires_at=models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Token expiration timestamp"
+    )
+    provider_name=models.CharField(
+        max_length=255,
+        help_text="Full name from OAuth Provider"
+    )
+    created_at=models.DateTimeField(
+        auto_now_add=True,
+        help_text="When the OAuth account was linked"
+    )
+    updated_at=models.DateTimeField(
+        auto_now=True,
+        help_text="Late updated at "
+    )
+    
+    class Meta:
+        unique_together=[
+            ['provider','provider_user_id'],
+        ]
+        indexes=[
+            models.Index(fields=['provider','provider_user_id']),
+            models.Index(fields=['user','provider'])
+        ]
+    def __str__(self):
+        return f"{self.user.email} - {self.provider}"
+    
+    def is_token_valid(self):
+        from django.utils import timezone
+        if self.token_expires_at:
+            return self.token_expires_at>timezone.now()
+        return True
+
 
 class UserProfile(models.Model):
     user=models.OneToOneField(

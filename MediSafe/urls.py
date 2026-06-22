@@ -14,6 +14,9 @@ urlpatterns=[
     path('sub/intanalysis',view=views.intAnalysis,name="int_analysis"),
     path('logout/',view=views.logout,name='logout'),
     path('delete_medication/<int:medicationId>',view=views.deleteMedication,name='delete_medication'),
-    path('delete_medication/',view=views.deleteMedication,name='delete_medication')
+    path('delete_medication/',view=views.deleteMedication,name='delete_medication'),
 
+    path('auth/github/',view=views.github_login,name='github_login'),
+    path('auth/github/callback/',view=views.github_callback),
+    
 ]

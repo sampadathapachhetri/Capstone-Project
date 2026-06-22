@@ -39,7 +39,18 @@
 
         contents_div.innerHTML = htmlText;
         MedicalApp.currentPage = pageConfig.pageName;
-        path_nav.innerHTML += `<li>><li> <li>${pageConfig.pageName}</li>`;
+        path_nav.innerHTML += `
+         <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#1D1D1D">
+              <path d="M400-280v-400l200 200-200 200Z" />
+            </svg>
+          </li>
+        <li>${pageConfig.pageName}</li>`;
 
         // Load the script for the new page
         await this.loadPageScript(pageConfig);

@@ -1,0 +1,75 @@
+:root {
+  /* ===== TYPOGRAPHY ===== */
+  /* Font families */
+  --font-primary: "Inter", sans-serif;
+
+  /* Font sizes */
+  --font-xs: 0.75rem; /* 12px */
+  --font-sm: 0.875rem; /* 14px */
+  --font-base: 1rem; /* 16px */
+  --font-lg: 1.125rem; /* 18px */
+  --font-xl: 1.25rem; /* 20px */
+  --font-2xl: 1.5rem; /* 24px */
+  --font-3xl: 1.875rem; /* 30px */
+  --font-4xl: 2.25rem; /* 36px */
+
+  /* Font weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-bolder: 800;
+
+  /* Semantic colors */
+  --color-primary: var(--primary-600);
+  --color-primary-hover: var(--primary-700);
+  --color-secondary: #64748b;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #06b6d4;
+  --color-low: #10940e;
+
+  --color-danger-bg: #ef44441d;
+  --color-warning-bg: #f59e0b1d;
+  --color-low-bg: #10940e1d;
+
+  /* Text colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-disabled: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* Border colors */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
+  --border-dark: #9ca3af;
+
+  /* ===== Z-INDEX LAYERS ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+
+  --page-header-size: 2rem;
+  --page-subheader-size: 1rem;
+
+  --page-header-weight: 750;
+  --page-subheader-weight: 450;
+
+  --page-subheader-opacity: 70%;
+
+  --normal-gap: 2em;
+  --page-padding: 2em 2em;
+  --container-border-normal: 2px solid #e2e8f0;
+
+  --list-item-size-bold: 2rem;
+  --list-subitem-size: 0.8rem;
+
+  --seed-color: #005fb8;
+  --seed-color-transparent: #005fb811;
+
+  --primary-border-radius: 12px;
+}
