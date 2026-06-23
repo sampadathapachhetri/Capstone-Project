@@ -1,8 +1,7 @@
-# ═══════════════════════════════════════════════════════════════
 # pipeline.py
 # Main entry point — Drug Interaction Detection System
 # Image upload → auto path extraction → OCR → match
-# ═══════════════════════════════════════════════════════════════
+
 
 import os
 import tkinter as tk
@@ -29,7 +28,7 @@ def browse_image(drug_num):
     root.lift()
     root.attributes('-topmost', True)
 
-    print(f"\n  📂 Opening file browser for Drug {drug_num}...")
+    print(f"\n   Opening file browser for Drug {drug_num}...")
     print(f"  Select your medicine image in the popup window")
 
     image_path = filedialog.askopenfilename(
@@ -44,11 +43,11 @@ def browse_image(drug_num):
 
     if image_path:
         # Show just filename (not full path) for cleaner display
-        print(f"  ✅ Image selected : {os.path.basename(image_path)}")
-        print(f"  📁 Full path      : {image_path}")
+        print(f"   Image selected : {os.path.basename(image_path)}")
+        print(f"   Full path      : {image_path}")
         return image_path
     else:
-        print(f"  ❌ No image selected")
+        print(f"   No image selected")
         return None
 
 
@@ -67,21 +66,21 @@ def get_drug_input(drug_num, index):
       drug_id, drug_name or None, None
     """
     print(f"\n{'─'*55}")
-    print(f"  💊 DRUG {drug_num}")
+    print(f"   DRUG {drug_num}")
     print(f"{'─'*55}")
-    print(f"  1 → 📸 Upload medicine image")
-    print(f"  2 → ⌨️  Type drug name manually")
+    print(f"  1 →  Upload medicine image")
+    print(f"  2 →   Type drug name manually")
 
     choice = input(f"\n  Your choice (1 or 2): ").strip()
 
-    # ── Option 1: Image upload ────────────────────────────────────
+    #  Option 1: Image upload 
     if choice == "1":
 
         # Open popup → user clicks image → path extracted automatically
         image_path = browse_image(drug_num)
 
         if not image_path:
-            print("  ❌ No image selected — exiting Drug input")
+            print("   No image selected — exiting Drug input")
             return None, None
 
         # Validate image (size, format)
@@ -92,39 +91,39 @@ def get_drug_input(drug_num, index):
         text = get_text_from_image(image_path, drug_num)
 
         if not text.strip():
-            print("  ❌ No text could be extracted from image")
-            print("  💡 Try a clearer photo or use text input")
+            print("   No text could be extracted from image")
+            print("   Try a clearer photo or use text input")
             return None, None
 
         # Match extracted text to drug database
         matches = match_drug(text, index)
 
-    # ── Option 2: Text input ──────────────────────────────────────
+    #  Option 2: Text input 
     elif choice == "2":
         drug_name = input(f"\n  Type Drug {drug_num} name: ").strip()
 
         if not drug_name:
-            print("  ❌ No name entered!")
+            print("   No name entered!")
             return None, None
 
-        print(f"\n  🔍 Searching for: '{drug_name}'")
+        print(f"\n   Searching for: '{drug_name}'")
         matches = match_drug(drug_name, index)
 
     else:
-        print("  ❌ Invalid choice! Enter 1 or 2")
+        print("   Invalid choice! Enter 1 or 2")
         return None, None
 
-    # ── Show identified drug ──────────────────────────────────────
+    #  Show identified drug 
     if matches:
         best = matches[0]
-        print(f"\n  ✅ Drug {drug_num} identified!")
+        print(f"\n   Drug {drug_num} identified!")
         print(f"     Name  : {best['common_name']}")
         print(f"     ID    : {best['drugbank_id']}")
         print(f"     Match : {best['match_type']} (score={best['score']})")
         return best['drugbank_id'], best['common_name']
 
-    print(f"\n  ❌ Could not identify Drug {drug_num}")
-    print(f"  💡 Try typing the name manually (option 2)")
+    print(f"\n   Could not identify Drug {drug_num}")
+    print(f"   Try typing the name manually (option 2)")
     return None, None
 
 
@@ -138,26 +137,26 @@ def show_interaction_result(drug1_name, drug2_name, result):
       result:     dict from check_interaction()
     """
     print("\n" + "═" * 55)
-    print("         🔬 INTERACTION RESULT")
+    print("          INTERACTION RESULT")
     print("═" * 55)
     print(f"\n  Drug 1 : {drug1_name}")
     print(f"  Drug 2 : {drug2_name}")
     print()
 
     if not result['found']:
-        print("  ✅ NO KNOWN INTERACTION FOUND")
+        print("   NO KNOWN INTERACTION FOUND")
         print("  These drugs appear safe to use together")
         print("  (according to DrugBank database)")
     else:
-        print("  ⚠️  INTERACTION FOUND!")
-        print(f"\n  📋 Description:")
+        print("    INTERACTION FOUND!")
+        print(f"\n   Description:")
         desc = result['description']
         # Word wrap at 68 chars for readability
         for i in range(0, len(desc), 68):
             print(f"     {desc[i:i+68]}")
 
     print()
-    print("  ⚕️  Always consult a doctor or pharmacist")
+    print("    Always consult a doctor or pharmacist")
     print("     before combining medications.")
     print("═" * 55)
 
@@ -174,29 +173,29 @@ def run_pipeline():
       5. Show result
     """
     print("\n" + "═" * 55)
-    print("   💊 DRUG INTERACTION DETECTION SYSTEM")
+    print("    DRUG INTERACTION DETECTION SYSTEM")
     print("═" * 55)
     print(f"   Supported formats : {', '.join(SUPPORTED_FORMATS)}")
     print(f"   Max image size    : {MAX_IMAGE_MB} MB")
     print("═" * 55)
 
     # Load all databases once at startup
-    print("\n📂 Loading databases...")
+    print("\n Loading databases...")
     df           = load_drugbank()
     index        = build_index(df)
     interactions = load_interactions()
-    print("✅ All databases ready!")
+    print(" All databases ready!")
 
     # Get Drug 1
     drug1_id, drug1_name = get_drug_input(1, index)
     if not drug1_id:
-        print("\n❌ Could not identify Drug 1 — exiting.")
+        print("\n Could not identify Drug 1 — exiting.")
         return
 
     # Get Drug 2
     drug2_id, drug2_name = get_drug_input(2, index)
     if not drug2_id:
-        print("\n❌ Could not identify Drug 2 — exiting.")
+        print("\n Could not identify Drug 2 — exiting.")
         return
 
     # Check interaction between the two drugs

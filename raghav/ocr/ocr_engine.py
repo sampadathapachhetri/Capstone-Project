@@ -1,5 +1,4 @@
-# ═══════════════════════════════════════════════════════════════
-# ocr_engine.py
+ # ocr_engine.py
 # Handles all OCR (Optical Character Recognition) operations.
 # Uses EasyOCR — a deep learning based text extractor that works
 # well on real-world medicine packet photos.
@@ -7,19 +6,19 @@
 # Key design decision:
 #   EasyOCR reader is loaded ONCE at module import time.
 #   This avoids reloading the model for every image (slow).
-# ═══════════════════════════════════════════════════════════════
+
 
 import easyocr
 from image_utils import convert_to_jpg, preprocess
 from config import OCR_CONFIDENCE
 
-# ── Load EasyOCR model once ───────────────────────────────────────
+#  Load EasyOCR model once 
 # Loading takes ~10 seconds but only happens once
 # gpu=False → uses CPU (works on all computers without GPU)
 # ['en'] → English language model
-print("🔄 Loading EasyOCR model (this takes a few seconds)...")
+print("Loading EasyOCR model (this takes a few seconds)...")
 reader = easyocr.Reader(['en'], gpu=False)
-print("✅ EasyOCR ready!\n")
+print(" EasyOCR ready!\n")
 
 
 def run_ocr(image_path, label=""):
@@ -43,7 +42,7 @@ def run_ocr(image_path, label=""):
     results = reader.readtext(image_path)
     words   = []
 
-    print(f"\n📋 OCR Results — {label}")
+    print(f"\n OCR Results — {label}")
     print("-" * 45)
 
     for (_, text, conf) in results:
@@ -84,7 +83,7 @@ def get_text_from_image(image_path, drug_num):
     Returns:
       best_text: the OCR result with most words found
     """
-    print(f"\n📸 Extracting text from Drug {drug_num} image...")
+    print(f"\n Extracting text from Drug {drug_num} image...")
 
     # Convert to JPG if needed (required for OpenCV)
     image_path = convert_to_jpg(image_path)
@@ -101,5 +100,5 @@ def get_text_from_image(image_path, drug_num):
     all_results = [original_text, enhanced_text, thresh_text]
     best_text   = max(all_results, key=lambda t: len(t.split()))
 
-    print(f"\n🏆 Best result selected: {best_text}")
+    print(f"\n Best result selected: {best_text}")
     return best_text

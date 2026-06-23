@@ -1,4 +1,3 @@
-# ═══════════════════════════════════════════════════════════════
 # drug_matcher.py
 # Matches extracted OCR text to drug names in DrugBank database.
 #
@@ -8,7 +7,7 @@
 #
 # Uses drugbank_vocabulary_with_smiles.csv which contains:
 #   - Drug ID, Name, Synonyms, SMILES
-# ═══════════════════════════════════════════════════════════════
+
 
 import pandas as pd
 import re
@@ -47,10 +46,10 @@ def load_drugbank(csv_path=DRUGBANK_CSV):
             col_map['smiles'] = col
 
     if 'drugbank_id' not in col_map:
-        raise ValueError("❌ Could not find DrugBank ID column in CSV!")
+        raise ValueError(" Could not find DrugBank ID column in CSV!")
 
     df = df.rename(columns=col_map)
-    print(f"✅ DrugBank loaded: {len(df):,} drugs")
+    print(f" DrugBank loaded: {len(df):,} drugs")
     return df
 
 
@@ -114,7 +113,7 @@ def build_index(df):
                 if syn:
                     add(syn, {**base, 'matched_synonym': syn})
 
-    print(f"✅ Search index built: {len(index):,} searchable terms")
+    print(f" Search index built: {len(index):,} searchable terms")
     return index
 
 
@@ -216,8 +215,8 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
     seen_ids   = set()   # track already found drug IDs (avoid duplicates)
     matches    = []
 
-    # ── Stage 1: Exact Match ──────────────────────────────────────
-    print("\n🔍 Stage 1: Exact matching...")
+    #  Stage 1: Exact Match 
+    print("\nStage 1: Exact matching...")
     for token in candidates:
         if token in index:
             for entry in index[token]:
@@ -230,16 +229,16 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
                         'score'     : 1.0,
                         'ocr_token' : token
                     })
-                    print(f"  ✅ EXACT  '{token}'"
+                    print(f"   EXACT  '{token}'"
                           f" → {uid} ({entry['common_name']})")
 
     # If exact match found — return immediately (no need for fuzzy)
     if matches:
         return matches
 
-    # ── Stage 2: Fuzzy Match ──────────────────────────────────────
+    #  Stage 2: Fuzzy Match 
     print("  No exact match found")
-    print("\n🔍 Stage 2: Fuzzy matching...")
+    print("\n Stage 2: Fuzzy matching...")
 
     for token in candidates:
         for key, entries in index.items():
@@ -263,7 +262,7 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
 
     # Show top fuzzy matches found
     for m in matches[:3]:
-        print(f"  🔶 FUZZY  '{m['ocr_token']}'"
+        print(f"   FUZZY  '{m['ocr_token']}'"
               f" ≈ '{m['matched_synonym']}'"
               f" → {m['drugbank_id']}"
               f" (score={m['score']})")

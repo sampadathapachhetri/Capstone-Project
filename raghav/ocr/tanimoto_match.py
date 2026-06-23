@@ -1,4 +1,3 @@
-# ═══════════════════════════════════════════════════════════════
 # tanimoto_match.py
 # Matches drugs using molecular structure similarity (SMILES)
 # instead of text-based name matching.
@@ -12,7 +11,7 @@
 # fingerprints:
 #   similarity = |A ∩ B| / |A ∪ B|
 #   Range: 0.0 (no similarity) to 1.0 (identical molecule)
-# ═══════════════════════════════════════════════════════════════
+
 
 from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, DataStructs
@@ -65,7 +64,7 @@ def load_drugbank_with_fingerprints(csv_path=DRUGBANK_CSV):
       drug_fingerprints: list of dicts with:
         drugbank_id, common_name, smiles, fingerprint
     """
-    print("📂 Loading DrugBank for Tanimoto matching...")
+    print(" Loading DrugBank for Tanimoto matching...")
     df = pd.read_csv(csv_path, dtype=str).fillna('')
     df.columns = [c.strip().lower().replace(' ', '_') for c in df.columns]
 
@@ -85,7 +84,7 @@ def load_drugbank_with_fingerprints(csv_path=DRUGBANK_CSV):
     drug_fingerprints = []
     skipped = 0
 
-    print("🧬 Computing molecular fingerprints (this may take a minute)...")
+    print(" Computing molecular fingerprints (this may take a minute)...")
 
     for _, row in df.iterrows():
         smiles = row.get('smiles', '').strip()
@@ -108,7 +107,7 @@ def load_drugbank_with_fingerprints(csv_path=DRUGBANK_CSV):
             'fingerprint' : fingerprint
         })
 
-    print(f"✅ Fingerprints ready: {len(drug_fingerprints):,} drugs")
+    print(f" Fingerprints ready: {len(drug_fingerprints):,} drugs")
     print(f"   (skipped {skipped} invalid SMILES)")
 
     return drug_fingerprints
@@ -136,10 +135,10 @@ def find_similar_drugs(query_smiles, drug_fingerprints, top_n=5, min_similarity=
     query_fp = smiles_to_fingerprint(query_smiles)
 
     if query_fp is None:
-        print(f"❌ Invalid SMILES: {query_smiles}")
+        print(f" Invalid SMILES: {query_smiles}")
         return []
 
-    print(f"\n🧬 Comparing against {len(drug_fingerprints):,} drugs...")
+    print(f"\n Comparing against {len(drug_fingerprints):,} drugs...")
 
     matches = []
 
@@ -162,9 +161,9 @@ def find_similar_drugs(query_smiles, drug_fingerprints, top_n=5, min_similarity=
     matches.sort(key=lambda x: x['score'], reverse=True)
 
     # Show top results
-    print(f"✅ Found {len(matches)} similar drug(s) above threshold {min_similarity}")
+    print(f" Found {len(matches)} similar drug(s) above threshold {min_similarity}")
     for m in matches[:top_n]:
-        print(f"  🔬 {m['common_name']:25} ({m['drugbank_id']}) "
+        print(f"   {m['common_name']:25} ({m['drugbank_id']}) "
               f"→ Tanimoto={m['score']}")
 
     return matches[:top_n]
@@ -197,7 +196,7 @@ def match_by_smiles(query_smiles, drug_fingerprints, min_similarity=0.7):
     return None, None, 0
 
 
-# ── Test standalone ───────────────────────────────────────────────
+#  Test standalone 
 if __name__ == "__main__":
     # Load fingerprint database
     fingerprints = load_drugbank_with_fingerprints()
