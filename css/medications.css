@@ -1,11 +1,15 @@
+@import "variables.css";
+
 #medications_root {
-  font-family: "Inter", "sans-sarif";
+  font-family: var(--font-primary);
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 1.5em 4em 1em 2em;
+  gap: 1em;
   #medications_top {
     display: flex;
     justify-content: space-between;
@@ -15,12 +19,14 @@
     > h3 {
       display: flex;
       flex-direction: column;
-      font-weight: 800;
-      font-size: 2em;
+      gap: 8px;
+      justify-content: start;
+      font-weight: var(--page-header-weight);
+      font-size: var(--page-header-size);
       > span {
-        font-size: 0.5em;
-        font-weight: 500;
-        color: #585858;
+        font-size: var(--page-subheader-size);
+        font-weight: var(--page-subheader-weight);
+        opacity: var(--page-subheader-opacity);
       }
     }
     > button {
@@ -30,7 +36,7 @@
       height: 3.2em;
       width: 16%;
       gap: 4px;
-      background-color: #005fb8;
+      background-color: var(--seed-color);
       color: white;
       border: none;
       outline: none;
@@ -42,7 +48,7 @@
   }
   #medications_search {
     background-color: white;
-    border: 2px solid #e2e2e2;
+    border: var(--container-border-normal);
     border-radius: 12px;
     padding: 0.7em 1.2em;
     display: flex;
@@ -51,7 +57,7 @@
     box-sizing: border-box;
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 1.5em;
+    margin-bottom: 0.8em;
     #medications_search_box {
       display: flex;
       align-items: center;
@@ -103,7 +109,7 @@
         font-size: 12px;
         font-weight: 550;
         outline: none;
-        color: #005fb8;
+        color: var(--seed-color);
       }
     }
     #medications_filter_btn {
@@ -117,23 +123,21 @@
     }
   }
   #medications_main {
-    height: 50%;
-    margin-bottom: 1.5em;
+    height: 100%;
     overflow-y: auto;
 
     #medications_table {
-      border: 2px solid #e2e2e2;
+      border: var(--container-border-normal);
       box-sizing: border-box;
       width: 100%;
       border-collapse: collapse;
-      /* Remove height: 100% and max-height: 100% */
-
       > thead {
         height: 2.6em;
-        border: 2px solid #e2e2e2;
-        position: sticky; /* Keep header visible while scrolling */
+        border-radius: 12px;
+        border: var(--container-border-normal);
+        position: sticky;
         top: 0;
-        background-color: white; /* Prevent content from showing through */
+        background-color: white;
         z-index: 10;
 
         > tr {

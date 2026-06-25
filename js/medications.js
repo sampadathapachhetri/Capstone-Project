@@ -42,7 +42,16 @@
         await this.loadPageScript(pageConfig);
 
         path_nav.innerHTML += `
-          <li>></li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#1D1D1D">
+              <path d="M400-280v-400l200 200-200 200Z" />
+            </svg>
+          </li>
           <li>${pageConfig.pageName}</li>`;
       } else {
         console.error("Invalid page configuration");
