@@ -1,0 +1,9 @@
+*.xml
+*.csv
+*.zip
+prep_*.jpg
+__pycache__/
+*.pyc
+drug_env/
+results/
+*_converted.jpg

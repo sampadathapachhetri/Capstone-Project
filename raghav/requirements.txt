@@ -1,0 +1,21 @@
+# Computer Vision (OCR) + ML Model Comparison
+# Drug Interaction Detection System — Raghav's components
+
+
+#  OCR Pipeline 
+easyocr==1.7.2
+opencv-python==4.13.0.92
+pillow==12.2.0
+rapidfuzz==3.14.3
+pandas==3.0.1
+lxml==6.0.2
+pytesseract==0.3.13
+
+#  ML Model Comparison 
+scikit-learn==1.9.0
+xgboost==3.3.0
+imbalanced-learn==0.14.2
+numpy==2.4.3
+
+#  Tanimoto / Chemistry-based Drug Matching 
+rdkit==2026.3.3
