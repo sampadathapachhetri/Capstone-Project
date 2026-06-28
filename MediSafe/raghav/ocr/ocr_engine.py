@@ -9,15 +9,15 @@
 
 
 import easyocr
-from image_utils import convert_to_jpg, preprocess
-from config import OCR_CONFIDENCE
+from .image_utils import convert_to_jpg, preprocess
+from .config import OCR_CONFIDENCE
 
 #  Load EasyOCR model once 
 # Loading takes ~10 seconds but only happens once
 # gpu=False → uses CPU (works on all computers without GPU)
 # ['en'] → English language model
 print("Loading EasyOCR model (this takes a few seconds)...")
-reader = easyocr.Reader(['en'], gpu=False)
+reader = easyocr.Reader(['en'], gpu=True)
 print(" EasyOCR ready!\n")
 
 

@@ -4,9 +4,9 @@
 
 
 import os
-
+from pathlib import Path
 #  Base project directory 
-BASE_DIR = r"C:\Users\ragha\Documents\College\9th sem\Capstone project-I\drug_project"
+BASE_DIR = Path(__file__).resolve().parent #raghav 
 
 #  Dataset paths 
 DRUGBANK_CSV     = os.path.join(BASE_DIR, "data", "drugbank_vocabulary_with_smiles.csv")
