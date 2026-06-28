@@ -88,8 +88,16 @@
           <span>OR CONTINUE WITH</span>
         </div>
         <div id="extra_options">
-          <button>Google</button>
-          <button>Provider ID</button>
+          <button id="google_login_button">
+            <img src="{% static 'MediSafe/images/google_icon.png' %}">
+            <span>
+              Sign In with Google
+            </span>
+            </button>
+          <button onclick="window.location.href=`{% url 'github_login' %}`" id="github_login_button">
+            <img src="{% static 'MediSafe\images\github_icon.png' %}">
+            <span>Sign In with GitHub</span>
+          </button>
         </div>
         <span id="no_account"
           >Dont have an account?

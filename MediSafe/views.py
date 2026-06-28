@@ -1,8 +1,9 @@
 from django.shortcuts import render,redirect
-from django.http import Http404,HttpRequest,HttpResponse
+from django.http import Http404,HttpRequest,HttpResponse,JsonResponse
 from . import helpers,models
 from django.urls import reverse
-# Create your views here.
+from django.conf import settings as ds
+import requests
 
 def logout(request):
     try:
@@ -44,27 +45,28 @@ def index(request):
     except:
         return redirect("login")
 
+
+def createAuthSession(request,userID,exp=0):
+    request.session['user_id']=f'{userID}'
+    request.session.set_expiry(exp)
+    
 def login(request):
     context={}
-    # Error K-V sample
     error={
         # "invalid_cred":"invalid email or password",
         # "empty_field":"The fields must not be empty",
         # "unknown":"Unknown Error occured",
     }
     info={}
-    if(request.method=="POST"):
-        
+    if(request.method=="POST"):    
         email=request.POST.get("email")
         if( not helpers.isValidEmail(email=email)):
             error["invalid_cred"]="Invalid email or password"
         password=request.POST.get("password")
         isRemember=request.POST.get("remember")
-        # Function returns user id
         userId=authenticate(email=email,password=password)
         if(userId):
-            request.session['user_id']=userId
-            request.session.set_expiry(0)
+            createAuthSession(request=request,userID=userId)
             return redirect('index')
         else:
             error["invalid_cred"]='Invalid email or password'
@@ -82,7 +84,6 @@ def login(request):
 def register(request):
     context={}
 
-    # Error K-V sample
     error={
         # "invalid_cred":"invalid email or password",
         # "empty_field":"The fields must not be empty",
@@ -112,8 +113,7 @@ def register(request):
                 full_name=fullName,
                 email=email,
                 password=password)
-            request.session['user_id']=f"{newUser.id}"
-            request.session.set_expiry(0)
+            createAuthSession(request=request,userID=newUser.id,exp=0)
             return redirect('index')
         
         if error:
@@ -169,11 +169,15 @@ def settings(request):
                 error['msg']="Too Short name"
         if(email!=""):
             if(not helpers.isValidEmail(email)):
-                error["msg"]+=" , " 
+                error.setdefault('msg',"")
+                if error["msg"]:
+                    error["msg"]+=" , " 
                 error['msg']+="Invalid email"
             else:
                 if(email_exists(email)):
-                    error["msg"]+=" , "
+                    error.setdefault('msg',"")
+                    if error['msg']:
+                        error["msg"]+=" , "
                     error['msg']+="Email already exists"
         if error:
             request.session['error']={'settings':error}
@@ -217,7 +221,6 @@ def addMedications(request):
                 dosage_value=float(dosage_value)*1000
             user=models.Users.objects.get(id=request.session.get("user_id"))
 
-            # FROM HERE NEED TO CALL ML MODEL TO GET CATEGORY
             medicationRow=models.UserMedications.objects.get_or_create(
                 user=user,
                 name=medication_name,
@@ -250,3 +253,55 @@ def email_exists(email):
         return True
     except:
         return False
+
+
+def github_login(request):
+    authorize_url="https://github.com/login/oauth/authorize"
+    redirect_url=ds.GITHUB_REDIRECT_URI
+    
+    params={
+        'client_id':ds.GITHUB_CLIENT_ID,
+        'redirect_uri':redirect_url,
+        'scope':"user:email",
+    }
+    
+    auth_url=f"{authorize_url}?client_id={params['client_id']}&redirect_uri={params['redirect_uri']}&scope={params['scope']}"
+    return redirect(auth_url)
+    
+def github_callback(request):
+    code=request.GET.get('code')
+    token_resp=requests.post(
+        "https://github.com/login/oauth/access_token",
+        headers={"Accept":"application/json"},
+        data={
+            "client_id":ds.GITHUB_CLIENT_ID,
+            "client_secret":ds.GITHUB_CLIENT_SECRET,
+            "code":code,
+        }
+    )
+    access_token=token_resp.json()["access_token"]
+    user_resp=requests.get(
+        "https://api.github.com/user",
+        headers={"Authorization":f"Bearer {access_token}"}
+    )
+    print(f"RESPONSE: {user_resp}")
+    github_user=user_resp.json()
+    if(github_user['name']):
+        full_name=github_user['name']
+    else:
+        full_name=github_user['login']   
+    provider="github"
+    provider_name="GitHub"
+    provider_user_id=github_user['id']
+    
+    newUser=models.Users.objects.create_oauth_user_and_profile(
+     full_name=full_name,
+     provider=provider,
+     provider_name=provider_name,
+     provider_user_id=provider_user_id,
+     access_token=access_token,
+    )
+    if(newUser==None):
+        return redirect(login)
+    createAuthSession(request=request,userID=newUser.id)
+    return redirect(index)

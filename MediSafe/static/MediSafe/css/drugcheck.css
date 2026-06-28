@@ -1,6 +1,8 @@
+@import "variables.css";
+
 #drug_check_root {
   margin: 0;
-  padding: 3em 18em 2em 4em;
+  /* padding: 3em 18em 2em 4em; */
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -9,6 +11,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 
   #drug_check_title_div {
     width: 100%;
@@ -17,12 +20,13 @@
     > h2 {
       margin: 0;
       margin-bottom: 0.2em;
-      font-size: 2em;
-      font-weight: 800;
+      font-size: var(--page-header-size);
+      font-weight: var(--page-header-weight);
     }
     > span {
-      opacity: 60%;
-      font-weight: 600;
+      opacity: var(--page-subheader-opacity);
+      font-weight: var(--page-subheader-weight);
+      font-size: var(--page-subheader-size);
     }
   }
 
@@ -48,10 +52,10 @@
         align-items: center;
         justify-content: space-between;
         box-sizing: border-box;
-        padding-right: 8px;
-        padding-left: 4px;
+        padding-right: 1em;
+        padding-left: 1em;
         box-sizing: border-box;
-        border: 2px solid #dedede;
+        border: var(--container-border-normal);
         background-color: white;
         border-radius: 8px;
         margin-bottom: 6px;
@@ -68,7 +72,7 @@
           border: 0;
           background-color: transparent;
           font-size: 18px;
-          width: 90%;
+          width: 96%;
           padding-left: 1em;
         }
         > input::placeholder {
@@ -180,7 +184,7 @@
       > svg {
         width: 2em;
         height: 2em;
-        background-color: #005fb8;
+        background-color: var(--seed-color);
         padding: 8px;
         border-radius: 100%;
       }
@@ -189,7 +193,7 @@
         flex-direction: column;
         > span {
           font-weight: 700;
-          color: #0657a4;
+          color: var(--seed-color);
         }
         > p {
           margin: 0;
@@ -208,7 +212,7 @@
       width: 34%;
       border-radius: 12px;
       color: white;
-      background-color: #005fb8;
+      background-color: var(--seed-color);
       font-size: 18px;
       font-weight: 600;
       border: none;

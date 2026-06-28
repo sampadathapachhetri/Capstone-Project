@@ -1,3 +1,5 @@
+@import "variables.css";
+
 ::-webkit-scrollbar {
   background-color: transparent;
   width: 4px;
@@ -12,27 +14,31 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 1em 2.5em 4px 2em;
+  /* padding: 1em 2.5em 4px 2em; */
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   overflow: hidden;
   gap: 1em;
 
   #dash_top {
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
+    padding: 0;
     #dash_top_greet {
       h2 {
         margin: 0;
         font-weight: 800;
-        font-size: 2em;
+        /* font-size: 2em; */
+        font-size: var(--page-header-size);
         margin-bottom: 0.3em;
       }
       span {
-        font-size: 1em;
-        opacity: 70%;
+        font-size: var(--page-subheader-size);
+        font-weight: var(--page-subheader-weight);
+        opacity: var(--page-subheader-opacity);
       }
     }
 
@@ -56,7 +62,7 @@
       }
       #dash_history_button {
         background-color: white;
-        border: 2px solid #e2e8f0;
+        border: var(--container-border-normal);
         color: #334155;
       }
       #dash_new_button {
@@ -70,21 +76,21 @@
   #dash_middle {
     display: flex;
     justify-content: space-between;
-    padding: 0 1.2em;
+    /* padding: 0 1.2em; */
+    box-sizing: border-box;
+    margin: 0;
   }
 
   #dash_bottom {
-    display: flex;
     justify-content: space-between;
-    padding-left: 1.6%;
-    padding-right: 2%;
-    height: max-content;
+    /* padding-left: 1.6%; */
+    width: 100%;
     box-sizing: border-box;
     #dash_bottom_left {
       background-color: white;
-      border: 2px solid #e1e1e1;
+      border: var(--container-border-normal);
       border-radius: 12px;
-      width: 68%;
+      width: 100%;
       display: flex;
       padding-bottom: 1em;
       flex-direction: column;
@@ -97,7 +103,7 @@
       #dash_botleft_header {
         padding: 0px 1.2em;
         display: flex;
-        border-bottom: 2px solid #e6e6e6;
+        border-bottom: var(--container-border-normal);
         align-items: center;
         justify-content: space-between;
         height: 3em;
@@ -161,92 +167,6 @@
         }
       }
     }
-    #dash_bottom_right {
-      width: 25%;
-      display: flex;
-      flex-direction: column;
-      height: 74%;
-      gap: 0.5em;
-      #dash_tip_card {
-        border-radius: 14px;
-        height: 54%;
-        padding: 1.4em;
-        background: linear-gradient(135deg, #005fb8 0, #004a8f 100%);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        justify-content: space-between;
-        span {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 0.7em;
-          font-weight: 550;
-          svg {
-            width: 1.5em;
-          }
-        }
-        h3 {
-          margin: 0;
-          font-size: 1em;
-        }
-        p {
-          margin: 0;
-          font-size: 0.8em;
-          font-weight: 300;
-          text-align: start;
-          padding-right: 4px;
-          overflow-y: auto;
-        }
-        button {
-          height: 3em;
-          border-radius: 8px;
-          border: none;
-          width: 100%;
-          color: #1571c6;
-          font-weight: 650;
-          background-color: white;
-          font-size: 0.8em;
-          letter-spacing: 1px;
-        }
-      }
-
-      #dash_undo_card {
-        border-radius: 12px;
-        background-color: white;
-        border: 2px solid #e8e8e8;
-        height: 34%;
-        box-sizing: border-box;
-        padding: 1em;
-
-        span {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.8em;
-          font-weight: 700;
-        }
-        p {
-          font-size: 0.7em;
-          overflow-y: auto;
-          color: #94a3b8;
-          font-weight: 400;
-        }
-        div {
-          cursor: pointer;
-          font-size: 0.7em;
-          display: flex;
-          align-items: center;
-          color: #94a3b8;
-          font-weight: 550;
-          svg {
-            width: 16px;
-            fill: #94a3b8;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -256,12 +176,12 @@
   margin: 0;
 }
 .dash_drugcheck_time {
-  font-size: 13px;
+  font-size: var(--list-subitem-size);
 }
 
 .dash_middle_cards {
   background-color: #ffffff;
-  border: 2px solid #e2e8f0;
+  border: var(--container-border-normal);
   border-radius: 12px;
   padding: 1.5em;
   width: 27%;

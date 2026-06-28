@@ -10,7 +10,6 @@ ENV/
 env.bak/
 venv.bak/
 pythonenv*
-
 *.csv
 # Django
 *.log

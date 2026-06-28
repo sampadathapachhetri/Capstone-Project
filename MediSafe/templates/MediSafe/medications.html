@@ -63,6 +63,7 @@
       </div>
     </div>
     <div id="medications_main">
+      {% if medications %}
       <table id="medications_table">
         <thead id="medications_table_head">
           <tr id="med_table_coulmns">
@@ -130,30 +131,16 @@
             </td>
           </tr>
           {% endfor %}
-          
         </tbody>
       </table>
-    </div>
-    <div id="medications_reminder">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="2em"
-        viewBox="0 -960 960 960"
-        width="2em"
-        fill="#005fb8">
-        <path
-          d="M400-240q-33 0-56.5-23.5T320-320v-50q-57-39-88.5-100T200-600q0-117 81.5-198.5T480-880q117 0 198.5 81.5T760-600q0 69-31.5 129.5T640-370v50q0 33-23.5 56.5T560-240H400Zm0-80h160v-92l34-24q41-28 63.5-71.5T680-600q0-83-58.5-141.5T480-800q-83 0-141.5 58.5T280-600q0 49 22.5 92.5T366-436l34 24v92Zm0 240q-17 0-28.5-11.5T360-120v-40h240v40q0 17-11.5 28.5T560-80H400Zm80-520Z" />
-      </svg>
-      <h4>
-        Refill Reminder
-        <p>
-          You have 2 medications
-          <span id="medications_medsnames"> (Lisinopril, Metformin) </span>
-          reaching their refill date in the next 7 days. Would you like to set a
-          reminder?
-        </p>
-      </h4>
-      <button type="button">Setup Reminder</button>
+      {% else %}
+      <span style="width:100%;display:flex;justify-content:center;flex-direction:column;align-items:center">
+        <span>
+          No medications added
+        </span>
+        <span style="opacity:50%;">Insert a medication using the button above!!</span>
+      </span>
+      {% endif %}
     </div>
   </div>
 </body>
