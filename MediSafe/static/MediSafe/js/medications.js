@@ -39,9 +39,6 @@
 
         contents_div.innerHTML = htmlText;
         MedicalApp.currentPage = pageConfig.pageName;
-<<<<<<< HEAD
-        path_nav.innerHTML += `<li>><li> <li>${pageConfig.pageName}</li>`;
-=======
         path_nav.innerHTML += `
          <li>
             <svg
@@ -54,7 +51,6 @@
             </svg>
           </li>
         <li>${pageConfig.pageName}</li>`;
->>>>>>> dev
 
         // Load the script for the new page
         await this.loadPageScript(pageConfig);

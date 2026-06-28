@@ -115,9 +115,6 @@ async function fillActivePage() {
 
     MedicalApp.currentPage = pageConfig.pageName;
     path_nav.innerHTML = `<li>Home</li>
-<<<<<<< HEAD
-          <li>></li>
-=======
            <li>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +125,6 @@ async function fillActivePage() {
               <path d="M400-280v-400l200 200-200 200Z" />
             </svg>
           </li>
->>>>>>> dev
           <li>${pageConfig.pageName}</li>`;
   } catch (error) {
     console.error("Error loading page:", error);

@@ -42,9 +42,6 @@
 
         // Load the script for the new page
         await this.loadPageScript(pageConfig);
-<<<<<<< HEAD
-        path_nav.innerHTML += `<li>><li> <li>${pageConfig.pageName}</li>`;
-=======
         path_nav.innerHTML += `
          <li>
             <svg
@@ -57,7 +54,6 @@
             </svg>
           </li>
          <li>${pageConfig.pageName}</li>`;
->>>>>>> dev
       } else {
         console.error("Invalid page configuration");
       }
