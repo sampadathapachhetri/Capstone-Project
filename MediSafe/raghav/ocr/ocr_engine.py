@@ -11,6 +11,7 @@
 import easyocr
 from .image_utils import convert_to_jpg, preprocess
 from .config import OCR_CONFIDENCE
+import os
 
 #  Load EasyOCR model once 
 # Loading takes ~10 seconds but only happens once
@@ -19,6 +20,48 @@ from .config import OCR_CONFIDENCE
 print("Loading EasyOCR model (this takes a few seconds)...")
 reader = easyocr.Reader(['en'], gpu=True)
 print(" EasyOCR ready!\n")
+
+class OCRService:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._initialize()
+        return cls._instance
+
+    def _initialize(self):
+        """Initialize OCR reader"""
+        print("🔄 Initializing OCR Service...")
+        try:
+            self.reader = easyocr.Reader(['en'], gpu=False)
+            print("✅ OCR Service initialized successfully")
+        except Exception as e:
+            print(f"❌ Failed to initialize OCR: {e}")
+            self.reader = None
+
+    def run_ocr(self, image_path, label=""):
+        if self.reader is None:
+            raise RuntimeError("OCR Service not available")
+        
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Image not found: {image_path}")
+        
+        results = self.reader.readtext(image_path)
+        words = []
+
+        print(f"\n📝 OCR Results — {label}")
+        print("-" * 45)
+
+        for (bbox, text, conf) in results:
+            if conf > OCR_CONFIDENCE:
+                print(f"  {text:30} conf={conf:.2f}")
+                words.append(text)
+
+        combined = ' '.join(words)
+        print(f"  → Combined: {combined}")
+
+        return combined
 
 
 def run_ocr(image_path, label=""):

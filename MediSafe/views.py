@@ -4,7 +4,12 @@ from . import helpers,models
 from django.urls import reverse
 from django.conf import settings as ds
 import requests
-
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+import uuid
+from .raghav.ocr import OCRService
+from django.conf import settings
 def logout(request):
     try:
         request.session.flush()
@@ -132,6 +137,52 @@ def dashboard(request):
 def drugCheck(request):
     return render(request=request,template_name='MediSafe/drugCheck.html',context={})
 
+
+
+
+def validateDrug(request):
+    if request.method=="GET":
+        drugname=request.GET.get("drugname")
+        error=None
+        if(drugname==None):
+            error="Invalid Drug Name"
+        elif drugname.strip()=="":
+            error="Invalid Drug Name"
+            
+        synonym=drugname
+        commonName=drugname
+        
+        
+        responseJson={
+            "synonym":synonym,
+            "commonname":commonName,
+            "error":error
+        }
+        
+        return JsonResponse(responseJson)
+
+def extractName(request):
+    ocr_service=helpers.getOCRInstance()
+    if request.method!="POST":
+        return JsonResponse({"error":"Method not allowed"},status=405)
+    
+    if 'image' not in request.FILES:
+        return JsonResponse({"error":"No File provided"},status=400)
+    file =request.FILES['image']
+    valid_types=['image/jpeg','image/png','images/jpg']
+    if file.content_type not in valid_types:
+        return JsonResponse({'error':'Only JPG and PNG allowed'},status=400)
+    
+    file_extension = os.path.splitext(file.name)[1] 
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    file_path =default_storage.save(unique_filename,ContentFile(file.read()))
+    absolute_path = os.path.join(settings.MEDIA_ROOT, file_path)
+    name=ocr_service.run_ocr(image_path=absolute_path);
+    return JsonResponse({
+        'success':True,
+        'synonym':name,
+        'commonname':name
+    })
 def history(request):
     return render(request=request,template_name='MediSafe/history.html',context={})
 
@@ -154,7 +205,7 @@ def deleteMedication(request,medicationId):
             pass
     return redirect('index')
 
-def settings(request):
+def settingsView(request):
     context={}
     error={}
     try:

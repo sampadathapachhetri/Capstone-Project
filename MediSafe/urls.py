@@ -1,4 +1,6 @@
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 urlpatterns=[
     path('',view=views.index,name='index'),
@@ -9,14 +11,17 @@ urlpatterns=[
     path('sub/drugcheck/',view=views.drugCheck,name='drug_check'),
     path('sub/history',view=views.history,name="history"),
     path('sub/medications',view=views.medications,name='medications'),
-    path('sub/settings',view=views.settings,name="settings"),
+    path('sub/settings',view=views.settingsView,name="settings"),
     path('sub/addmedications',view=views.addMedications,name="add_medications"),
     path('sub/intanalysis',view=views.intAnalysis,name="int_analysis"),
     path('logout/',view=views.logout,name='logout'),
     path('delete_medication/<int:medicationId>',view=views.deleteMedication,name='delete_medication'),
     path('delete_medication/',view=views.deleteMedication,name='delete_medication'),
-
+    path("api/checkdrug/",view=views.validateDrug,name="check_drug"),
+    path("api/extract-name",view=views.extractName,name="ocr_upload"),
     path('auth/github/',view=views.github_login,name='github_login'),
     path('auth/github/callback/',view=views.github_callback),
     
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

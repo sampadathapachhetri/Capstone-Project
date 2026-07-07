@@ -5,23 +5,260 @@
   global.MedicalApp.Pages.DrugCheck = {
     init: function () {
       console.log("DrugCheck Initialized");
+      totalCards = document.querySelectorAll(".drug_choosen_card").length;
+      if (totalCards == 0) {
+        this.forNoInsertedCard();
+      }
       this.setupEventHandling();
     },
+    forNoInsertedCard: function () {
+      let drug_cards_container = document.getElementById(
+        "drug_cards_container",
+      );
+      drug_cards_container.style.display = "flex";
+      drug_cards_container.style.justifyContent = "center";
+      drug_cards_container.style.alignItems = "center";
 
+      drug_cards_container.innerHTML = `
+        <span style="color:#616161;"> No Drug Added. Add using the box above</span>
+      `;
+      this.forDisableInteractionButton();
+      this.forEnableValidationButton();
+    },
+    forYesIntertedCard: function () {
+      let drug_cards_container = document.getElementById(
+        "drug_cards_container",
+      );
+      drug_cards_container.innerHTML = null;
+    },
+    forEnableInteractionButton: function () {
+      let drug_check_button = document.getElementById("drug_check_button");
+      drug_check_button.removeAttribute("disabled");
+    },
+    forDisableInteractionButton: function () {
+      let drug_check_button = document.getElementById("drug_check_button");
+      drug_check_button.setAttribute("disabled", "");
+    },
+    forEnableValidationButton: function () {
+      let confirm_drug_button = document.getElementById("confirm_drug_button");
+      confirm_drug_button.removeAttribute("disabled");
+    },
+    forDisablingValidationButton: function () {
+      let confirm_drug_button = document.getElementById("confirm_drug_button");
+      confirm_drug_button.setAttribute("disabled", "");
+    },
+
+    getTotalCards: function () {
+      totalCards = document.querySelectorAll(".drug_choosen_card").length;
+      return totalCards;
+    },
+    showInvalidInputError: function (msg) {
+      this.removeInvalidInputError();
+      let drugnameInputBox = document.getElementById("drugnameInputBox");
+      drugnameInputBox.value = "";
+      drugnameInputBox.classList.add("shake");
+      setTimeout(() => {
+        drugnameInputBox.classList.remove("shake");
+      }, 500);
+      let drug_check_input_extra = document.getElementById(
+        "drug_check_input_extra",
+      );
+      drug_check_input_extra.insertAdjacentHTML(
+        "beforeend",
+        `
+        <span style="color:#ff0000"; id="temperrormsg">${msg}</span>
+        `,
+      );
+    },
+    removeInvalidInputError: function () {
+      let cont = document.getElementById("temperrormsg");
+      if (cont != null) {
+        cont.remove();
+      }
+    },
+    validateDrugName: function (name) {
+      // takes synonym and returns list[synonum,commonname] and errorString
+      if (name == null) {
+        return [["", ""], "Empty Input Box"];
+      }
+      if (name.trim() != "") {
+        const params = new URLSearchParams({
+          drugname: name.trim(),
+        });
+        fetch(`/api/checkdrug/?${params}`, {
+          method: "GET",
+        });
+
+        return [[name, name], null];
+      } else {
+        return [[name, name], "Invalid data"];
+      }
+    },
+    sendFileToServer: async function (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+      const csrfToken = document.querySelector(
+        '[name="csrfmiddlewaretoken"]',
+      )?.value;
+      try {
+        const response = await fetch("/api/extract-name", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
+          body: formData,
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.success) {
+          return [[data["synonym"], data["commonname"]], null];
+        } else {
+          return [[], error];
+        }
+      } catch (error) {
+        return [[], error];
+      }
+    },
     setupEventHandling: function () {
       let drug_check_button = document.getElementById("drug_check_button");
+      let camera_button = document.getElementById("camera_button");
+      let imageInput = document.getElementById("imageInput");
       let navToPageMap = {
         drug_check_button: {
           file: "intAnalysis.html",
           pageName: "IntAnalysis",
         },
       };
+      drug_cards_container = document.getElementById("drug_cards_container");
+      // EVENT LISTENDER: IMAGE UPLOAD BUTTON
+      camera_button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
 
+        imageInput.click();
+      });
+      imageInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        isValid = ["image/jpg", "image/png", "image/jpeg"].includes(
+          file.type.trim(),
+        );
+        e.target.value = "";
+        if (isValid) {
+          const overlay = document.getElementById("loading-overlay");
+          overlay.style.display = "flex";
+          [[synonym, commonname], errorString] =
+            await this.sendFileToServer(file);
+          if (errorString != null) {
+            showInvalidInputError(errorString);
+          }
+          overlay.style.display = "none";
+          let drugnameInputBox = document.getElementById("drugnameInputBox");
+          drugnameInputBox.value = synonym;
+        }
+      });
+
+      // EVENT LISTENER: CLOSE BUTTON EVENT LISTENER
+      drug_cards_container.addEventListener("click", (e) => {
+        const closeBtn = e.target.closest(".drug_choosen_close_btn");
+        if (closeBtn) {
+          const card = closeBtn.closest(".drug_choosen_card");
+          card.remove();
+          if (this.getTotalCards() == 0) {
+            this.forNoInsertedCard();
+          }
+          this.forDisableInteractionButton();
+          this.forEnableValidationButton();
+        }
+      });
       if (drug_check_button) {
+        totalCards = this.getTotalCards();
+        if (totalCards == 2) {
+          this.forEnableInteractionButton();
+        }
+        // EVENT LISTENER: DRUG INTERACTION CHECKER
         drug_check_button.addEventListener("click", async (e) => {
+          totalCards = this.getTotalCards();
           e.stopPropagation();
           e.preventDefault();
           await this.redirectHandler(navToPageMap.drug_check_button);
+        });
+      }
+
+      let confirm_drug_button = document.getElementById("confirm_drug_button");
+      if (confirm_drug_button) {
+        // EVENT LISTENER: DRUG VALIDATION BUTTON
+        confirm_drug_button.addEventListener("click", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+
+          drugname = "Aspirin";
+          commonname = "Aspirin";
+          totalCards = this.getTotalCards();
+
+          if (totalCards == 2) {
+            this.forEnableInteractionButton();
+            this.forDisablingValidationButton();
+          } else if (totalCards < 2) {
+            let drugnameInputBox = document.getElementById("drugnameInputBox");
+            drugname = drugnameInputBox.value;
+            [nameList, errormsg] = this.validateDrugName(drugname);
+            if (errormsg != null) {
+              this.showInvalidInputError(errormsg);
+              return;
+            }
+            if (totalCards == 0) {
+              this.forYesIntertedCard();
+              this.forEnableValidationButton();
+            }
+
+            drug_cards_container.insertAdjacentHTML(
+              "afterbegin",
+              `
+            <div class="drug_choosen_card">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#005fb8">
+                <path
+                  d="M345-120q-94 0-159.5-65.5T120-345q0-45 17-86t49-73l270-270q32-32 73-49t86-17q94 0 159.5 65.5T840-615q0 45-17 86t-49 73L504-186q-32 32-73 49t-86 17Zm266-286 107-106q20-20 31-47t11-56q0-60-42.5-102.5T615-760q-29 0-56 11t-47 31L406-611l205 205ZM345-200q29 0 56-11t47-31l106-107-205-205-107 106q-20 20-31 47t-11 56q0 60 42.5 102.5T345-200Z" />
+              </svg>
+              <div>
+                <span> ${drugname} </span>
+                <p>Common name: ${commonname}</p>
+              </div>
+            </div>
+            <button class="drug_choosen_close_btn" type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="30px"
+                viewBox="0 -960 960 960"
+                width="30px"
+                fill="#C1C1C1">
+                <path
+                  d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
+              </svg>
+            </button>
+          </div>
+            `,
+            );
+            drugnameInputBox.value = "";
+            this.removeInvalidInputError();
+            totalCards = this.getTotalCards();
+            if (totalCards == 2) {
+              this.forEnableInteractionButton();
+              this.forDisablingValidationButton();
+            } else {
+              this.forDisableInteractionButton();
+              this.forEnableValidationButton();
+            }
+          } else {
+            this.forDisableInteractionButton();
+            this.forEnableValidationButton();
+          }
         });
       }
     },

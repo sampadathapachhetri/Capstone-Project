@@ -146,5 +146,3 @@ dmypy.json
 
 # pre-commit
 .pre-commit-config.yaml.local
-
-.prettierignore

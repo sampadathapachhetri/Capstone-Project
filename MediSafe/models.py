@@ -301,13 +301,12 @@ class UserMedications(models.Model):
         ]
     
 class Drug(models.Model):
-    name=models.CharField(max_length=100,db_index=True,unique=True)
+    drug_bank_id=models.CharField(max_length=50,unique=True,db_index=True,primary_key=True)
+    common_name=models.CharField(max_length=100,db_index=True,unique=True)
+    synonyms=models.CharField(max_length=100)
     smile_structure=models.CharField(max_length=100)
-    drug_bank_id=models.CharField(max_length=50,unique=True,db_index=True)
-    drug_synonym=models.CharField(max_length=100)
     def __str__(self):
-        return f'{self.name}, {self.drug_synonym}'
-
+        return f'{self.common_name}, {self.synonyms}'
 
 class Severity(models.Model):
     level=models.CharField(max_length=20,unique=True)
