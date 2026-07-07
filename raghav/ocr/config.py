@@ -5,17 +5,13 @@
 
 import os
 from dotenv import load_dotenv
-
+from pathlib import Path
 # Load .env file (if exists)
 # Silent if no .env found — uses defaults instead
 load_dotenv()
 
 # ── Base directory (relative to this file) ────────────────────
-BASE_DIR = os.path.dirname(
-               os.path.dirname(
-                   os.path.abspath(__file__)
-               )
-           )
+BASE_DIR = Path(__file__).resolve().parent 
 
 # ── Dataset paths ─────────────────────────────────────────────
 DRUGBANK_CSV = os.environ.get(

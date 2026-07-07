@@ -1,4 +1,3 @@
-# tanimoto_match.py
 # Matches drugs using molecular structure similarity (SMILES)
 # instead of text-based name matching.
 #
@@ -204,5 +203,5 @@ if __name__ == "__main__":
     # Test with Paracetamol's SMILES
     test_smiles = "CC(=O)Nc1ccc(O)cc1"  # Paracetamol
 
-    print(f"\n🔍 Testing with SMILES: {test_smiles}")
+    print(f"\n Testing with SMILES: {test_smiles}")
     matches = find_similar_drugs(test_smiles, fingerprints, top_n=5)

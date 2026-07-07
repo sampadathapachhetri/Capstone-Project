@@ -1,4 +1,3 @@
-# image_utils.py
 # Handles all image operations:
 #   - Validating image files
 #   - Converting image formats to JPG
@@ -40,17 +39,17 @@ def validate_image(image_path):
     ext = os.path.splitext(image_path)[1].lower()
     if ext not in SUPPORTED_FORMATS:
         print(f" Unsupported format: {ext}")
-        print(f"   Supported formats: {', '.join(SUPPORTED_FORMATS)}")
+        print(f" Supported formats: {', '.join(SUPPORTED_FORMATS)}")
         return False
 
     # Check 3: Is the file size acceptable?
     size_mb = os.path.getsize(image_path) / (1024 * 1024)
-    print(f"Image size: {size_mb:.2f} MB")
+    print(f" Image size: {size_mb:.2f} MB")
 
     if size_mb > MAX_IMAGE_MB:
-        print(f" Image too large! ({size_mb:.1f} MB)")
-        print(f"   Maximum allowed: {MAX_IMAGE_MB} MB")
-        print(f"    Compress or resize the image first")
+        print(f"  Image too large! ({size_mb:.1f} MB)")
+        print(f"  Maximum allowed: {MAX_IMAGE_MB} MB")
+        print(f"  Compress or resize the image first")
         return False
 
     if size_mb > 5:
@@ -132,7 +131,7 @@ def preprocess(image_path, drug_num):
     h, w = img.shape[:2]
     print(f"   Original size: {w}x{h} pixels")
 
-    #  Step 1: Resize 
+    # Step 1: Resize 
     # Too small → scale up so text is readable
     if w < MIN_IMAGE_SIZE or h < MIN_IMAGE_SIZE:
         img = cv2.resize(img, None, fx=2, fy=2,
@@ -147,13 +146,13 @@ def preprocess(image_path, drug_num):
     else:
         print(" Step 1: Size OK — no resize needed")
 
-    #  Step 2: Denoise 
+    # Step 2: Denoise 
     # Removes camera grain/noise that confuses OCR
     # Uses colored denoising to preserve detail before grayscale
     denoised = cv2.fastNlMeansDenoisingColored(img, h=10)
     print(" Step 2: Denoised")
 
-    #  Step 3: Grayscale 
+    # Step 3: Grayscale 
     # Color is not needed for reading text
     # Grayscale reduces complexity and speeds up OCR
     gray = cv2.cvtColor(denoised, cv2.COLOR_BGR2GRAY)
@@ -168,7 +167,7 @@ def preprocess(image_path, drug_num):
     sharpened = cv2.filter2D(gray, -1, kernel)
     print(" Step 4: Sharpened")
 
-    #  Step 5: CLAHE (Contrast Enhancement) 
+    # Step 5: CLAHE (Contrast Enhancement) 
     # Better than simple histogram equalization
     # Works on small local regions (tileGridSize) separately
     # Handles uneven lighting on medicine packets (reflections, shadows)
@@ -176,7 +175,7 @@ def preprocess(image_path, drug_num):
     enhanced = clahe.apply(sharpened)
     print(" Step 5: Contrast enhanced (CLAHE)")
 
-    #  Step 6: Threshold 
+    # Step 6: Threshold 
     # Converts image to pure black and white
     # OTSU method automatically finds the best threshold value
     # Great for medicine packets with clear text on white background
@@ -186,7 +185,7 @@ def preprocess(image_path, drug_num):
     )
     print(" Step 6: Threshold applied (Otsu)")
 
-    #  Save both versions 
+    # Save both versions 
     enhanced_path = os.path.join(RESULTS_DIR, f"drug{drug_num}_enhanced.jpg")
     thresh_path   = os.path.join(RESULTS_DIR, f"drug{drug_num}_thresh.jpg")
     cv2.imwrite(enhanced_path, enhanced)
