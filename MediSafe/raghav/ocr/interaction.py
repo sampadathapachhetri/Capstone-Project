@@ -1,13 +1,11 @@
- # interaction.py
 # Checks if two identified drugs have a known interaction
 # in the DrugBank interactions database.
 #
 # Uses interactions_with_severity.csv which contains:
 #   drug1_id, drug2_id, description, severity
- 
 
 import pandas as pd
-from config import INTERACTIONS_CSV
+from .config import INTERACTIONS_CSV
 
 
 def load_interactions(csv_path=INTERACTIONS_CSV):
