@@ -21,11 +21,11 @@
 import os
 import threading
 
-from config import SUPPORTED_FORMATS, MAX_IMAGE_MB, OCR_CONFIDENCE
-from image_utils import validate_image, convert_to_jpg, preprocess
-from drug_matcher import load_drugbank, build_index, match_drug
-from interaction import load_interactions, check_interaction
-from tanimoto_match import load_drugbank_with_fingerprints, find_similar_drugs
+from .config import SUPPORTED_FORMATS, MAX_IMAGE_MB, OCR_CONFIDENCE
+from .image_utils import validate_image, convert_to_jpg, preprocess
+from .drug_matcher import load_drugbank, build_index, match_drug
+from .interaction import load_interactions, check_interaction
+from .tanimoto_match import load_drugbank_with_fingerprints, find_similar_drugs
 
 
 # ────────────────────────────────────────────────────────────

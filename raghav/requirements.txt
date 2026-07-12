@@ -10,6 +10,7 @@ rapidfuzz==3.14.3
 pandas==3.0.1
 lxml==6.0.2
 pytesseract==0.3.13
+dotenv==0.9.9
 
 #  ML Model Comparison 
 scikit-learn==1.9.0

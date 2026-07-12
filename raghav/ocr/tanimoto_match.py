@@ -16,7 +16,7 @@ from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, DataStructs
 import pandas as pd
 
-from config import DRUGBANK_CSV
+from .config import DRUGBANK_CSV
 
 
 def smiles_to_fingerprint(smiles_string):

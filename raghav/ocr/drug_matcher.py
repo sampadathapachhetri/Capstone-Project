@@ -9,7 +9,7 @@
 
 import pandas as pd
 import re
-from config import DRUGBANK_CSV, FUZZY_THRESHOLD, MIN_TOKEN_LENGTH
+from .config import DRUGBANK_CSV, FUZZY_THRESHOLD, MIN_TOKEN_LENGTH
 
 # ── Lazy import for Tanimoto ──────────────────────────────────
 # Only loaded if Stage 1 and 2 both fail

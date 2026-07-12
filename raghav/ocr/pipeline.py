@@ -14,11 +14,11 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
-from config       import SUPPORTED_FORMATS, MAX_IMAGE_MB
-from image_utils  import validate_image
-from ocr_engine   import get_text_from_image
-from drug_matcher import load_drugbank, build_index, match_drug
-from interaction  import load_interactions, check_interaction
+from .config       import SUPPORTED_FORMATS, MAX_IMAGE_MB
+from .image_utils  import validate_image
+from .ocr_engine   import get_text_from_image
+from .drug_matcher import load_drugbank, build_index, match_drug
+from .interaction  import load_interactions, check_interaction
 
 # ── Load databases ONCE at module level ───────────────────────
 # These run when pipeline.py is first imported
