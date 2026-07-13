@@ -10,8 +10,8 @@ from pathlib import Path
 # Silent if no .env found — uses defaults instead
 load_dotenv()
 
-# ── Base directory (relative to this file) ────────────────────
-BASE_DIR = Path(__file__).resolve().parent 
+# ── Base directory (relative to the repository root) ───────────────────
+BASE_DIR = Path(__file__).resolve().parents[3]
 
 # ── Dataset paths ─────────────────────────────────────────────
 DRUGBANK_CSV = os.environ.get(

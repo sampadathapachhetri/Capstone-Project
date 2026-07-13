@@ -9,6 +9,7 @@
 
 import pandas as pd
 import re
+from rapidfuzz import fuzz
 from .config import DRUGBANK_CSV, FUZZY_THRESHOLD, MIN_TOKEN_LENGTH
 
 # ── Lazy import for Tanimoto ──────────────────────────────────
@@ -24,7 +25,7 @@ def _get_tanimoto_fingerprints():
     """
     global _tanimoto_fingerprints
     if _tanimoto_fingerprints is None:
-        from tanimoto_match import load_drugbank_with_fingerprints
+        from .tanimoto_match import load_drugbank_with_fingerprints
         print("🧬 Loading Tanimoto fingerprints (first time only)...")
         _tanimoto_fingerprints = load_drugbank_with_fingerprints()
         print(f"✅ Tanimoto ready: "
@@ -61,7 +62,7 @@ def load_drugbank(csv_path=DRUGBANK_CSV):
 
 def build_index(df):
     """
-    Build searchable index of drug common names only.
+    Build searchable index of drug names + synonyms.
     Also stores SMILES per drug for Tanimoto fallback.
     """
     index = {}
@@ -74,6 +75,7 @@ def build_index(df):
     for _, row in df.iterrows():
         db_id  = row.get('drugbank_id', '').strip()
         cname  = row.get('common_name', '').strip()
+        syns   = row.get('synonyms',    '').strip()
         smiles = row.get('smiles',      '').strip()
 
         if not db_id:
@@ -87,6 +89,11 @@ def build_index(df):
 
         if cname:
             add(cname, {**base, 'matched_synonym': cname})
+        if syns:
+            for syn in re.split(r'[|;,]', syns):
+                syn = syn.strip()
+                if syn:
+                    add(syn, {**base, 'matched_synonym': syn})
 
     print(f"✅ Index built: {len(index):,} searchable terms")
     return index
@@ -110,13 +117,11 @@ def extract_tokens(text):
     return sorted(tokens, key=len, reverse=True)
 
 
-def jaccard_score(a, b):
-    """Character overlap similarity"""
-    a_set = set(a.lower())
-    b_set = set(b.lower())
-    if not a_set or not b_set:
+def fuzzy_score(a, b):
+    """Approximate string similarity using RapidFuzz."""
+    if not a or not b:
         return 0.0
-    return len(a_set & b_set) / len(a_set | b_set)
+    return fuzz.token_sort_ratio(a, b) / 100.0
 
 
 def _get_smiles_for_token(token, index):
@@ -138,7 +143,7 @@ def _get_smiles_for_token(token, index):
     best_smiles = None
 
     for key, entries in index.items():
-        score = jaccard_score(token, key)
+        score = fuzzy_score(token, key)
         if score > best_score:
             for entry in entries:
                 if entry.get('smiles'):
@@ -212,7 +217,7 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
 
     for token in candidates:
         for key, entries in index.items():
-            score = jaccard_score(token, key)
+            score = fuzzy_score(token, key)
             if score >= fuzzy_threshold:
                 for entry in entries:
                     uid = entry['drugbank_id']
@@ -258,7 +263,7 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
     fingerprints = _get_tanimoto_fingerprints()
 
     # Find structurally similar drugs
-    from tanimoto_match import find_similar_drugs
+    from .tanimoto_match import find_similar_drugs
     tanimoto_results = find_similar_drugs(
         query_smiles,
         fingerprints,
