@@ -13,6 +13,8 @@
 
 import torch
 import easyocr
+
+from ocr.ocr_engine import run_ocr
 from .image_utils import convert_to_jpg, preprocess
 from .config      import OCR_CONFIDENCE
 
