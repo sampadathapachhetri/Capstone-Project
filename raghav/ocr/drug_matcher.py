@@ -61,7 +61,7 @@ def load_drugbank(csv_path=DRUGBANK_CSV):
 
 def build_index(df):
     """
-    Build searchable index of drug names + synonyms.
+    Build searchable index of drug common names only.
     Also stores SMILES per drug for Tanimoto fallback.
     """
     index = {}
@@ -74,7 +74,6 @@ def build_index(df):
     for _, row in df.iterrows():
         db_id  = row.get('drugbank_id', '').strip()
         cname  = row.get('common_name', '').strip()
-        syns   = row.get('synonyms',    '').strip()
         smiles = row.get('smiles',      '').strip()
 
         if not db_id:
@@ -88,11 +87,6 @@ def build_index(df):
 
         if cname:
             add(cname, {**base, 'matched_synonym': cname})
-        if syns:
-            for syn in re.split(r'[|;,]', syns):
-                syn = syn.strip()
-                if syn:
-                    add(syn, {**base, 'matched_synonym': syn})
 
     print(f"✅ Index built: {len(index):,} searchable terms")
     return index
