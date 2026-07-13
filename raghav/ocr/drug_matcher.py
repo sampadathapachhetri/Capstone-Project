@@ -43,19 +43,49 @@ import pandas as pd
 from typing import Optional, Tuple
 from pathlib import Path
 import os
+from pathlib import Path
+import os
 class DrugMatcher:
+    _instance = None
+    _initialized = False
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
     def __init__(self):
-        filepath = os.path.join(Path(__file__).resolve().parent,r"data/cleaned_synonym_id_cn_data.csv") # should be on raghav/ocr/data/cleaned_synonym_id_cn_data.csv
-        df = pd.read_csv(filepath, usecols=['synonym', 'drugbank_id'])
-        df = df.dropna(subset=['synonym', 'drugbank_id'])
-        self.data = df[['synonym', 'drugbank_id']].values.tolist()
-        self.synonyms = [row[0] for row in self.data]
-        self.ids = [row[1] for row in self.data]
-        print(f"Loaded {len(self.data)} records")
+        # Only initialize once
+        if not DrugMatcher._initialized:
+            self._load_data()
+            DrugMatcher._initialized = True
+    
+    def _load_data(self):
+        """Load data from CSV file - called only once"""
+        filepath = os.path.join(Path(__file__).resolve().parent, r"data/cleaned_synonym_id_cn_data.csv")
+        
+        try:
+            df = pd.read_csv(filepath, usecols=['synonym', 'drugbank_id'])
+            df = df.dropna(subset=['synonym', 'drugbank_id'])
+            self.data = df[['synonym', 'drugbank_id']].values.tolist()
+            self.synonyms = [row[0] for row in self.data]
+            self.ids = [row[1] for row in self.data]
+            print(f"Loaded {len(self.data)} records (singleton instance)")
+        except FileNotFoundError:
+            print(f"Error: CSV file not found at {filepath}")
+            # Initialize with empty data to avoid further errors
+            self.data = []
+            self.synonyms = []
+            self.ids = []
+            raise
     
     def match(self, query: str, high_confidence_threshold: float = 0.7) -> Tuple[Optional[str], Optional[str]]:
         if not query or not query.strip():
             return None, "Empty search query"
+        
+        # Check if data is loaded
+        if not self.synonyms:
+            return None, "No data available for matching"
         
         results = process.extract(
             query, 
@@ -70,13 +100,13 @@ class DrugMatcher:
         
         match, score, idx = results[0]
         return self.ids[idx], None
+
 # Main fuzzy matcher ends here 
 
 # How to use 
 # from ocr.drug_matcher  import DrugMatcher
 #     matcher = DrugMatcher()
 #     drug_id, error = matcher.match("Goserelin")
-
 
 
 def build_index(df):
