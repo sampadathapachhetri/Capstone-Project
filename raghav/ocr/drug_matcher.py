@@ -9,8 +9,10 @@
 
 import pandas as pd
 import re
-from rapidfuzz import fuzz
 from .config import DRUGBANK_CSV, FUZZY_THRESHOLD, MIN_TOKEN_LENGTH
+from rapidfuzz import fuzz, process
+import pandas as pd
+from typing import Optional, Tuple
 
 # ── Lazy import for Tanimoto ──────────────────────────────────
 # Only loaded if Stage 1 and 2 both fail
@@ -33,31 +35,48 @@ def _get_tanimoto_fingerprints():
     return _tanimoto_fingerprints
 
 
-def load_drugbank(csv_path=DRUGBANK_CSV):
-    """Load DrugBank vocabulary with SMILES"""
-    df = pd.read_csv(csv_path, dtype=str).fillna('')
-    df.columns = [
-        c.strip().lower().replace(' ', '_')
-        for c in df.columns
-    ]
+# Main fuzzy matching code starts here
 
-    col_map = {}
-    for col in df.columns:
-        if 'drugbank' in col and 'id' in col:
-            col_map['drugbank_id'] = col
-        elif col in ('common_name', 'name', 'drug_name'):
-            col_map['common_name'] = col
-        elif 'synonym' in col:
-            col_map['synonyms'] = col
-        elif 'smiles' in col:
-            col_map['smiles'] = col
 
-    if 'drugbank_id' not in col_map:
-        raise ValueError("Could not find DrugBank ID column!")
+from rapidfuzz import fuzz, process
+import pandas as pd
+from typing import Optional, Tuple
+from pathlib import Path
+import os
+class DrugMatcher:
+    def __init__(self):
+        filepath = os.path.join(Path(__file__).resolve().parent,r"data/cleaned_synonym_id_cn_data.csv") # should be on raghav/ocr/data/cleaned_synonym_id_cn_data.csv
+        df = pd.read_csv(filepath, usecols=['synonym', 'drugbank_id'])
+        df = df.dropna(subset=['synonym', 'drugbank_id'])
+        self.data = df[['synonym', 'drugbank_id']].values.tolist()
+        self.synonyms = [row[0] for row in self.data]
+        self.ids = [row[1] for row in self.data]
+        print(f"Loaded {len(self.data)} records")
+    
+    def match(self, query: str, high_confidence_threshold: float = 0.7) -> Tuple[Optional[str], Optional[str]]:
+        if not query or not query.strip():
+            return None, "Empty search query"
+        
+        results = process.extract(
+            query, 
+            self.synonyms,
+            scorer=fuzz.ratio,
+            limit=1,
+            score_cutoff=high_confidence_threshold * 100
+        )
+        
+        if not results:
+            return None, f"No matches found for '{query}'"
+        
+        match, score, idx = results[0]
+        return self.ids[idx], None
+# Main fuzzy matcher ends here 
 
-    df = df.rename(columns=col_map)
-    print(f"✅ DrugBank loaded: {len(df):,} drugs")
-    return df
+# How to use 
+# from ocr.drug_matcher  import DrugMatcher
+#     matcher = DrugMatcher()
+#     drug_id, error = matcher.match("Goserelin")
+
 
 
 def build_index(df):
