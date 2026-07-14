@@ -13,6 +13,7 @@
 
 import torch
 import easyocr
+
 from .image_utils import convert_to_jpg, preprocess
 from .config      import OCR_CONFIDENCE
 
@@ -20,8 +21,6 @@ from .config      import OCR_CONFIDENCE
 # Checks if NVIDIA GPU + CUDA is available on this machine
 # True  → uses RTX 4050 (fast ~0.5-1 sec per image)
 # False → uses CPU (slower ~5-8 sec per image)
-import torch
-import easyocr
 
 # OCR confidence threshold
 OCR_CONFIDENCE = 0.50
@@ -103,7 +102,7 @@ class OCRService:
                 print(f"  {text:30} conf={conf:.2f}")
                 words.append(text)
 
-        combined = " ".join(words)
+        combined = "=".join(words)
 
         print(f"  → Combined: {combined}")
 
@@ -140,18 +139,18 @@ def get_text_from_image(image_path, drug_num):
     image_path = convert_to_jpg(image_path)
 
     # OCR on original unmodified image
-    original_text = run_ocr(
+    original_text = OCRService().run_ocr(
         image_path,
         f"Drug {drug_num} — Original"
     )
 
     # Preprocess then OCR on both versions
     enhanced_path, thresh_path = preprocess(image_path, drug_num)
-    enhanced_text = run_ocr(
+    enhanced_text = OCRService().run_ocr(
         enhanced_path,
         f"Drug {drug_num} — Enhanced"
     )
-    thresh_text = run_ocr(
+    thresh_text = OCRService().run_ocr(
         thresh_path,
         f"Drug {drug_num} — Threshold"
     )

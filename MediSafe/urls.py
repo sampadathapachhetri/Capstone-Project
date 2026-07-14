@@ -13,7 +13,7 @@ urlpatterns=[
     path('sub/medications',view=views.medications,name='medications'),
     path('sub/settings',view=views.settingsView,name="settings"),
     path('sub/addmedications',view=views.addMedications,name="add_medications"),
-    path('sub/intanalysis',view=views.intAnalysis,name="int_analysis"),
+    path('sub/intanalysis/',view=views.intAnalysis,name="int_analysis"),
     path('logout/',view=views.logout,name='logout'),
     path('delete_medication/<int:medicationId>',view=views.deleteMedication,name='delete_medication'),
     path('delete_medication/',view=views.deleteMedication,name='delete_medication'),
@@ -21,7 +21,8 @@ urlpatterns=[
     path("api/extract-name",view=views.extractName,name="ocr_upload"),
     path('auth/github/',view=views.github_login,name='github_login'),
     path('auth/github/callback/',view=views.github_callback),
-    
+    path('report/<int:history_id>/', views.report_detail, name='report_detail'), 
+    path('switch_status/<int:medicationId>',view=views.switchStatusMedication,name="switch_status"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,8 +1,9 @@
 (function (global) {
   global.MedicalApp = global.MedicalApp || {};
   global.MedicalApp.Pages = global.MedicalApp.Pages || {};
-
   global.MedicalApp.Pages.DrugCheck = {
+    drugs: new Map(),
+    maxCards: 2,
     init: function () {
       console.log("DrugCheck Initialized");
       totalCards = document.querySelectorAll(".drug_choosen_card").length;
@@ -15,6 +16,7 @@
       let drug_cards_container = document.getElementById(
         "drug_cards_container",
       );
+      this.drugs.clear();
       drug_cards_container.style.display = "flex";
       drug_cards_container.style.justifyContent = "center";
       drug_cards_container.style.alignItems = "center";
@@ -76,8 +78,72 @@
         cont.remove();
       }
     },
-    validateDrugName: function (name) {
-      // takes synonym and returns list[synonum,commonname] and errorString
+
+    addDrug: function (commonname, drugbankId, drugsynonym) {
+      if (this.drugs.size >= this.maxCards) {
+        this.showInvalidInputError("Maximum 2 drugs allowed");
+        return false;
+      }
+      if (this.drugs.has(commonname)) {
+        this.showInvalidInputError(`${commonname} is already added`);
+        return false;
+      }
+      for (let [key, value] of this.drugs) {
+        if (value.drugbankId == drugbankId) {
+          this.showInvalidInputError("This drug is already added");
+          return false;
+        }
+      }
+      this.drugs.set(commonname, drugbankId);
+
+      drug_cards_container.insertAdjacentHTML(
+        "afterbegin",
+        `
+            <div class="drug_choosen_card"
+              data-drug-name="${commonname}"
+              data-drug-id="${drugbankId}"
+            >
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#005fb8">
+                <path
+                  d="M345-120q-94 0-159.5-65.5T120-345q0-45 17-86t49-73l270-270q32-32 73-49t86-17q94 0 159.5 65.5T840-615q0 45-17 86t-49 73L504-186q-32 32-73 49t-86 17Zm266-286 107-106q20-20 31-47t11-56q0-60-42.5-102.5T615-760q-29 0-56 11t-47 31L406-611l205 205ZM345-200q29 0 56-11t47-31l106-107-205-205-107 106q-20 20-31 47t-11 56q0 60 42.5 102.5T345-200Z" />
+              </svg>
+              <div>
+                <span> ${drugsynonym} </span>
+                <p>Common Name: ${commonname}</p>
+              </div>
+            </div>
+            <button class="drug_choosen_close_btn" type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="30px"
+                viewBox="0 -960 960 960"
+                width="30px"
+                fill="#C1C1C1">
+                <path
+                  d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
+              </svg>
+            </button>
+          </div>
+            `,
+      );
+      return true;
+    },
+    removeDrug: function (commonname) {
+      if (!this.drugs.has(commonname)) {
+        console.warn("Drug not found: ", commonname);
+        return false;
+      }
+      this.drugs.delete(commonname);
+      return true;
+    },
+    validateDrugName: async function (name) {
+      // takes common name and returns list[commonname,drugbankID] and errorString
       if (name == null) {
         return [["", ""], "Empty Input Box"];
       }
@@ -85,13 +151,20 @@
         const params = new URLSearchParams({
           drugname: name.trim(),
         });
-        fetch(`/api/checkdrug/?${params}`, {
+        const response = await fetch(`/api/checkdrug/?${params}`, {
           method: "GET",
         });
-
-        return [[name, name], null];
+        if (response != null) {
+          const data = await response.json();
+          console.log(data);
+          return [
+            [data["commonname"], data["synonym"], data["drugbankId"]],
+            data.error,
+          ];
+        }
+        return [[name, name, name], "Fetching Error"];
       } else {
-        return [[name, name], "Invalid data"];
+        return [[name, name, name], "Invalid data"];
       }
     },
     sendFileToServer: async function (file) {
@@ -111,12 +184,12 @@
         const data = await response.json();
         console.log(data);
         if (data.success) {
-          return [[data["synonym"], data["commonname"]], null];
+          return [data["commonname"], null];
         } else {
-          return [[], error];
+          return [null, error];
         }
       } catch (error) {
-        return [[], error];
+        return [null, error];
       }
     },
     setupEventHandling: function () {
@@ -147,14 +220,13 @@
         if (isValid) {
           const overlay = document.getElementById("loading-overlay");
           overlay.style.display = "flex";
-          [[synonym, commonname], errorString] =
-            await this.sendFileToServer(file);
+          [commonname, errorString] = await this.sendFileToServer(file);
           if (errorString != null) {
             showInvalidInputError(errorString);
           }
           overlay.style.display = "none";
           let drugnameInputBox = document.getElementById("drugnameInputBox");
-          drugnameInputBox.value = synonym;
+          drugnameInputBox.value = commonname;
         }
       });
 
@@ -163,7 +235,11 @@
         const closeBtn = e.target.closest(".drug_choosen_close_btn");
         if (closeBtn) {
           const card = closeBtn.closest(".drug_choosen_card");
-          card.remove();
+          if (card) {
+            const commonname = card.dataset.drugName;
+            this.removeDrug(commonname);
+            card.remove();
+          }
           if (this.getTotalCards() == 0) {
             this.forNoInsertedCard();
           }
@@ -188,12 +264,13 @@
       let confirm_drug_button = document.getElementById("confirm_drug_button");
       if (confirm_drug_button) {
         // EVENT LISTENER: DRUG VALIDATION BUTTON
-        confirm_drug_button.addEventListener("click", (e) => {
+        confirm_drug_button.addEventListener("click", async (e) => {
           e.stopPropagation();
           e.preventDefault();
 
-          drugname = "Aspirin";
-          commonname = "Aspirin";
+          let commonname;
+          let drugbankId;
+          let drugsynonym;
           totalCards = this.getTotalCards();
 
           if (totalCards == 2) {
@@ -201,8 +278,9 @@
             this.forDisablingValidationButton();
           } else if (totalCards < 2) {
             let drugnameInputBox = document.getElementById("drugnameInputBox");
-            drugname = drugnameInputBox.value;
-            [nameList, errormsg] = this.validateDrugName(drugname);
+            commonname = drugnameInputBox.value;
+            [[commonname, drugsynonym, drugbankId], errormsg] =
+              await this.validateDrugName(commonname);
             if (errormsg != null) {
               this.showInvalidInputError(errormsg);
               return;
@@ -211,40 +289,7 @@
               this.forYesIntertedCard();
               this.forEnableValidationButton();
             }
-
-            drug_cards_container.insertAdjacentHTML(
-              "afterbegin",
-              `
-            <div class="drug_choosen_card">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#005fb8">
-                <path
-                  d="M345-120q-94 0-159.5-65.5T120-345q0-45 17-86t49-73l270-270q32-32 73-49t86-17q94 0 159.5 65.5T840-615q0 45-17 86t-49 73L504-186q-32 32-73 49t-86 17Zm266-286 107-106q20-20 31-47t11-56q0-60-42.5-102.5T615-760q-29 0-56 11t-47 31L406-611l205 205ZM345-200q29 0 56-11t47-31l106-107-205-205-107 106q-20 20-31 47t-11 56q0 60 42.5 102.5T345-200Z" />
-              </svg>
-              <div>
-                <span> ${drugname} </span>
-                <p>Common name: ${commonname}</p>
-              </div>
-            </div>
-            <button class="drug_choosen_close_btn" type="button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="30px"
-                viewBox="0 -960 960 960"
-                width="30px"
-                fill="#C1C1C1">
-                <path
-                  d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
-              </svg>
-            </button>
-          </div>
-            `,
-            );
+            this.addDrug(commonname, drugbankId, drugsynonym);
             drugnameInputBox.value = "";
             this.removeInvalidInputError();
             totalCards = this.getTotalCards();
@@ -265,8 +310,15 @@
 
     redirectHandler: async function (pageConfig) {
       if (pageConfig && pageConfig.file) {
+        const values = Array.from(this.drugs.values());
+        const params = new URLSearchParams({
+          drug1: values[0],
+          drug2: values[1],
+        });
+        this.forNoInsertedCard();
+
         const response = await fetch(
-          "sub/" + pageConfig.pageName.toLowerCase(),
+          `sub/${pageConfig.pageName.toLowerCase()}/?${params}`,
         );
         if (!response.ok) {
           throw new Error(`FETCHING error: ${response.status}`);
@@ -300,7 +352,6 @@
       return new Promise((resolve, reject) => {
         const pageName = pageConfig.pageName;
 
-        // FIXED: Added missing closing bracket
         const existingScript = document.querySelector(
           `script[data-page="${pageName}"]`, // Fixed here
         );
@@ -319,7 +370,6 @@
 
         script.onload = () => {
           console.log(`Loaded: ${pageName}`);
-          // FIXED: Changed Pagees to Pages
           if (MedicalApp.Pages[pageName] && MedicalApp.Pages[pageName].init) {
             MedicalApp.Pages[pageName].init(); // Fixed here
           }
@@ -327,7 +377,6 @@
         };
 
         script.onerror = () => {
-          // FIXED: Changed eroor to error
           console.error(`Failed to load script: ${pageName}`); // Fixed here
           reject(new Error(`Failed to load script: ${pageName}`));
         };

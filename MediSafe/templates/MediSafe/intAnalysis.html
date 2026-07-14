@@ -22,7 +22,7 @@
             <path
               d="M318-120q-82 0-140-58t-58-140q0-40 15-76t43-64l134-133 56 56-134 134q-17 17-25.5 38.5T200-318q0 49 34.5 83.5T318-200q23 0 45-8.5t39-25.5l133-134 57 57-134 133q-28 28-64 43t-76 15Zm79-220-57-57 223-223 57 57-223 223Zm251-28-56-57 134-133q17-17 25-38t8-44q0-50-34-85t-84-35q-23 0-44.5 8.5T558-726L425-592l-57-56 134-134q28-28 64-43t76-15q82 0 139.5 58T839-641q0 39-14.5 75T782-502L648-368Z" />
           </svg>
-          <span class="active_drug_name"> Asprin (ASA) </span>
+          <span class="active_drug_name">{{ data.drug1 }}</span>
         </li>
         <li>
           <svg
@@ -34,7 +34,7 @@
             <path
               d="M318-120q-82 0-140-58t-58-140q0-40 15-76t43-64l134-133 56 56-134 134q-17 17-25.5 38.5T200-318q0 49 34.5 83.5T318-200q23 0 45-8.5t39-25.5l133-134 57 57-134 133q-28 28-64 43t-76 15Zm79-220-57-57 223-223 57 57-223 223Zm251-28-56-57 134-133q17-17 25-38t8-44q0-50-34-85t-84-35q-23 0-44.5 8.5T558-726L425-592l-57-56 134-134q28-28 64-43t76-15q82 0 139.5 58T839-641q0 39-14.5 75T782-502L648-368Z" />
           </svg>
-          <span class="active_drug_name"> Warfarin </span>
+          <span class="active_drug_name"> {{ data.drug2 }} </span>
         </li>
       </div>
     </div>
@@ -53,14 +53,17 @@
           <span> INTERACTION SUMMARY </span>
         </div>
         <p>
-          Analysis identifies a critical interaction between Aspirin and
-          Warfarin, significantly elevating bleeding risks. Supplementary
-          moderate interactions involving Lisinopril necessitate increased
-          monitoring of renal function and blood pressure stability.
+          {{ data.description }}
         </p>
       </div>
       <div id="analysis_summary_right">
+      {% if data.severity_level == 3 %}
         <div id="analysis_summary_card" class="analysis_summary_critical">
+      {% elif data.severity_level == 2 %}
+        <div id="analysis_summary_card" class="analysis_summary_moderate">
+      {% else %}
+        <div id="analysis_summary_card" class="analysis_summary_low">
+      {% endif %}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
@@ -70,12 +73,20 @@
             <path
               d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
           </svg>
-          CRITICAL: BLEEDING RISK
+          {{ data.severity }}
         </div>
         <div class="analysis_summary_recom"></div>
       </div>
     </div>
+    {% if data.severity_level == 3 %}
     <div id="analysis_details" class="analysis_details_high">
+    {% elif data.severity_level == 2 %}
+    <div id="analysis_details" class="analysis_details_medium">
+
+    {% else %}
+    <div id="analysis_details" class="analysis_details_low">
+    {% endif %}
+
       <div id="analysis_details_top">
         <div id="analysis_details_topleft">
           <svg
@@ -89,7 +100,7 @@
           </svg>
           <h4>
             Interaction Detail
-            <span> Aspirin + Warfarin </span>
+            <span> {{ data.drug1 }} + {{ data.drug2 }} </span>
           </h4>
         </div>
         <div id="analysis_details_topright">
@@ -101,18 +112,13 @@
         <div id="analysis_details_bottomleft">
           <span>MECHANISM</span>
           <p id="analysis_mechanism">
-            Aspirin inhibits platelet aggregation via COX-1 inhibition while
-            Warfarin antagonizes Vitamin K- dependent clotting factors.
-            Concurrent use creates a synergistic effect that profoundly impairs
-            hemostasis.
+            {{ data.description }}
           </p>
         </div>
         <div id="analysis_details_bottomright">
-          <span>RECOMMENDATION</span>
+          <span>WARNING</span>
           <p id="analysis_recommendation">
-            Avoid combination if possible. Substitute Aspirin with Acetaminophen
-            for pain management. If NSAIDs are essential, consider PPI
-            prophylaxis and monitor for gastric micro-bleeding.
+            This program is for educational purpose. Always prefer consulting to a professional physician before consuming any drug.
           </p>
         </div>
       </div>

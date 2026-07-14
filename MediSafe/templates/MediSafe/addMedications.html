@@ -38,13 +38,13 @@
             <span>Dosage</span>
             <div id="dosage_box">
               <input type="text" placeholder="e.g. 500" required name="dosage_value" />
-              <select name="dosage_unit">
+              <select name="dosage_unit" >
                 <option>mg</option>
                 <option>g</option>
               </select>
             </div>
           </div>
-          <div class="input_fields" id="frequency_box">
+          <div class="input_fields" id="frequency_box" >
             <span>Frequency</span>
             <select name="dosage_frequency">
               <option>Select frequency</option>
@@ -62,7 +62,7 @@
         </div>
         <div id="bottom_buttons">
           <button type="button" id="cancel_btn" onclick="window.location.href=`{% url 'index' %}?page=medications`">Cancel</button>
-          <button type="submit" id="submit_btn">
+          <button type="button" id="submit_btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"

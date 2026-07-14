@@ -2,8 +2,9 @@ from django.contrib.auth.hashers import make_password,check_password
 import uuid
 import re
 from django.core.mail import send_mail
-from .raghav.ocr import OCRService
-
+from .raghav.ocr.ocr_engine import OCRService
+from .raghav.ocr.drug_matcher import DrugMatcher
+from . import models
 def hash_password(plaintext):
     return make_password(plaintext)
 
@@ -38,6 +39,25 @@ def sendEmail(to:str, message:str,subject="Default Subject"):
     send_mail
     pass
 
-def getOCRInstance():
-    ocr=OCRService()
-    return ocr
+def getUserFromSession(session):
+    userId=session['user_id']
+    try:
+        user=models.Users.objects.get(id=userId)
+        return user
+    except:
+        return None
+
+def runFzMatchingForAllWords(value:str):
+    words =value.split("=")
+    foundvalue=None
+    dm=DrugMatcher()
+    for word in words: 
+        if(len(word)<3 and (";" in word)):
+            continue
+        # print(f"\nsearching for word: {word}")
+        (_,error)=dm.match(word)
+        # print(f"\nResponse={temp},{error}")
+        if(error==None):
+            foundvalue=word
+            break
+    return foundvalue

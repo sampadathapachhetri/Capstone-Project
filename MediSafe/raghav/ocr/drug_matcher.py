@@ -10,6 +10,9 @@
 import pandas as pd
 import re
 from .config import DRUGBANK_CSV, FUZZY_THRESHOLD, MIN_TOKEN_LENGTH
+from rapidfuzz import fuzz, process
+import pandas as pd
+from typing import Optional, Tuple
 
 # ── Lazy import for Tanimoto ──────────────────────────────────
 # Only loaded if Stage 1 and 2 both fail
@@ -24,7 +27,7 @@ def _get_tanimoto_fingerprints():
     """
     global _tanimoto_fingerprints
     if _tanimoto_fingerprints is None:
-        from tanimoto_match import load_drugbank_with_fingerprints
+        from .tanimoto_match import load_drugbank_with_fingerprints
         print("🧬 Loading Tanimoto fingerprints (first time only)...")
         _tanimoto_fingerprints = load_drugbank_with_fingerprints()
         print(f"✅ Tanimoto ready: "
@@ -32,31 +35,74 @@ def _get_tanimoto_fingerprints():
     return _tanimoto_fingerprints
 
 
-def load_drugbank(csv_path=DRUGBANK_CSV):
-    """Load DrugBank vocabulary with SMILES"""
-    df = pd.read_csv(csv_path, dtype=str).fillna('')
-    df.columns = [
-        c.strip().lower().replace(' ', '_')
-        for c in df.columns
-    ]
+# Main fuzzy matching code starts here
 
-    col_map = {}
-    for col in df.columns:
-        if 'drugbank' in col and 'id' in col:
-            col_map['drugbank_id'] = col
-        elif col in ('common_name', 'name', 'drug_name'):
-            col_map['common_name'] = col
-        elif 'synonym' in col:
-            col_map['synonyms'] = col
-        elif 'smiles' in col:
-            col_map['smiles'] = col
 
-    if 'drugbank_id' not in col_map:
-        raise ValueError("Could not find DrugBank ID column!")
+from pathlib import Path
+import os
+class DrugMatcher:
+    _instance = None
+    _initialized = False
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def __init__(self):
+        # Only initialize once
+        if not DrugMatcher._initialized:
+            self._load_data()
+            DrugMatcher._initialized = True
+    
+    def _load_data(self):
+        """Load data from CSV file - called only once"""
+        filepath = os.path.join(Path(__file__).resolve().parent, r"data/cleaned_synonym_id_cn_data.csv")
+        
+        try:
+            df = pd.read_csv(filepath, usecols=['synonym', 'drugbank_id'])
+            df = df.dropna(subset=['synonym', 'drugbank_id'])
+            self.data = df[['synonym', 'drugbank_id']].values.tolist()
+            self.synonyms = [row[0] for row in self.data]
+            self.ids = [row[1] for row in self.data]
+            print(f"Loaded {len(self.data)} records (singleton instance)")
+        except FileNotFoundError:
+            print(f"Error: CSV file not found at {filepath}")
+            # Initialize with empty data to avoid further errors
+            self.data = []
+            self.synonyms = []
+            self.ids = []
+            raise
+    
+    def match(self, query: str, high_confidence_threshold: float = 0.7) -> Tuple[Optional[str], Optional[str]]:
+        if not query or not query.strip():
+            return None, "Empty search query"
+        
+        # Check if data is loaded
+        if not self.synonyms:
+            return None, "No data available for matching"
+        
+        results = process.extract(
+            query, 
+            self.synonyms,
+            scorer=fuzz.ratio,
+            limit=1,
+            score_cutoff=high_confidence_threshold * 100
+        )
+        
+        if not results:
+            return None, f"No matches found for '{query}'"
+        
+        match, score, idx = results[0]
+        return self.ids[idx], None
 
-    df = df.rename(columns=col_map)
-    print(f"✅ DrugBank loaded: {len(df):,} drugs")
-    return df
+# Main fuzzy matcher ends here 
+
+# How to use 
+# from ocr.drug_matcher  import DrugMatcher
+#     matcher = DrugMatcher()
+#     drug_id, error = matcher.match("Goserelin")
+
 
 
 def build_index(df):
@@ -116,13 +162,11 @@ def extract_tokens(text):
     return sorted(tokens, key=len, reverse=True)
 
 
-def jaccard_score(a, b):
-    """Character overlap similarity"""
-    a_set = set(a.lower())
-    b_set = set(b.lower())
-    if not a_set or not b_set:
+def fuzzy_score(a, b):
+    """Approximate string similarity using RapidFuzz."""
+    if not a or not b:
         return 0.0
-    return len(a_set & b_set) / len(a_set | b_set)
+    return fuzz.token_sort_ratio(a, b) / 100.0
 
 
 def _get_smiles_for_token(token, index):
@@ -144,7 +188,7 @@ def _get_smiles_for_token(token, index):
     best_smiles = None
 
     for key, entries in index.items():
-        score = jaccard_score(token, key)
+        score = fuzzy_score(token, key)
         if score > best_score:
             for entry in entries:
                 if entry.get('smiles'):
@@ -218,7 +262,7 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
 
     for token in candidates:
         for key, entries in index.items():
-            score = jaccard_score(token, key)
+            score = fuzzy_score(token, key)
             if score >= fuzzy_threshold:
                 for entry in entries:
                     uid = entry['drugbank_id']
@@ -264,7 +308,7 @@ def match_drug(text, index, fuzzy_threshold=FUZZY_THRESHOLD):
     fingerprints = _get_tanimoto_fingerprints()
 
     # Find structurally similar drugs
-    from tanimoto_match import find_similar_drugs
+    from .tanimoto_match import find_similar_drugs
     tanimoto_results = find_similar_drugs(
         query_smiles,
         fingerprints,

@@ -82,7 +82,6 @@
 
         script.onload = () => {
           console.log(`Loaded: ${pageName}`);
-          // FIXED: Changed Pagees to Pages
           if (MedicalApp.Pages[pageName] && MedicalApp.Pages[pageName].init) {
             MedicalApp.Pages[pageName].init(); // Fixed here
           }
@@ -90,7 +89,6 @@
         };
 
         script.onerror = () => {
-          // FIXED: Changed eroor to error
           console.error(`Failed to load script: ${pageName}`); // Fixed here
           reject(new Error(`Failed to load script: ${pageName}`));
         };

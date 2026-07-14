@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import Http404,HttpRequest,HttpResponse,JsonResponse
 from . import helpers,models
 from django.urls import reverse
@@ -8,8 +8,14 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
 import uuid
-from .raghav.ocr import OCRService
+from .raghav.ocr.ocr_engine import OCRService
 from django.conf import settings
+from .raghav.ocr.drug_matcher import DrugMatcher
+import json
+from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Count,Q
+from datetime import timedelta
 def logout(request):
     try:
         request.session.flush()
@@ -132,12 +138,69 @@ def resetPassword(request):
     return render(request=request,template_name='MediSafe/resetAccount.html',context={})
 
 def dashboard(request):
-    return render(request=request,template_name='MediSafe/dashboard.html',context={})
+    user = helpers.getUserFromSession(request.session)
+    if user is None:
+        return redirect('login')
+    
+    pretty_username = user.full_name.split(" ")[0]
+    
+    # Get all user history
+    history = models.UserHistory.objects.filter(user=user)
+    
+    # Basic counts
+    total_checks = history.count()
+    
+    # Monthly checks
+    now = timezone.now()
+    first_day_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    currentmonth_checks = history.filter(date_time__gte=first_day_of_month).count()
+    
+    # Last month checks
+    last_month = first_day_of_month - timedelta(days=1)
+    first_day_of_last_month = last_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    lastmonth_checks = history.filter(
+        date_time__gte=first_day_of_last_month,
+        date_time__lt=first_day_of_month
+    ).count()
+    
+    # Percentage change
+    if lastmonth_checks > 0:
+        percentage_value = int(((currentmonth_checks - lastmonth_checks) / lastmonth_checks) * 100)
+        percentage_change = "increase" if percentage_value >= 0 else "decrease"
+    else:
+        percentage_value = 100 if currentmonth_checks > 0 else 0
+        percentage_change = "increase" if currentmonth_checks > 0 else "no_change"
+    
+    # High risk alerts (severity level 7-10)
+    total_highrisk_alerts = history.filter(interaction__severity_level__gte=3).count()
+    
+    # Recent 5 checks
+    recent_checks = history.select_related(
+        'interaction__first_drug',
+        'interaction__second_drug'
+    ).only(
+        'id', 'date_time',
+        'interaction__severity',
+        'interaction__severity_level',
+        'interaction__first_drug__common_name',
+        'interaction__second_drug__common_name'
+    ).order_by('-date_time')[:5]
+    
+    context = {
+        "pretty_username": pretty_username,
+        "currentmonth_checks": currentmonth_checks,
+        "lastmonth_checks": lastmonth_checks,
+        "percentage_change": percentage_change,
+        "percentage_value": percentage_value,
+        "total_checks": total_checks,
+        "total_highrisk_alerts": total_highrisk_alerts,
+        "recent_checks": recent_checks,
+    }
+    
+    return render(request, 'MediSafe/dashboard.html', context)
 
 def drugCheck(request):
     return render(request=request,template_name='MediSafe/drugCheck.html',context={})
-
-
 
 
 def validateDrug(request):
@@ -148,21 +211,31 @@ def validateDrug(request):
             error="Invalid Drug Name"
         elif drugname.strip()=="":
             error="Invalid Drug Name"
-            
-        synonym=drugname
-        commonName=drugname
         
-        
+        commonName="Unidentified"
+        drugbankId="Unidentified"
+        drugname=drugname.strip()
+        matcher=DrugMatcher()
+        (drugbankId,error)=matcher.match(drugname)
+        try:
+            drug=models.Drug.objects.get(drug_bank_id=drugbankId)
+            commonName=drug.common_name
+        except Exception as e: 
+            if(error==None):
+                error="Drugname not found in the Database"
+                print(e)
+                         
         responseJson={
-            "synonym":synonym,
             "commonname":commonName,
+            "synonym":drugname,
+            "drugbankId":drugbankId,
             "error":error
-        }
+        } 
         
         return JsonResponse(responseJson)
 
 def extractName(request):
-    ocr_service=helpers.getOCRInstance()
+    ocr_service=OCRService()
     if request.method!="POST":
         return JsonResponse({"error":"Method not allowed"},status=405)
     
@@ -178,13 +251,75 @@ def extractName(request):
     file_path =default_storage.save(unique_filename,ContentFile(file.read()))
     absolute_path = os.path.join(settings.MEDIA_ROOT, file_path)
     name=ocr_service.run_ocr(image_path=absolute_path);
+    foundval=helpers.runFzMatchingForAllWords(value=name)
+    success=True
+    if (foundval==None):
+        success=False
+    else:
+        name=foundval
     return JsonResponse({
-        'success':True,
-        'synonym':name,
+        'success':success,
         'commonname':name
     })
 def history(request):
-    return render(request=request,template_name='MediSafe/history.html',context={})
+    page = request.GET.get('page', 1)
+    empty=True
+    user=helpers.getUserFromSession(request.session)
+    if(user==None):
+        return redirect("login")
+    page_obj = get_user_history_page(user=user, page_number=page)
+    context={
+        'empty':empty,
+        "page_obj":page_obj
+    }
+    
+    return render(request=request,template_name='MediSafe/history.html',context=context)
+
+def get_user_history_page(user, page_number, per_page=10):
+    history = models.UserHistory.objects.filter(
+        user=user
+    ).select_related(
+        'interaction__first_drug',
+        'interaction__second_drug'
+    ).only(
+        'id', 
+        'date_time',
+        'interaction__severity',
+        'interaction__severity_level',
+        'interaction__description',
+        'interaction__first_drug__common_name',
+        'interaction__first_drug__drug_bank_id',
+        'interaction__second_drug__common_name',
+        'interaction__second_drug__drug_bank_id'
+    )
+    
+    paginator = Paginator(history, per_page)
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    
+    return page_obj
+
+
+def report_detail(request, history_id):
+    """View for displaying a single history report"""
+    user = helpers.getUserFromSession(request.session)
+    if user is None:
+        return redirect("login")
+    
+    history_item = get_object_or_404(
+        models.UserHistory, 
+        id=history_id, 
+        user=user
+    )
+    
+    context = {
+        'item': history_item,
+    }
+    
+    return JsonResponse(context)
 
 def medications(request):
     user=models.Users.objects.get(id=request.session.get("user_id"))
@@ -197,13 +332,24 @@ def medications(request):
 def deleteMedication(request,medicationId):
     if(medicationId):
         try:
-            user=models.Users.objects.get(id=request.session.get('user_id'))
+            user=helpers.getUserFromSession(request.session)
             medication=models.UserMedications.objects.filter(id=medicationId,user=user)
             medication.delete()
             return redirect(reverse('index')+"?page=medications")
         except:
             pass
     return redirect('index')
+
+def switchStatusMedication(request,medicationId):
+    if(medicationId):
+        user=helpers.getUserFromSession(request.session)
+        if(not user):
+            return redirect('index')
+        medication=models.UserMedications.objects.get(id=medicationId,user=user)
+        medication.active=not medication.active
+        medication.save()
+        return redirect(reverse('index')+"?page=medications")
+        
 
 def settingsView(request):
     context={}
@@ -254,41 +400,125 @@ def settingsView(request):
     
 
 def addMedications(request):
-    error={}
+    error=None
+    context={}
     if request.method=="POST":
+        print(request.body)
         try:
-            medication_name=request.POST.get("medication_name")
-            dosage_unit=request.POST.get("dosage_unit")
-            dosage_value=request.POST.get("dosage_value")
-            dosage_frequency=request.POST.get("dosage_frequency")
-            medication_more=request.POST.get("medication_more")
+            data = json.loads(request.body)
+            
+            medication_name=data.get("medication_name")
+            matcher=DrugMatcher()
+            (drugbankId,error)=matcher.match(medication_name)
+            if(error!=None):
+                error="Drug name not found in the Database"
+                context={
+                    "error":error
+                }
+                return JsonResponse(context)
+            commonname=models.Drug.objects.get(drug_bank_id=drugbankId).common_name
+            dosage_unit=data.get("dosage_unit")
+            dosage_value=data.get("dosage_value")
+            dosage_frequency=data.get("dosage_frequency")
+            medication_more=data.get("medication_more")
             try:
                 float(dosage_value)
+                if(dosage_value.strip()==""):
+                    error="Invalid Dosage Value"
+                    context={
+                        "error":error
+                        }
+                    return JsonResponse(context)
             except :
-                error['msg']="INVALID medication input (dosage value)"
-                request.session['error']={'addmedications':error}
-                return redirect(reverse('index')+"?page=medications")
+                error="Invalid Dosage Value"
+                context={
+                    "error":error
+                }
+                return JsonResponse(context)
             if dosage_unit=='g':
                 dosage_value=float(dosage_value)*1000
+            elif dosage_unit=="mg":
+                dosage_value=dosage_value
+            else:
+                error="Invalid Dosage Unit"
+                context={
+                    "error":error
+                }
+                return JsonResponse(context)
             user=models.Users.objects.get(id=request.session.get("user_id"))
+            
+            
+            exists=models.UserMedications.objects.filter(
+                    user=user,
+                    name=medication_name,
+                    dosage_amount_mg=dosage_value,
+                    dosage_frequency=dosage_frequency,
+                    category=commonname,
+                    medication_more=medication_more
+                ).exists()
+            if(exists):
+                error="This Exact Field input was already added."
+                context["error"]=error
+                return JsonResponse(context)
+            else:
+                medicationRow=models.UserMedications.objects.get_or_create(
+                    user=user,
+                    name=medication_name,
+                    dosage_amount_mg=dosage_value,
+                    dosage_frequency=dosage_frequency,
+                    category=commonname,
+                    medication_more=medication_more
+                )
+        except Exception as e:
+            error=f"Error: {e}"
+            context['error']=error
+            return JsonResponse(context)
 
-            medicationRow=models.UserMedications.objects.get_or_create(
-                user=user,
-                name=medication_name,
-                dosage_amount_mg=dosage_value,
-                dosage_frequency=dosage_frequency,
-                medication_more=medication_more
-            )
-        except:
-            pass
-
-        return redirect(reverse('index')+"?page=medications")
+        return JsonResponse({error:None})
         
     else:
+        
         return render(request=request,template_name='MediSafe/addMedications.html',context={})
 
 def intAnalysis(request):
-    return render(request=request,template_name='MediSafe/intAnalysis.html',context={})
+    if request.method=="GET":
+        drug1=request.GET.get("drug1")
+        drug2=request.GET.get("drug2")        
+        
+        drug1Name=models.Drug.objects.get(drug_bank_id=drug1).common_name
+        drug2Name=models.Drug.objects.get(drug_bank_id=drug2).common_name
+        
+        description="""Analysis identifies a critical interaction between Aspirin and
+          Warfarin, significantly elevating bleeding risks. Supplementary
+          moderate interactions involving Lisinopril necessitate increased
+          monitoring of renal function and blood pressure stability."""
+        severityLevel=2
+        severity="High"
+        data={
+            "drug1":drug1Name,
+            "drug2":drug2Name,
+            "description":description,
+            "severity_level":severityLevel,
+            "severity":severity
+        }
+        error=""
+        context={
+            "data":data,
+            "error":error
+        }
+        user=helpers.getUserFromSession(session=request.session)
+        print(user)
+        
+        history=models.Drug_Interactions.objects.create_interaction_and_history(
+            user=user,drug1=drug1,drug2=drug2,description=description,severity=severity,severityLevel=severityLevel,dateTime=timezone.now()
+        )
+        
+        
+        return render(request=request,template_name='MediSafe/intAnalysis.html',context=context)
+    else:
+        return redirect(index)
+
+
 
 
 

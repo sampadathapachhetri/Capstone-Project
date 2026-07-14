@@ -8,3 +8,4 @@ drug_env/
 results/
 *_converted.jpg
 .env
+data/

@@ -4,6 +4,7 @@ from . import helpers
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.db import transaction,IntegrityError
+from django.db.models.functions import Lower
 # Create your models here.
 class UserManager(models.Manager):
     def create_user_and_profile(self,email:str,full_name:str,password:str):
@@ -88,6 +89,30 @@ class UserManager(models.Manager):
             acc.save()
         return user
 
+class InteractionManager(models.Manager):
+    def create_interaction_and_history(self,user,drug1,drug2,description,severity,severityLevel,dateTime):
+        with transaction.atomic():
+            drug1Obj=Drug.objects.get(
+                drug_bank_id=drug1
+            )
+            drug2Obj=Drug.objects.get(
+                drug_bank_id=drug2
+            )
+            (inter,_)=Drug_Interactions.objects.get_or_create(
+                first_drug=drug1Obj,
+                second_drug=drug2Obj,
+                description=description,
+                severity=severity,
+                severity_level=severityLevel
+            )
+            history=UserHistory.objects.get_or_create(
+                user=user,
+                interaction=inter,
+                date_time=dateTime
+            )
+            return history
+
+            
 class Users(models.Model):
     objects=UserManager()
     id=models.UUIDField(
@@ -301,18 +326,23 @@ class UserMedications(models.Model):
         ]
     
 class Drug(models.Model):
-    drug_bank_id=models.CharField(max_length=50,unique=True,db_index=True,primary_key=True)
-    common_name=models.CharField(max_length=100,db_index=True,unique=True)
-    synonyms=models.CharField(max_length=100)
-    smile_structure=models.CharField(max_length=100)
+    drug_bank_id=models.CharField(max_length=50,unique=True,primary_key=True)
+    common_name=models.CharField(unique=True)
+    synonyms=models.CharField()
+    smile_structure=models.CharField()
+    class Meta:
+        indexes=[
+            models.Index(
+                Lower("common_name"),
+                name="drug_common_name_lower_idx"
+            )
+        ]     
     def __str__(self):
-        return f'{self.common_name}, {self.synonyms}'
-
-class Severity(models.Model):
-    level=models.CharField(max_length=20,unique=True)
-    info=models.TextField()
+        return f'{self.common_name}, {self.drug_bank_id}'
+    
 
 class Drug_Interactions(models.Model):
+    objects=InteractionManager()
     first_drug=models.ForeignKey(
         Drug,
         on_delete=models.CASCADE,
@@ -324,20 +354,19 @@ class Drug_Interactions(models.Model):
         related_name="second_drug"
     )
     description=models.TextField()
-    mechanism=models.TextField()
-    recommendation=models.TextField()
-
-    severity=models.ForeignKey(
-        to=Severity,
-        null=True,
-        on_delete=models.SET_NULL,
+    
+    severity=models.TextField(
+        max_length=20
     )
+    severity_level=models.IntegerField()
+    
     class Meta:
         indexes=[
             models.Index(fields=['first_drug','second_drug'])
         ]
 
 class UserHistory(models.Model):
+    
     user=models.ForeignKey(
         Users,
         on_delete=models.CASCADE,

@@ -21,6 +21,8 @@
 import os
 import threading
 
+import torch
+
 from .config import SUPPORTED_FORMATS, MAX_IMAGE_MB, OCR_CONFIDENCE
 from .image_utils import validate_image, convert_to_jpg, preprocess
 from .drug_matcher import load_drugbank, build_index, match_drug
@@ -86,7 +88,14 @@ class ModelService:
                 if cls._ocr_reader is None:
                     print(" [ModelService] Loading EasyOCR model (first call only)...")
                     import easyocr
-                    cls._ocr_reader = easyocr.Reader(['en'], gpu=False)
+
+                    gpu_available = torch.cuda.is_available()
+                    if gpu_available:
+                        print(" [ModelService] GPU available — loading EasyOCR on GPU...")
+                    else:
+                        print(" [ModelService] No GPU found — loading EasyOCR on CPU...")
+
+                    cls._ocr_reader = easyocr.Reader(['en'], gpu=gpu_available)
         return cls._ocr_reader
 
     @classmethod
