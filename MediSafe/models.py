@@ -2,9 +2,11 @@ from django.db import models
 import uuid
 from . import helpers
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import FileExtensionValidator
 from django.db import transaction,IntegrityError
 from django.db.models.functions import Lower
+from datetime import timedelta
 # Create your models here.
 class UserManager(models.Manager):
     def create_user_and_profile(self,email:str,full_name:str,password:str):
@@ -169,7 +171,6 @@ class Users(models.Model):
         return f"{self.full_name} ({self.email})"
     
     def update_last_login(self):
-        from django.utils import timezone
         self.last_logged_in_at=timezone.now()
         self.save(update_fields=['last_logged_in_at'])
     def has_password(self):
@@ -388,3 +389,41 @@ class UserHistory(models.Model):
     ]
     def __str__(self):
         return f"{self.date_time}"
+    
+    
+class OTPManager(models.Manager):
+    def remove_and_create(self,email:str,otpval:str,expiration_time=(timezone.now()+timedelta(minutes=20))):
+        try:
+            otp=OTP.objects.get(email=email)
+            otp.delete()
+            newOTP=OTP.objects.create(
+                email=email,
+                otp=otpval,
+                expiration_time=expiration_time
+            )
+            return newOTP
+        except ObjectDoesNotExist as e:
+            newOTP=OTP.objects.create(
+                email=email,
+                otp=otpval,
+                expiration_time=expiration_time
+            )
+            return newOTP
+        except Exception as e:
+            print(f"E {e}")
+    def incrementAttempt(self,otpObj:OTP):
+        otpObj.attempts+=1
+        otpObj.save()
+        
+    def removeExpiredOTP(self):
+        OTP.objects.filter(expiration_time__lt=timezone.now()).delete()
+        
+class OTP(models.Model):
+    objects=OTPManager()
+    email=models.TextField(unique=True)
+    otp=models.TextField(max_length=5,null=False,blank=False)
+    expiration_time=models.DateTimeField()
+    attempts=models.IntegerField(default=0)
+    def __str__(self):
+        return f"Email: {self.email}, OTP:{self.otp}, {self.expiration_time},Attempts:{self.attempts}"
+    

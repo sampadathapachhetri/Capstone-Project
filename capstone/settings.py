@@ -148,12 +148,32 @@ GITHUB_CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET")
 GITHUB_REDIRECT_URI = os.environ.get("GITHUB_REDIRECT_URI")
 
 
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS")
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND", 
+    "django.core.mail.backends.smtp.EmailBackend"
+)
 
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Convert to int
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+
+# Convert string "True"/"False" to boolean
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("true", "1", "t")
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False").lower() in ("true", "1", "t")
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+
+# DEFAULT_FROM_EMAIL can be set separately or fallback to EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL", 
+    EMAIL_HOST_USER
+)
+
+# Optional Django email settings
+EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[MyApp] ")
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", 10))
+
+
+MAX_OTP_ATTEMPTS=5

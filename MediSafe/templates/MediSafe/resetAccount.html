@@ -18,6 +18,33 @@
       href="{% static 'MediSafe/css/resetAccount.css' %}" />
   </head>
   <body>
+    <div class="overlay" id="otpOverlay">
+    <div class="dialog">
+        <h3>Enter OTP  And New Password</h3>
+        
+        <div class="form-group">
+            <label for="otpInput">OTP Code</label>
+            <input type="text" id="otpInput" placeholder="Enter OTP code" maxlength="6">
+        </div>
+        
+        <div class="form-group">
+            <label for="passInput">New Password</label>
+            <input type="text" id="passInput" placeholder="Enter New Password">
+        </div>
+        
+        <div id="otperror" class="error-message"></div>
+        
+        <div class="buttons">
+            <button class="submit-btn" id="submitBtn">Submit</button>
+            <button class="cancel-btn" id="cancelBtn">Cancel</button>
+        </div>
+        
+        <div class="resend-link">
+            <a href="#" id="resendOtpLink" >Send another email</a>
+        </div>
+    </div>
+</div>
+
     <div id="left">
       <div id="left_top">
         <div id="left_top_image_div">
@@ -53,7 +80,12 @@
           <img src="{% static 'MediSafe/images/left_arrow_icon.svg' %}" />
           <span>Back to Login</span>
         </div>
-        <form name="forget_password_form" id="forget_password_form">
+        <form name="forget_password_form" 
+        action='{% url "reset_password" %}'
+        method="POST"
+        id="forget_password_form" 
+         >
+        {% csrf_token %}
           <div id="form_top_icon_div">
             <img src="{% static 'MediSafe/images/lock_reset_icon.svg' %}" />
           </div>
@@ -75,7 +107,8 @@
               id="email_field"
               required />
           </div>
-          <button id="confirm_button">
+          <div id="temperror" style="width:100%;margin-bottom:4px"></div>
+          <button id="confirm_button" type="button">
             Send Reset Link
             <img
               src="{% static 'MediSafe/images/right_arrow_icon.svg' %}"

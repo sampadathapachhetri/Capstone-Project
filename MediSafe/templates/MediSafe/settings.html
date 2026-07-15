@@ -9,6 +9,34 @@
         safety alerts.
       </span>
     </div>
+
+
+
+      <div class="overlay" id="deleteOverlay">
+  <div class="dialog">
+    <span class="warning-icon">⚠️</span>
+    <h3>Delete Account Permanently?</h3>
+    <p>
+      This action <span class="highlight">cannot be undone</span>. 
+      All your data, including messages, files, and settings will be 
+      permanently removed.
+    </p>
+    
+    <div class="confirm-input">
+      <label for="confirmDeleteInput">Type <strong>DELETE</strong> to confirm:</label>
+      <input type="text" id="confirmDeleteInput" placeholder="Type DELETE here" maxlength="6">
+      <div id="deleteError" class="error-message"></div>
+    </div>
+    
+    <div class="buttons">
+      <button class="delete-confirm-btn" id="confirmDeleteBtn">Yes, Delete My Account</button>
+      <button class="cancel-btn" id="cancelDeleteBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
     <form
       id="settings_body"
       name="settings_form"
@@ -175,7 +203,7 @@
               irreversbile
             </p>
           </h4>
-          <button type="button">Delete Account</button>
+          <button type="button" id="delete_user_btn">Delete Account</button>
         </div>
       </div>
       <div id="settings_footer">

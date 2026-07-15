@@ -5,6 +5,10 @@ from django.core.mail import send_mail
 from .raghav.ocr.ocr_engine import OCRService
 from .raghav.ocr.drug_matcher import DrugMatcher
 from . import models
+from django.conf import settings
+import smtplib
+from email.mime.text import MIMEText
+import random,string
 def hash_password(plaintext):
     return make_password(plaintext)
 
@@ -32,12 +36,24 @@ def isValidEmail(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$'
     return bool(re.match(pattern, email))
 
+
 def createActivityLog():
     pass
 
 def sendEmail(to:str, message:str,subject="Default Subject"):
-    send_mail
-    pass
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30)
+        server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+        msg = MIMEText(message)
+        msg['Subject'] = subject
+        msg['From'] = settings.EMAIL_HOST_USER
+        msg['To'] = to
+        server.send_message(msg)
+        server.quit()
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Failed to send email"
 
 def getUserFromSession(session):
     userId=session['user_id']
@@ -61,3 +77,8 @@ def runFzMatchingForAllWords(value:str):
             foundvalue=word
             break
     return foundvalue
+
+
+def generateRandomOTP():
+     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    

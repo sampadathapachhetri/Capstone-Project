@@ -137,6 +137,84 @@ def register(request):
 def resetPassword(request):
     return render(request=request,template_name='MediSafe/resetAccount.html',context={})
 
+def requestResetPassword(request):
+    if request.method=="POST":
+        data=json.loads(request.body)
+        email=data.get("email")
+        otp=data.get("otp")
+        newPassword=data.get("password")
+        err=None
+        if(len(newPassword)<8):
+            err="Password must be atleast 8 characters long"
+            return JsonResponse({"error":err})
+        hashedPass=helpers.hash_password(newPassword)
+        (success,err)=validateOTP(email=email,otp=otp)
+        if success:
+            try:
+                user=models.Users.objects.get(email=email)
+                if user.is_oauth_user:
+                    success=False
+                    err="Email is used with OAuth account, login via google or github"
+                else:
+                    print(f"hashedPass: {hashedPass}")
+                    user.pass_hash=hashedPass
+                    user.save()
+                    otpObj=models.OTP.objects.get(email=email,otp=otp)
+                    otpObj.delete()
+                    
+            except Exception as e:
+                success=False
+                print("ERROR:" ,e)
+                err="Failure, Maybe Retry"
+        return JsonResponse({"error":err})
+        
+
+def requestOTP(request):
+    if request.method=="POST":
+        data=json.loads(request.body)
+        email=data.get("email")
+        otp=helpers.generateRandomOTP()
+        msg="Your OTP:\n"+otp
+        try:
+            user=models.Users.objects.get(email=email)
+            if user.is_oauth_user:
+                err="Email is used with OAuth account, login via google or github"
+                return JsonResponse({"error":err})
+            # err=helpers.sendEmail(to=email,message=msg,subject="OTP Verification")
+            err=None
+            if(err==None):
+                print(f"Sent to {email}")
+                models.OTP.objects.remove_and_create(email=email,otpval=otp)
+                return JsonResponse({"error":None})
+            else:
+                print(f"Failed to send: {email}, Error:{err}")
+                return JsonResponse({"error":f"{err}"})
+        except Exception as e:
+            print("ERROR :",e)
+            err="Invalid Email"
+            return JsonResponse({"error":err})
+        
+                    
+
+def validateOTP(email,otp):
+    try:
+        otpObj=models.OTP.objects.get(email=email)
+        print(f"OTP ATTEMPTS:. {otpObj.attempts}")
+        otpObj.attempts+=1
+        otpObj.save()
+        if(otpObj.attempts>settings.MAX_OTP_ATTEMPTS):
+            print(f"OTP ATTEMPTS limit excdded, deleting the otp row. {otpObj.attempts}")
+            otpObj.delete()
+            return (False,"Limit exceeded")
+        if(otpObj.otp==otp):
+            if(otpObj.expiration_time<timezone.now()):
+                return (False,"Expired OTP")
+            return (True,None)
+        return (False,"Invalid Code")
+    except Exception as e:
+        print("ERROR in validate OTP: ",e)
+        return (False,"Email isnt sent")
+
 def dashboard(request):
     user = helpers.getUserFromSession(request.session)
     if user is None:
@@ -257,6 +335,7 @@ def extractName(request):
         success=False
     else:
         name=foundval
+    os.remove(absolute_path)
     return JsonResponse({
         'success':success,
         'commonname':name
@@ -398,6 +477,17 @@ def settingsView(request):
             return redirect("login")
 
     
+
+def deleteAccount(request):
+    if request.method=="POST":
+        try:
+            user=helpers.getUserFromSession(request.session)
+            user.delete()
+            request.session.flush()
+            return JsonResponse({"success":True})
+        except Exception as e:
+            return JsonResponse({"success":False,"reason":str(e)})
+        
 
 def addMedications(request):
     error=None

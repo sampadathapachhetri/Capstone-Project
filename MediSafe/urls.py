@@ -23,6 +23,9 @@ urlpatterns=[
     path('auth/github/callback/',view=views.github_callback),
     path('report/<int:history_id>/', views.report_detail, name='report_detail'), 
     path('switch_status/<int:medicationId>',view=views.switchStatusMedication,name="switch_status"),
+    path("api/requestotp",view=views.requestOTP,name="request_otp"),
+    path("api/requestPassReset",view=views.requestResetPassword,name="request_pass_reset"),
+    path("delete_account/",view=views.deleteAccount,name="remove_account")
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
