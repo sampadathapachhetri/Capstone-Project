@@ -98,14 +98,17 @@
         <div class="settings_toggle_divs">
           <h4>
             Two-Factor Authentication (2FA)<span>
-              Add an extra layer of security to your clinical account using OTP.
+              Add an extra layer of security to your clinical account using OTP.(Shouldn't be an OAuth user to enable 2FA)
             </span>
           </h4>
           <label class="toggle-switch">
             <input
+            class="toggles"
               type="checkbox"
               name="tfa"
-              
+              {% if user.is_oauth_user %}
+            disabled
+            {% endif %}
               {% if user.profile.two_factor_auth %}
               checked
               
@@ -147,9 +150,9 @@
         </div>
         <div class="settings_toggle_divs">
           <h4>
-            Monthly Usage Reports
+            Monthly Usage Reports Reminder
             <span>
-              Receive a PDF summary of activity and aherence logs every months.
+              Receive a Notification Every month to export your medication reports.
             </span>
           </h4>
           <label class="toggle-switch">

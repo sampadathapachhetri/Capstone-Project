@@ -439,3 +439,27 @@ class OTP(models.Model):
     def __str__(self):
         return f"Email: {self.email}, OTP:{self.otp}, {self.expiration_time},Attempts:{self.attempts}"
     
+    
+class NotificationManager(models.Manager):
+
+    def shouldNotificationTrigger(self,noti:NotificationTrigger):
+        currentDate=timezone.now()
+        lastTriggered=noti.notified_date
+        if((currentDate.year<=lastTriggered.year)and (currentDate.month<=lastTriggered.month)):
+            return False
+        else:
+            return True
+    def afterNotificationTriggered(self,noti:NotificationTrigger):
+         currentDate=timezone.now()
+         noti.notified_date=currentDate
+         noti.save()       
+    
+class NotificationTrigger(models.Model):
+    objects=NotificationManager()
+    user=models.OneToOneField(
+        Users,
+        on_delete=models.CASCADE
+    )
+    notified_date=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"notified_date:{self.notified_date}"

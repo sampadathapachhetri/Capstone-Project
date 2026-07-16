@@ -59,7 +59,27 @@ let activeNav = null;
 let contents = document.getElementById("contents_div");
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-  // showNotification("Hello", "This is a test notification");
+  // await fetch("/api/canAlertNot/")
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     if (data.allowed == true) {
+  //       alert("Safety alerts are enabled");
+  //     } else {
+  //       alert("Safety alerts are disabled");
+  //     }
+  //   });
+
+  await fetch("/api/canReminderNot/")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.allowed == true) {
+        showNotification(
+          "Monthly Report Alert",
+          "Remember to Regularly Export your reports monthly.",
+        );
+      } else {
+      }
+    });
 
   const urlParams = new URLSearchParams(window.location.search);
   const page = urlParams.get("page");

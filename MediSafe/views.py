@@ -37,6 +37,28 @@ def logout(request):
         pass
     return redirect('login')
 
+
+def api_canGetAlertNotification(request):
+    user=helpers.getUserFromSession(request.session)
+    return JsonResponse({"allowed":user.profile.safety_alerts})
+
+def api_canGetReminderNotification(request):
+    user=helpers.getUserFromSession(request.session)
+    return JsonResponse({"allowed":user.profile.monthly_usage_reports})
+
+def shouldPushReminderNotification(request):
+    if(api_canGetReminderNotification(request)):
+        user=helpers.getUserFromSession(request.session)
+        noti,_=models.NotificationTrigger.objects.get_or_create(user=user)
+        response=models.NotificationTrigger.objects.shouldNotificationTrigger(noti)
+        if(response):
+            models.NotificationTrigger.objects.afterNotificationTriggered(noti)
+        
+        return JsonResponse({"allowed":response})
+    return JsonResponse({"allowed":False})
+    
+        
+
 def index(request):
     context={}
     error={}
@@ -75,36 +97,109 @@ def createAuthSession(request,userID,exp=0):
     request.session['user_id']=f'{userID}'
     request.session.set_expiry(exp)
     
-def login(request):
-    context={}
-    error={
-        # "invalid_cred":"invalid email or password",
-        # "empty_field":"The fields must not be empty",
-        # "unknown":"Unknown Error occured",
-    }
-    info={}
-    if(request.method=="POST"):    
-        email=request.POST.get("email")
-        if( not helpers.isValidEmail(email=email)):
-            error["invalid_cred"]="Invalid email or password"
-        password=request.POST.get("password")
-        isRemember=request.POST.get("remember")
-        userId=authenticate(email=email,password=password)
-        if(userId):
-            createAuthSession(request=request,userID=userId)
-            return redirect('index')
-        else:
-            error["invalid_cred"]='Invalid email or password'
-    if(error):
-        context["error"]=error
+    
+def api_is_tfa_enabled(request):
+    if request.method == "POST":
+        try:
+            # Handle both JSON and FormData
+            if request.content_type == "application/json":
+                data = json.loads(request.body)
+                email = data.get("email")
+            else:
+                email = request.POST.get("email")
+            
+            if not email:
+                return JsonResponse({'enabled': False, 'error': 'Email is required'}, status=400)
+            
+            user = models.Users.objects.get(email=email)
+            return JsonResponse({'enabled': user.profile.two_factor_auth})
+            
+        except models.Users.DoesNotExist:
+            return JsonResponse({'enabled': False, 'error': 'User not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'enabled': False, 'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'enabled': False, 'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+def is_tfa_enabled(email):
     try:
-        info["session_exists"]=request.session['user_id']
-        username=models.Users.objects.get(id=info['session_exists']).full_name
-        info['username']=username
-        context["info"]=info
+        user = models.Users.objects.get(email=email)
+        return user.profile.two_factor_auth
+    except models.Users.DoesNotExist:
+        return False
+
+
+def createAuthSession(request, userID, remember=False):
+    request.session['user_id'] = str(userID)
+    if remember:
+        request.session.set_expiry(1209600)  # 2 weeks
+    else:
+        request.session.set_expiry(0)
+    request.session.save()
+
+
+# ========== LOGIN VIEWS ==========
+
+def login(request):
+    context = {}
+    error = None
+    info = {}
+    
+    if request.method == "POST":
+        response = validate_login(request)
+        if response['success']:
+            return redirect("index")
+        else:
+            error = response['msg']
+    
+    if error:
+        context["error"] = {"login_error": error}
+    
+    try:
+        info["session_exists"] = request.session['user_id']
+        username = models.Users.objects.get(id=info['session_exists']).full_name
+        info['username'] = username
+        context["info"] = info
     except:
         pass
-    return render(request=request,template_name="MediSafe/login.html",context=context)
+    
+    return render(request=request, template_name="MediSafe/login.html", context=context)
+
+
+def validate_login(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "msg": "Method not allowed"})
+    
+    email = request.POST.get("email")
+    password = request.POST.get("password")
+    otp = request.POST.get("otp")
+    remember = request.POST.get("remember") == "on"
+    
+    if not email or not password:
+        return JsonResponse({"success": False, "msg": "Email and password are required"})
+    
+    if not helpers.isValidEmail(email=email):
+        return JsonResponse({"success": False, "msg": "Invalid email or password"})
+    
+    userId = authenticate(email=email, password=password)
+    if userId is None:
+        return JsonResponse({"success": False, "msg": "Invalid User Credentials"})
+    
+    if is_tfa_enabled(email=email):
+        if not otp:
+            return JsonResponse({"success": False, "msg": "OTP is required for this account"})
+        
+        success, error = validateOTP(email=email, otp=otp)
+        if not success:
+            return JsonResponse({"success": False, "msg": error or "Invalid OTP"})
+        else:
+            otpObj=models.OTP.objects.get(email=email,otp=otp)
+            otpObj.delete()
+    createAuthSession(request=request, userID=userId, remember=remember)
+    return JsonResponse({"success": True, "msg": None})
 
 def register(request):
     context={}

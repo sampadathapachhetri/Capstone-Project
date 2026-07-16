@@ -12,6 +12,9 @@
       this.setupExportButton();
       // Store the data from the template
       this.storeDataFromTemplate();
+
+      // Check for high severity and send notification
+      this.checkAndSendHighSeverityAlert();
     },
 
     storeDataFromTemplate: function () {
@@ -71,7 +74,73 @@
           : "No mechanism available.",
       };
 
-      console.log("Stored interaction data:", currentInteractionData);
+      // console.log("Stored interaction data:", currentInteractionData);
+    },
+
+    checkAndSendHighSeverityAlert: function () {
+      const data = currentInteractionData;
+
+      // Only proceed if severity is HIGH (level 2)
+      if (!data || data.severity_level !== 2) {
+        console.log("Not a high severity interaction. No notification needed.");
+        return;
+      }
+
+      console.log("High severity detected! Checking notification settings...");
+
+      // Check if user has enabled safety alerts
+      fetch("/api/canAlertNot/")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.allowed === true) {
+            console.log("Safety alerts are enabled. Sending notification...");
+            this.sendBrowserNotification();
+          } else {
+            console.log("Safety alerts are disabled by user.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error checking notification settings:", error);
+        });
+    },
+
+    sendBrowserNotification: function () {
+      const data = currentInteractionData;
+
+      if (!("Notification" in window)) {
+        console.log("Browser doesn't support notifications");
+        return;
+      }
+
+      const title = "⚠️ HIGH RISK Interaction Detected!";
+      const body = `${data.drug1} + ${data.drug2}: ${data.description.substring(0, 120)}...`;
+
+      if (Notification.permission === "granted") {
+        const notification = new Notification(title, {
+          body: body,
+          icon: "/static/MediSafe/images/warning-icon.png",
+          tag: "medisafe-high-risk",
+          requireInteraction: true,
+          vibrate: [300, 100, 300, 100, 300],
+        });
+
+        notification.onclick = function () {
+          window.focus();
+          notification.close();
+        };
+
+        setTimeout(() => notification.close(), 15000);
+        console.log("High severity notification sent!");
+      } else if (Notification.permission === "default") {
+        // Request permission and try again
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            this.sendBrowserNotification();
+          }
+        });
+      } else {
+        console.log("Notification permission denied");
+      }
     },
 
     setupCopyButton: function () {
@@ -107,13 +176,13 @@
 
       // Also create a human-readable formatted version
       const formattedText = `
-        Drug Interaction Report
-        ------------------------
-        Drug 1: ${data.drug1}
-        Drug 2: ${data.drug2}
-        Severity: ${data.severity.toUpperCase()}
-        Description: ${data.description || "No description available."}
-        Mechanism: ${data.mechanism || "No mechanism available."}
+Drug Interaction Report
+------------------------
+Drug 1: ${data.drug1}
+Drug 2: ${data.drug2}
+Severity: ${data.severity.toUpperCase()}
+Description: ${data.description || "No description available."}
+Mechanism: ${data.mechanism || "No mechanism available."}
       `.trim();
 
       // Copy both formats to clipboard
@@ -141,7 +210,15 @@
     },
 
     exportAnalysisPDF: function () {
-      // ... get historyId ...
+      const data = currentInteractionData;
+
+      if (!data || !data.id) {
+        alert("No interaction data found to export. Please try again.");
+        return;
+      }
+
+      const historyId = data.id;
+      console.log("Exporting PDF for ID:", historyId);
 
       const exportBtn = document.getElementById("export_button");
       const originalText = exportBtn ? exportBtn.textContent : "EXPORT PDF";
@@ -154,7 +231,7 @@
 
       // Add a timeout to the fetch
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       const url = `/export/interaction/pdf/${historyId}/`;
       console.log("Fetching URL:", url);
@@ -164,7 +241,19 @@
           clearTimeout(timeoutId);
           console.log("Response status:", response.status);
           if (!response.ok) {
-            throw new Error(`Export failed with status: ${response.status}`);
+            return response
+              .json()
+              .then((errData) => {
+                throw new Error(
+                  errData.error ||
+                    `Export failed with status: ${response.status}`,
+                );
+              })
+              .catch(() => {
+                throw new Error(
+                  `Export failed with status: ${response.status}`,
+                );
+              });
           }
           return response.blob();
         })
@@ -204,9 +293,6 @@
               exportBtn.style.pointerEvents = "auto";
             }, 2000);
           }
-        })
-        .finally(() => {
-          this._isExporting = false;
         });
     },
   };
