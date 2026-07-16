@@ -86,9 +86,13 @@
         <div id="security_chpassword_div_par">
           <div id="security_chpassword_div">
             <h4>
-              Account Password<span id="passch">Last changed 4 months ago</span>
+              Account Password<span id="passch">Must not be OAuth User to reset password.</span>
             </h4>
-            <button type="button">Change Password</button>
+            <button type="button"
+            {% if user.is_oauth_user %}
+            disabled
+            {% endif %}
+            >Change Password</button>
           </div>
         </div>
         <div class="settings_toggle_divs">
@@ -181,7 +185,7 @@
                 and audit history for clinical record-keeping compliance
               </p>
             </h4>
-            <button type="button">
+            <button type="button" id="export_all_btn">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -223,4 +227,46 @@
       </div>
     </form>
   </div>
+
+  <!-- Password Change Dialog -->
+<div class="overlay" id="passwordOverlay">
+  <div class="dialog password-dialog">
+    <h3>Change Password</h3>
+    <p>
+      Enter the OTP sent to your registered email and set a new password.
+    </p>
+    
+    <div class="password-form">
+      <div class="form-group">
+        <label for="otpInput">OTP Code</label>
+        <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6">
+        <div id="otpError" class="error-message"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="newPasswordInput">New Password</label>
+        <input type="password" id="newPasswordInput" placeholder="Enter new password (min 8 characters)">
+        <div id="passwordError" class="error-message"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPasswordInput">Confirm Password</label>
+        <input type="password" id="confirmPasswordInput" placeholder="Confirm new password">
+        <div id="confirmError" class="error-message"></div>
+      </div>
+      
+      <div class="otp-actions">
+        <a href="#" id="resendOtpLink">Didn't receive OTP? Resend</a>
+        <span id="resendStatus" class="resend-status"></span>
+      </div>
+    </div>
+    
+    <div class="buttons">
+      <button class="password-confirm-btn" id="confirmPasswordBtn">Update Password</button>
+      <button class="cancel-btn" id="cancelPasswordBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
 </body>

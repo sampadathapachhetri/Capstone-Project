@@ -57,9 +57,9 @@
         </p>
       </div>
       <div id="analysis_summary_right">
-      {% if data.severity_level == 3 %}
+      {% if data.severity_level == 2 %}
         <div id="analysis_summary_card" class="analysis_summary_critical">
-      {% elif data.severity_level == 2 %}
+      {% elif data.severity_level == 1 %}
         <div id="analysis_summary_card" class="analysis_summary_moderate">
       {% else %}
         <div id="analysis_summary_card" class="analysis_summary_low">
@@ -78,9 +78,9 @@
         <div class="analysis_summary_recom"></div>
       </div>
     </div>
-    {% if data.severity_level == 3 %}
+    {% if data.severity_level == 2 %}
     <div id="analysis_details" class="analysis_details_high">
-    {% elif data.severity_level == 2 %}
+    {% elif data.severity_level == 1 %}
     <div id="analysis_details" class="analysis_details_medium">
 
     {% else %}

@@ -25,7 +25,16 @@ urlpatterns=[
     path('switch_status/<int:medicationId>',view=views.switchStatusMedication,name="switch_status"),
     path("api/requestotp",view=views.requestOTP,name="request_otp"),
     path("api/requestPassReset",view=views.requestResetPassword,name="request_pass_reset"),
-    path("delete_account/",view=views.deleteAccount,name="remove_account")
+    path("delete_account/",view=views.deleteAccount,name="remove_account"),
+    path("api/gethistory/<int:historyId>",view=views.getInteractionHistorySingle,name="get_history"),
+    path('api/history/', views.api_history_paginated, name='api_history_paginated'),
+    path('api/medications/', views.api_medications, name='api_medications'),
+    
+    # Export URLs
+    path('export/combined/pdf/', views.export_combined_pdf, name='export_combined_pdf'),
+    path('export/history/pdf/', views.export_history_pdf, name='export_history_pdf'),
+    path('export/interaction/pdf/<int:history_id>/', views.export_interaction_pdf, name='export_interaction_pdf'),
+    path('export/history/csv/', views.export_history_csv, name='export_history_csv'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

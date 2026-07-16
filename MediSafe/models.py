@@ -113,7 +113,16 @@ class InteractionManager(models.Manager):
                 date_time=dateTime
             )
             return history
-
+    def create_history_of_interaction(self,user,interaction,dateTime):
+        try:
+            history=UserHistory.objects.create(
+                user=user,
+                interaction=interaction,
+                date_time=dateTime
+            )
+            return history
+        except Exception as e:
+            print("Exception found on create_historoy_of_interaction: ",e)
             
 class Users(models.Model):
     objects=UserManager()
@@ -344,6 +353,9 @@ class Drug(models.Model):
 
 class Drug_Interactions(models.Model):
     objects=InteractionManager()
+    id=models.AutoField(
+        primary_key=True,
+    )
     first_drug=models.ForeignKey(
         Drug,
         on_delete=models.CASCADE,
@@ -376,7 +388,7 @@ class UserHistory(models.Model):
     )
     date_time=models.DateTimeField(
         auto_now_add=True,
-
+    
     )
     interaction=models.ForeignKey(Drug_Interactions,on_delete=models.CASCADE,
                                   related_name='interaction')

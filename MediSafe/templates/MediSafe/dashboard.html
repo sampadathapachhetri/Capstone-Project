@@ -87,39 +87,68 @@
           <span onclick="window.location.href='?page=history'" id="view_all_button">View All</span>
         </div>
         <div id="dash_botleft_list">
-          {% if recent_checks %}
-            {% for item in recent_checks %}
-            <div class="dash_recent_li">
-              <div class="dash_li_left">
-                <div class="dash_li_img_div">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#475569">
-                    <path d="M420-260h120v-100h100v-120H540v-100H420v100H320v120h100v100ZM280-120q-33 0-56.5-23.5T200-200v-440q0-33 23.5-56.5T280-720h400q33 0 56.5 23.5T760-640v440q0 33-23.5 56.5T680-120H280Zm0-80h400v-440H280v440Zm-40-560v-80h480v80H240Zm40 120v440-440Z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="dash_drug_names">{{ item.interaction.first_drug.common_name }} + {{ item.interaction.second_drug.common_name }}</h4>
-                  <span class="dash_drugcheck_time">Checked {{ item.date_time|date:"M d, Y" }} at {{ item.date_time|date:"h:i A" }}</span>
-                </div>
-              </div>
-              <div class="dash_li_right">
-                <div class="dash_drug_interaction_{{ item.interaction.severity|lower }}">
-                  <span class="dash_drug_interaction">{{ item.interaction.severity|upper }} INTERACTION</span>
-                </div>
-                <svg class="dash_li_eye" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#9CA3AF" onclick="window.location.href='{% url 'report_detail' item.id %}'">
-                  <path d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z" />
-                </svg>
-              </div>
-            </div>
-            {% endfor %}
-          {% else %}
-            <div class="dash_empty_state">
-              <p>No recent checks found</p>
-              <span>Start a new check to see results here</span>
-            </div>
-          {% endif %}
+  {% if recent_checks %}
+    {% for item in recent_checks %}
+    <div class="dash_recent_li" data-description="{{ item.interaction.description|default:'No description available.' }}">
+      <div class="dash_li_left">
+        <div class="dash_li_img_div">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#475569">
+            <path d="M420-260h120v-100h100v-120H540v-100H420v100H320v120h100v100ZM280-120q-33 0-56.5-23.5T200-200v-440q0-33 23.5-56.5T280-720h400q33 0 56.5 23.5T760-640v440q0 33-23.5 56.5T680-120H280Zm0-80h400v-440H280v440Zm-40-560v-80h480v80H240Zm40 120v440-440Z" />
+          </svg>
         </div>
+        <div>
+          <h4 class="dash_drug_names">{{ item.interaction.first_drug.common_name }} + {{ item.interaction.second_drug.common_name }}</h4>
+          <span class="dash_drugcheck_time">Checked {{ item.date_time|date:"M d, Y" }} at {{ item.date_time|date:"h:i A" }}</span>
+        </div>
+      </div>
+      <div class="dash_li_right">
+        <div class="dash_drug_interaction_{{ item.interaction.severity|lower }}">
+          <span class="dash_drug_interaction">{{ item.interaction.severity|upper }} INTERACTION</span>
+        </div>
+        <svg class="dash_li_eye" data-report-id="{{ item.id }}" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#9CA3AF">
+          <path d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z" />
+        </svg>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="dash_empty_state">
+      <p>No recent checks found</p>
+      <span>Start a new check to see results here</span>
+    </div>
+  {% endif %}
+</div>
       </div>
     </div>
   </div>
+
+
+  <div id="analysisModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content-wrapper">
+    <div class="modal-header-bar">
+      <h3>
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0051f8">
+          <path d="M400-400h160v-80H400v80Zm0-120h320v-80H400v80Zm0-120h320v-80H400v80Zm-80 400q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+        </svg>
+        Interaction Analysis
+      </h3>
+      <button class="modal-close-btn" onclick="closeAnalysisModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-scroll-content">
+      <!-- Loading State -->
+      <div id="analysisLoadingState" class="analysis-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading interaction details...</p>
+      </div>
+      
+      <!-- Content will be rendered here by JavaScript -->
+      <div id="analysisContent" style="display: none;"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

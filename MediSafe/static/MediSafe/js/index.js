@@ -2,6 +2,35 @@ window.MedicalApp = window.MedicalApp || {};
 window.MedicalApp.Pages = window.MedicalApp.Pages || {};
 window.MedicalApp.currentPage = null;
 
+function showNotification(
+  title,
+  body,
+  icon = "/static/MediSafe/images/logo.png",
+) {
+  // Check if browser supports notifications
+  if (!("Notification" in window)) {
+    console.log("Browser doesn't support notifications");
+    return;
+  }
+
+  // Check permission
+  if (Notification.permission === "granted") {
+    new Notification(title, {
+      body: body,
+      icon: icon,
+    });
+  } else if (Notification.permission === "default") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification(title, {
+          body: body,
+          icon: icon,
+        });
+      }
+    });
+  }
+}
+
 let dashboard_nav = document.getElementById("dashboard_nav_button");
 let drugcheck_nav = document.getElementById("drug_checker_nav_button");
 let history_nav = document.getElementById("history_nav_button");
@@ -30,6 +59,8 @@ let activeNav = null;
 let contents = document.getElementById("contents_div");
 
 document.addEventListener("DOMContentLoaded", async (e) => {
+  // showNotification("Hello", "This is a test notification");
+
   const urlParams = new URLSearchParams(window.location.search);
   const page = urlParams.get("page");
 

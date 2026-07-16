@@ -1,7 +1,10 @@
 {% load static %}
-<body>
+<!DOCTYPE html>
+<html>
+<head>
   <link rel="stylesheet" href="{% static 'MediSafe/css/history.css' %}" />
-
+</head>
+<body>
   <div id="history_root">
     <div id="history_topfirst">
       <div id="history_text">
@@ -11,150 +14,157 @@
         </span>
       </div>
       <div id="history_top_buttons">
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#585858">
-            <path
-              d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+        <button id="export_csv_btn">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#585858">
+            <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
           </svg>
           Export CSV
         </button>
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#585858">
-            <path
-              d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-51 35-85.5t85-34.5h560q51 0 85.5 34.5T880-520v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-560H200q-17 0-28.5 11.5T160-520v160h80v-80h480v80h80Z" />
+        <button id="export_history_pdf_btn">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#585858">
+            <path d="M640-640v-120H320v120h-80v-200h480v200h-80Zm-480 80h640-640Zm560 100q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320Zm80 80H240v-160H80v-240q0-51 35-85.5t85-34.5h560q51 0 85.5 34.5T880-520v240H720v160Zm80-240v-160q0-17-11.5-28.5T760-560H200q-17 0-28.5 11.5T160-520v160h80v-80h480v80h80Z"/>
           </svg>
-          Print All
+          Export PDF
         </button>
       </div>
     </div>
     <div id="history_topsecond">
-      <div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="#585858">
-          <path
-            d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+      <div id="srdiv">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#585858">
+          <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
         </svg>
-        <input type="text" placeholder="Search drug name or date..." />
+        <input type="text" placeholder="Search drug name or date..." id="searchInput" />
       </div>
-      <select class="history_top_buttons">
-        <option>Severity: All</option>
-      </select>
-      <button class="history_top_buttons">
+
+      
+      <div class="custom-dropdown" id="severityDropdown">
+      <button class="history_top_buttons dropdown-toggle" id="severityToggle" type="button">
+        <span id="selectedSeverity">Severity: All</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#585858">
+          <path d="M480-360 280-560h400L480-360Z"/>
+        </svg>
+      </button>
+      <ul class="dropdown-menu" id="severityMenu">
+        <li data-value="all" class="active">Severity: All</li>
+        <li data-value="high">🔴 High</li>
+        <li data-value="moderate">🟠 Moderate</li>
+        <li data-value="low">🟢 Low</li>
+      </ul>
+      </div>
+
+
+      <button class="history_top_buttons" id="dateRangeBtn">
         Date Range
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="16px"
-          fill="#585858">
-          <path
-            d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-188.5-11.5Q280-423 280-440t11.5-28.5Q303-480 320-480t28.5 11.5Q360-457 360-440t-11.5 28.5Q337-400 320-400t-28.5-11.5ZM640-400q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-188.5-11.5Q280-263 280-280t11.5-28.5Q303-320 320-320t28.5 11.5Q360-297 360-280t-11.5 28.5Q337-240 320-240t-28.5-11.5ZM640-240q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#585858">
+          <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-188.5-11.5Q280-423 280-440t11.5-28.5Q303-480 320-480t28.5 11.5Q360-457 360-440t-11.5 28.5Q337-400 320-400t-28.5-11.5ZM640-400q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-188.5-11.5Q280-263 280-280t11.5-28.5Q303-320 320-320t28.5 11.5Q360-297 360-280t-11.5 28.5Q337-240 320-240t-28.5-11.5ZM640-240q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/>
         </svg>
       </button>
-      <button id="filter_button">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="#000000">
-          <path
-            d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
+      <span id="filter_button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+          <path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/>
         </svg>
-      </button>
+      </span>
     </div>
-
-
 
     <div id="history_main">
-  <!-- History Table -->
-  <table id="history_table">
-    <thead>
-      <tr>
-        <th>DATE CHECKED</th>
-        <th>DRUGS CHECKED</th>
-        <th>HIGHEST SEVERITY</th>
-        <th>ACTION</th>
-      </tr>
-    </thead>
-    <tbody id="history_table_body">
-      {% if page_obj %}
-        {% for item in page_obj %}
-        <tr class="history_row">
-          <td>
-            <div class="history_card_date">
-              <h3>{{ item.date_time|date:"M d, Y" }}</h3>
-              <span>{{ item.date_time|date:"h:i A" }}</span>
-            </div>
-          </td>
-          <td>
-            <div class="history_card_drugs">
-              <span>{{ item.interaction.first_drug.common_name }}</span>
-              <span>{{ item.interaction.second_drug.common_name }}</span>
-            </div>
-          </td>
-          <td>
-            <div class="history_card_risk_{{ item.interaction.severity|lower }}">
-              <div class="dot severity-{{ item.interaction.severity_level }}"></div>
-              <span>{{ item.interaction.severity }}</span>
-            </div>
-          </td>
-          <td>
-            <a href="{% url 'report_detail' item.id %}" class="view-report-btn">View Report</a>
-          </td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="4" class="empty-state">No history found</td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
+      <table id="history_table">
+        <thead>
+          <tr>
+            <th>DATE CHECKED</th>
+            <th>DRUGS CHECKED</th>
+            <th>HIGHEST SEVERITY</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="history_table_body">
+          {% if page_obj %}
+            {% for item in page_obj %}
+            <tr class="history_row" data-description="{{ item.interaction.description|default:'No description available.' }}">
+              <td>
+                <div class="history_card_date">
+                  <h3>{{ item.date_time|date:"M d, Y" }}</h3>
+                  <span>{{ item.date_time|date:"h:i A" }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="history_card_drugs">
+                  <span>{{ item.interaction.first_drug.common_name }}</span>
+                  <span>{{ item.interaction.second_drug.common_name }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="history_card_risk_{{ item.interaction.severity|lower }}">
+                  <div class="dot severity-{{ item.interaction.severity_level }}"></div>
+                  <span>{{ item.interaction.severity }}</span>
+                </div>
+              </td>
+              <td>
+                <a href="#" class="view-report-link" data-report-id="{{ item.id }}">View Report</a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="4" class="empty-state">No history found</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
 
-  <!-- Bottom Pagination -->
-  <div id="history_main_bottom">
-    <span>
-      Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} 
-      of {{ page_obj.paginator.count }} checks
-    </span>
-    <div class="pagination_controls">
-      {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">&lt;</a>
-      {% else %}
-        <button class="page-btn" disabled>&lt;</button>
-      {% endif %}
+      <div id="history_main_bottom">
+        <span id="pagination_info">
+          Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} 
+          of {{ page_obj.paginator.count }} checks
+        </span>
+        <div class="pagination_controls" id="pagination_controls">
+          {% if page_obj.has_previous %}
+            <button class="page-btn" data-page="{{ page_obj.previous_page_number }}">&lt;</button>
+          {% else %}
+            <button class="page-btn" disabled>&lt;</button>
+          {% endif %}
 
-      {% for num in page_obj.paginator.page_range %}
-        {% if num == page_obj.number %}
-          <button class="page-btn active">{{ num }}</button>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-          <a href="?page={{ num }}" class="page-btn">{{ num }}</a>
-        {% endif %}
-      {% endfor %}
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <button class="page-btn active" data-page="{{ num }}">{{ num }}</button>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <button class="page-btn" data-page="{{ num }}">{{ num }}</button>
+            {% endif %}
+          {% endfor %}
 
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="page-btn">&gt;</a>
-      {% else %}
-        <button class="page-btn" disabled>&gt;</button>
-      {% endif %}
+          {% if page_obj.has_next %}
+            <button class="page-btn" data-page="{{ page_obj.next_page_number }}">&gt;</button>
+          {% else %}
+            <button class="page-btn" disabled>&gt;</button>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- Modal -->
+  <div id="analysisModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content-wrapper">
+      <div class="modal-header-bar">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0051f8">
+            <path d="M400-400h160v-80H400v80Zm0-120h320v-80H400v80Zm0-120h320v-80H400v80Zm-80 400q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+          </svg>
+          Interaction Analysis
+        </h3>
+        <button class="modal-close-btn" onclick="closeAnalysisModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-scroll-content">
+        <div id="analysisLoadingState" class="analysis-loading">
+          <div class="loading-spinner"></div>
+          <p>Loading interaction details...</p>
+        </div>
+        <div id="analysisContent" style="display: none;"></div>
+      </div>
+    </div>
   </div>
 </body>
+</html>

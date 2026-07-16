@@ -9,6 +9,11 @@ from django.conf import settings
 import smtplib
 from email.mime.text import MIMEText
 import random,string
+
+
+
+
+
 def hash_password(plaintext):
     return make_password(plaintext)
 
@@ -81,4 +86,6 @@ def runFzMatchingForAllWords(value:str):
 
 def generateRandomOTP():
      return ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    
+ 
+ 
+ 
