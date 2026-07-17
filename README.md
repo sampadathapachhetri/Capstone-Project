@@ -14,7 +14,7 @@ This is a **capstone project** developed collaboratively by a group of students.
 - Raghav Raj Shrestha
 - Urvi Timilsina
 
-> ⚠️ Note: This project is still under development and may not be fully complete.
+> ⚠️ Note: The Dockerization is not Completely Finished. This is just a source code minor information. Documentation will be updated soon with manual.
 
 ---
 
