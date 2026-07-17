@@ -332,7 +332,7 @@
               </h4>
             </div>
             <div id="analysis_details_topright">
-              <a href="#" onclick="exportAnalysisPDF()">EXPORT PDF</a>
+              
             </div>
           </div>
           <div id="analysis_details_bottom">

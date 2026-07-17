@@ -1,4 +1,3 @@
-// ========== DOM ELEMENTS ==========
 let redirect_to_register = document.getElementById("redirect_to_register");
 let forget_password_href = document.getElementById("forget_password_href");
 let password_field = document.getElementById("password_field");
@@ -13,7 +12,6 @@ let resendStatus = document.getElementById("resendStatus");
 let otpDialog = document.getElementById("otpDialog");
 let csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]')?.value;
 
-// ========== EVENT LISTENERS ==========
 
 redirect_to_register.addEventListener("click", (e) => {
   window.location.href = "/register/";
@@ -100,10 +98,8 @@ async function submitLogin(email, password, remember, otp) {
     const data = await response.json();
 
     if (data.success) {
-      // Login successful - redirect
       window.location.href = "/";
     } else {
-      // Show error
       if (otp) {
         otpError.textContent = data.msg || "Invalid OTP. Please try again.";
         otpInput.classList.add("error");
@@ -149,7 +145,7 @@ otpSubmitBtn.addEventListener("click", async function () {
   const otp = otpInput.value.trim();
 
   if (otp.length !== 5) {
-    otpError.textContent = "Please enter a valid 6-digit OTP";
+    otpError.textContent = "Please enter a valid 5-Character OTP";
     otpInput.classList.add("error");
     return;
   }

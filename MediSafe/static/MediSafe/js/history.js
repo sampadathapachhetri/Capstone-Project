@@ -701,7 +701,6 @@
               <h4>Interaction Detail <span>${data.drug1} + ${data.drug2}</span></h4>
             </div>
             <div id="analysis_details_topright">
-              <a href="#" onclick="exportAnalysisPDF()">EXPORT PDF</a>
             </div>
           </div>
           <div id="analysis_details_bottom">

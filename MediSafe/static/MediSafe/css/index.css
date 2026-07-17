@@ -166,7 +166,7 @@ button {
   gap: 10%;
 }
 #notification_button {
-  cursor: pointer;
+  cursor: help;
 }
 #notification_button:hover {
   fill: #0084ff;

@@ -135,13 +135,12 @@ def is_tfa_enabled(email):
 def createAuthSession(request, userID, remember=False):
     request.session['user_id'] = str(userID)
     if remember:
-        request.session.set_expiry(1209600)  # 2 weeks
+        request.session.set_expiry(1209600) 
     else:
         request.session.set_expiry(0)
     request.session.save()
 
 
-# ========== LOGIN VIEWS ==========
 
 def login(request):
     context = {}
@@ -175,7 +174,6 @@ def validate_login(request):
     
     email = request.POST.get("email")
     password = request.POST.get("password")
-    otp = request.POST.get("otp")
     remember = request.POST.get("remember") == "on"
     
     if not email or not password:
@@ -185,10 +183,12 @@ def validate_login(request):
         return JsonResponse({"success": False, "msg": "Invalid email or password"})
     
     userId = authenticate(email=email, password=password)
+    print("User",userId)
     if userId is None:
         return JsonResponse({"success": False, "msg": "Invalid User Credentials"})
     
     if is_tfa_enabled(email=email):
+        otp = request.POST.get("otp")
         if not otp:
             return JsonResponse({"success": False, "msg": "OTP is required for this account"})
         
@@ -455,7 +455,6 @@ def history(request):
     if user is None:
         return redirect("login")
     
-    # Get first page for initial render
     page_obj = get_user_history_page(user=user, page_number=1)
     
     context = {
@@ -464,7 +463,6 @@ def history(request):
     
     return render(request=request, template_name='MediSafe/history.html', context=context)
 
-# API endpoint for AJAX pagination
 def api_history_paginated(request):
     try:
         user = helpers.getUserFromSession(request.session)
@@ -477,13 +475,11 @@ def api_history_paginated(request):
         page_number = request.GET.get('page', 1)
         per_page = request.GET.get('per_page', 10)
         
-        # Get filter parameters
         search_query = request.GET.get('search', '').strip()
         severity_filter = request.GET.get('severity', 'all').strip()
         date_from = request.GET.get('date_from', '').strip()
         date_to = request.GET.get('date_to', '').strip()
         
-        # Get base queryset
         history_qs = models.UserHistory.objects.filter(
             user=user
         ).select_related(
@@ -492,7 +488,6 @@ def api_history_paginated(request):
             'interaction__second_drug'
         )
         
-        # Apply search filter (if not empty)
         if search_query:
             history_qs = history_qs.filter(
                 Q(interaction__first_drug__common_name__icontains=search_query) |
@@ -510,7 +505,6 @@ def api_history_paginated(request):
         if date_to:
             history_qs = history_qs.filter(date_time__date__lte=date_to)
         
-        # Paginate
         paginator = Paginator(history_qs, per_page)
         
         try:
@@ -518,7 +512,6 @@ def api_history_paginated(request):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
         
-        # Build response data
         data = []
         for item in page_obj:
             data.append({
@@ -563,7 +556,6 @@ def getInteractionHistorySingle(request, historyId):
     try:
         user = helpers.getUserFromSession(request.session)
         
-        # Use select_related for efficiency
         history_entry = models.UserHistory.objects.select_related(
             'interaction',
             'interaction__first_drug',
@@ -635,7 +627,6 @@ def get_user_history_page(user, page_number, per_page=10):
 
 
 def report_detail(request, history_id):
-    """View for displaying a single history report"""
     user = helpers.getUserFromSession(request.session)
     if user is None:
         return redirect("login")
@@ -660,7 +651,6 @@ def medications(request):
     context['medications']=medications
     return render(request=request,template_name='MediSafe/medications.html',context=context)
 
-# API endpoint for medications with filtering
 def api_medications(request):
     try:
         user = models.Users.objects.get(id=request.session.get("user_id"))
@@ -673,14 +663,11 @@ def api_medications(request):
         page_number = request.GET.get('page', 1)
         per_page = request.GET.get('per_page', 10)
         
-        # Get filter parameters
         search_query = request.GET.get('search', '').strip()
         status_filter = request.GET.get('active', 'all').strip()
         
-        # Get base queryset
         medications_qs = models.UserMedications.objects.filter(user=user)
         
-        # Apply search filter (if not empty)
         if search_query:
             medications_qs = medications_qs.filter(
                 Q(name__icontains=search_query) |
@@ -688,14 +675,12 @@ def api_medications(request):
                 Q(dosage_frequency__icontains=search_query)
             )
         
-        # Apply status filter (if not 'all' or empty)
         if status_filter and status_filter != 'all':
             if status_filter.lower() == 'true':
                 medications_qs = medications_qs.filter(active=True)
             elif status_filter.lower() == 'false':
                 medications_qs = medications_qs.filter(active=False)
         
-        # Paginate
         paginator = Paginator(medications_qs, per_page)
         
         try:
@@ -703,7 +688,6 @@ def api_medications(request):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
         
-        # Build response data
         data = []
         for med in page_obj:
             data.append({
@@ -1033,6 +1017,60 @@ def github_callback(request):
     createAuthSession(request=request,userID=newUser.id)
     return redirect(index)
 
+
+def google_login(request):
+    authorize_url = "https://accounts.google.com/o/oauth2/v2/auth"
+    redirect_url = ds.GOOGLE_REDIRECT_URI
+    
+    params = {
+        'client_id': ds.GOOGLE_CLIENT_ID,
+        'redirect_uri': redirect_url,
+        'response_type': 'code',
+        'scope': 'email profile',
+    }
+    
+    auth_url = f"{authorize_url}?client_id={params['client_id']}&redirect_uri={params['redirect_uri']}&response_type={params['response_type']}&scope={params['scope']}"
+    return redirect(auth_url)
+
+def google_callback(request):
+    code = request.GET.get('code')
+    token_resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        headers={"Accept": "application/json"},
+        data={
+            "client_id": ds.GOOGLE_CLIENT_ID,
+            "client_secret": ds.GOOGLE_CLIENT_SECRET,
+            "code": code,
+            "redirect_uri": ds.GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        }
+    )
+    access_token = token_resp.json()["access_token"]
+    user_resp = requests.get(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+    print(f"RESPONSE: {user_resp}")
+    google_user = user_resp.json()
+    if google_user.get('name'):
+        full_name = google_user['name']
+    else:
+        full_name = google_user['email']
+    provider = "google"
+    provider_name = "Google"
+    provider_user_id = google_user['id']
+    
+    newUser = models.Users.objects.create_oauth_user_and_profile(
+        full_name=full_name,
+        provider=provider,
+        provider_name=provider_name,
+        provider_user_id=provider_user_id,
+        access_token=access_token,
+    )
+    if newUser == None:
+        return redirect(login)
+    createAuthSession(request=request, userID=newUser.id)
+    return redirect(index)
 
 
 # ========== COMBINED EXPORT (Medications + History) ==========

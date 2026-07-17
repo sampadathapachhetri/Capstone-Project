@@ -31,11 +31,11 @@ urlpatterns=[
     path('api/medications/', views.api_medications, name='api_medications'),
     path('api/canAlertNot/', views.api_canGetAlertNotification, name='api_medications'),
     path('api/canReminderNot/', views.shouldPushReminderNotification, name='api_medications'),
-    
+    path('auth/google/', view=views.google_login, name='google_login'),
+    path('auth/google/callback/', view=views.google_callback, name='google_callback'),
     
      path('validate_login/', views.validate_login, name='validate_login'),
     path('api/isTfaEnabled/', views.api_is_tfa_enabled, name='is_tfa_enabled'),
-    # Export URLs
     path('export/combined/pdf/', views.export_combined_pdf, name='export_combined_pdf'),
     path('export/history/pdf/', views.export_history_pdf, name='export_history_pdf'),
     path('export/interaction/pdf/<int:history_id>/', views.export_interaction_pdf, name='export_interaction_pdf'),

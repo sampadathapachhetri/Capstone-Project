@@ -33,3 +33,5 @@ tqdm==4.68.4
 
 
 reportlab==5.0.0
+waitress==3.0.2
+whitenoise==6.12.0

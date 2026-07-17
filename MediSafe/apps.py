@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from .ddi_predictor import predictor
+
 
 class MedisafeConfig(AppConfig):
     name = 'MediSafe'
@@ -10,7 +10,6 @@ class MedisafeConfig(AppConfig):
             # ocr_service=OCRService()
             print("Pre loading Array of drug matcher")
             from .raghav.ocr.drug_matcher  import DrugMatcher
-            predictor.load_models()   
             matcher = DrugMatcher()     
                 
             print("Loaded successfully")

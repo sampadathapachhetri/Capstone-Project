@@ -299,6 +299,13 @@ body {
   opacity: 60%;
   font-size: 0.6em;
 }
+#right_bottom_refs > span {
+  text-align: center;
+  text-decoration: none;
+  color: black;
+  opacity: 60%;
+  font-size: 0.6em;
+}
 
 /* OTP Dialog Styles */
 .otp-overlay {

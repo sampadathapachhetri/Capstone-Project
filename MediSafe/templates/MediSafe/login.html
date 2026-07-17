@@ -97,7 +97,7 @@
         </div>
         
         <div id="extra_options">
-          <button id="google_login_button">
+          <button onclick="window.location.href=`{% url 'google_login' %}`" id="google_login_button">
             <img src="{% static 'MediSafe/images/google_icon.png' %}">
             <span>Sign In with Google</span>
           </button>
@@ -115,9 +115,10 @@
         </span>
         
         <div id="right_bottom_refs">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Contact Support</a>
+          <span >
+            Disclaimer: This tool provides informational content only. 
+Consult your physician for personalized medical advice.
+          </span>
         </div>
       </div>
     </div>
@@ -130,13 +131,13 @@
           <button class="otp-close-btn" onclick="closeOTPDialog()">✕</button>
         </div>
         <div class="otp-dialog-body">
-          <p>Enter the 6-digit OTP sent to your registered email.</p>
+          <p>Enter the 5-Character OTP sent to your registered email.</p>
           <div class="otp-input-group">
             <input 
               type="text" 
               id="otpInput" 
-              maxlength="6" 
-              placeholder="Enter 6-digit OTP"
+              maxlength="5" 
+              placeholder="Enter 5-Character OTP"
               autocomplete="one-time-code"
             />
             <div id="otpError" class="otp-error-message"></div>

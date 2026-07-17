@@ -79,7 +79,7 @@
           width: 2em;
           height: 2em;
           padding: 4px;
-          cursor: pointer;
+          cursor: default;
         }
         > input {
           box-sizing: border-box;
