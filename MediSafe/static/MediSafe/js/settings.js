@@ -285,7 +285,7 @@
 
       // Validate OTP
       if (otp.length !== 5) {
-        this.otpError.textContent = "Please enter a valid 6-digit OTP";
+        this.otpError.textContent = "Please enter a valid 5-digit OTP";
         this.otpInput.classList.add("error");
         return;
       }

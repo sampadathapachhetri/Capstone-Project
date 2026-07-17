@@ -233,7 +233,7 @@ def register(request):
                 full_name=fullName,
                 email=email,
                 password=password)
-            createAuthSession(request=request,userID=newUser.id,exp=0)
+            createAuthSession(request=request,userID=newUser.id)
             return redirect('index')
         
         if error:

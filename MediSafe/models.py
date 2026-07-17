@@ -404,7 +404,7 @@ class UserHistory(models.Model):
     
     
 class OTPManager(models.Manager):
-    def remove_and_create(self,email:str,otpval:str,expiration_time=(timezone.now()+timedelta(minutes=20))):
+    def remove_and_create(self,email:str,otpval:str,expiration_time=(timezone.now()+timedelta(minutes=60))):
         try:
             otp=OTP.objects.get(email=email)
             otp.delete()
