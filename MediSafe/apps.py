@@ -7,7 +7,7 @@ class MedisafeConfig(AppConfig):
         try:
             print("Pre Loading OCR")
             from .raghav.ocr.ocr_engine import OCRService
-            # ocr_service=OCRService()
+            ocr_service=OCRService()
             print("Pre loading Array of drug matcher")
             from .raghav.ocr.drug_matcher  import DrugMatcher
             matcher = DrugMatcher()     
