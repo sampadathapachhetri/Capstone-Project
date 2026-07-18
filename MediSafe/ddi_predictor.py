@@ -97,6 +97,7 @@ def predict(drug1, drug2):
 def get_severity(drug1, drug2):
     """Return just the severity string."""
     result = predictor.predict(drug1, drug2)
+    print("Result from prediction: ",result)
     return result.get('severity') if 'error' not in result else None
 def get_severity_level(drug1, drug2):
     severity = get_severity(drug1, drug2)

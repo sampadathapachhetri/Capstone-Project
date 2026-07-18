@@ -900,25 +900,34 @@ def intAnalysis(request):
         drug2Name=secondDrug.common_name
         description="""The Description for this interaction was not found in the Database. Proceed with caution."""
         interaction=None
+        severity=None
         try:
             interaction=models.Drug_Interactions.objects.get(first_drug=firstDrug,second_drug=secondDrug)
         except Exception as e: 
             print(f"Interaction not in DB: {e}")
         if(interaction==None):
+            print(f"Interaction doesnot exist, getting new Severity from model drugs: ({drug1},{drug2})")
             severityLevel = get_severity_level(drug1=drug1,drug2=drug2)
+            match severityLevel:
+                case 0:
+                    severity="Low"   
+                case 1: 
+                    severity="Moderate"   
+                case 2:
+                    severity="High"
+            print("New Sev: ",severityLevel,severity)
+            try: 
+                interaction,_=models.Drug_Interactions.objects.get_or_create(first_drug=firstDrug,second_drug=secondDrug,description=description,severity=severity,severity_level=severityLevel)
+            except Exception as e:
+                print("ERROR Trying to add new interaction: ",e)
         else:
-            severity=interaction.severity_level
+            severity=interaction.severity
             description=interaction.description
             severityLevel=interaction.severity_level
         error=""
-        severity="Unidentified"
-        match severityLevel:
-            case 0:
-                severity="Low"   
-            case 1: 
-                severity="Moderate"   
-            case 2:
-                severity="High"   
+        description=interaction.description
+        severityLevel=interaction.severity_level
+        severity=interaction.severity
         data={
             "drug1":drug1Name,
             "drug2":drug2Name,
@@ -931,17 +940,12 @@ def intAnalysis(request):
             "error":error
         }
         user=helpers.getUserFromSession(session=request.session)
-        if(interaction==None):
-            print("Interaction doesnot exist, creating a new one")
-            history=models.Drug_Interactions.objects.create_interaction_and_history(
-                user=user,drug1=drug1,drug2=drug2,description=description,severity=severity,severityLevel=severityLevel,dateTime=timezone.now()
-            )
-        else:
-            history=models.Drug_Interactions.objects.create_history_of_interaction(
-                user=user,
-                interaction=interaction,
-                dateTime=timezone.now()
-            )
+        
+        history=models.Drug_Interactions.objects.create_history_of_interaction(
+            user=user,
+            interaction=interaction,
+            dateTime=timezone.now()
+        )
         
         
         return render(request=request,template_name='MediSafe/intAnalysis.html',context=context)

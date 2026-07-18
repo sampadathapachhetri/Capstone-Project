@@ -19,7 +19,8 @@
   flex-direction: column;
   gap: 2em;
   overflow: hidden;
-  background: #f8fafc;
+  /* background: #f8fafc; */
+  background: transparent;
 }
 
 #dash_top {

@@ -29,10 +29,15 @@ button {
   width: 3em;
   height: 3em;
   display: flex;
-  border-radius: 6px;
-  background-color: #005fb8;
-  padding: 0.5em;
+  background-color: transparent;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
+  padding: 0;
+  > img {
+    width: 100%;
+    height: 100%;
+  }
 }
 #left_top_info {
   display: flex;
@@ -210,7 +215,9 @@ button {
 
 #contents_div {
   box-sizing: border-box;
-  background-color: #f5f7f8;
+  /* background-color: #f5f7f8; */
+  background: url("../images/clean-medical-background.png");
+  background-size: contain;
   width: 100%;
   height: 94%;
   display: flex;

@@ -6,12 +6,14 @@ class MedisafeConfig(AppConfig):
     def ready(self):
         try:
             print("Pre Loading OCR")
-            from .raghav.ocr.ocr_engine import OCRService
-            ocr_service=OCRService()
-            print("Pre loading Array of drug matcher")
-            from .raghav.ocr.drug_matcher  import DrugMatcher
-            matcher = DrugMatcher()     
-                
+            # from .raghav.ocr.ocr_engine import OCRService
+            # ocr_service=OCRService()
+            # print("Pre loading Array of drug matcher")
+            # from .raghav.ocr.drug_matcher  import DrugMatcher
+            # matcher = DrugMatcher()     
+            from .ddi_predictor import DDIPredictor
+            ml=DDIPredictor()
+            ml.load_models()
             print("Loaded successfully")
         except Exception as e: 
             print(f"OCR service preloading failed: {e}")

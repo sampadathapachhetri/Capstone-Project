@@ -261,4 +261,5 @@ body {
   text-decoration: none;
   color: black;
   opacity: 60%;
+  cursor: default;
 }

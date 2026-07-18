@@ -58,10 +58,10 @@ body {
     margin: 0;
     font-size: 0.7em;
   }
-  img {
-    padding: 0.5em;
+  > img {
+    width: 1.5em;
+    height: 1.5em;
     border-radius: 8px;
-    background-color: #005fb8;
   }
   margin-bottom: 0.5em;
 }
