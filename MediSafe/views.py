@@ -331,7 +331,6 @@ def dashboard(request):
     
     pretty_username = user.full_name.split(" ")[0]
     
-    # Get all user history
     history = models.UserHistory.objects.filter(user=user)
     
     # Basic counts
@@ -358,7 +357,7 @@ def dashboard(request):
         percentage_value = 100 if currentmonth_checks > 0 else 0
         percentage_change = "increase" if currentmonth_checks > 0 else "no_change"
     
-    # High risk alerts (severity level 7-10)
+    # High risk alerts 
     total_highrisk_alerts = history.filter(interaction__severity_level__gte=2).count()
     
     # Recent 5 checks
@@ -387,11 +386,23 @@ def dashboard(request):
     return render(request, 'MediSafe/dashboard.html', context)
 
 def drugCheck(request):
+    user = helpers.getUserFromSession(request.session)
+    if user is None:
+        return redirect('login')
     return render(request=request,template_name='MediSafe/drugCheck.html',context={})
 
 
 def validateDrug(request):
     if request.method=="GET":
+        user = helpers.getUserFromSession(request.session)
+        if user is None:
+            responseJson={
+                        "commonname":"",
+                        "synonym":"",
+                        "drugbankId":"",
+                        "error":"User not logged in"
+                    } 
+            return JsonResponse(responseJson)
         drugname=request.GET.get("drugname")
         error=None
         if(drugname==None):
@@ -422,6 +433,12 @@ def validateDrug(request):
         return JsonResponse(responseJson)
 
 def extractName(request):
+    user=helpers.getUserFromSession(request.session)
+    if user==None:
+        return JsonResponse({
+            'success':False,
+            "commonname":""
+        })
     ocr_service=OCRService()
     if request.method!="POST":
         return JsonResponse({"error":"Method not allowed"},status=405)
@@ -555,7 +572,11 @@ def api_history_paginated(request):
 def getInteractionHistorySingle(request, historyId):
     try:
         user = helpers.getUserFromSession(request.session)
-        
+        if( user==None):
+            return JsonResponse({
+                'success':False,
+                "error":"User not logged in"
+            })
         history_entry = models.UserHistory.objects.select_related(
             'interaction',
             'interaction__first_drug',
@@ -626,25 +647,27 @@ def get_user_history_page(user, page_number, per_page=10):
     return page_obj
 
 
-def report_detail(request, history_id):
-    user = helpers.getUserFromSession(request.session)
-    if user is None:
-        return redirect("login")
+# def report_detail(request, history_id):
+#     user = helpers.getUserFromSession(request.session)
+#     if user is None:
+#         return redirect("login")
     
-    history_item = get_object_or_404(
-        models.UserHistory, 
-        id=history_id, 
-        user=user
-    )
+#     history_item = get_object_or_404(
+#         models.UserHistory, 
+#         id=history_id, 
+#         user=user
+#     )
     
-    context = {
-        'item': history_item,
-    }
+#     context = {
+#         'item': history_item,
+#     }
     
-    return JsonResponse(context)
+#     return JsonResponse(context)
 
 def medications(request):
-    user=models.Users.objects.get(id=request.session.get("user_id"))
+    user=helpers.getUserFromSession(request.session)
+    if(user ==None):
+        return redirect("login")
     userMedications=models.UserMedications.objects.filter(user=user)
     context={}
     medications=userMedications
@@ -743,7 +766,7 @@ def switchStatusMedication(request,medicationId):
     if(medicationId):
         user=helpers.getUserFromSession(request.session)
         if(not user):
-            return redirect('index')
+            return redirect('login')
         medication=models.UserMedications.objects.get(id=medicationId,user=user)
         medication.active=not medication.active
         medication.save()
@@ -892,6 +915,9 @@ def addMedications(request):
 
 def intAnalysis(request):
     if request.method=="GET":
+        user=helpers.getUserFromSession(session=request.session)
+        if(user==None):
+            return redirect("login")
         drug1=request.GET.get("drug1")
         drug2=request.GET.get("drug2")        
         firstDrug=models.Drug.objects.get(drug_bank_id=drug1)
@@ -908,6 +934,12 @@ def intAnalysis(request):
         if(interaction==None):
             print(f"Interaction doesnot exist, getting new Severity from model drugs: ({drug1},{drug2})")
             severityLevel = get_severity_level(drug1=drug1,drug2=drug2)
+            if(severityLevel==None):
+                context={
+                    "data":None,
+                    "error":"The Model was unable to predict the interaction severity with proper confidence."
+                }
+                return render(request=request,template_name='MediSafe/intAnalysis.html',context=context)
             match severityLevel:
                 case 0:
                     severity="Low"   

@@ -176,14 +176,14 @@
 
       // Also create a human-readable formatted version
       const formattedText = `
-Drug Interaction Report
-------------------------
-Drug 1: ${data.drug1}
-Drug 2: ${data.drug2}
-Severity: ${data.severity.toUpperCase()}
-Description: ${data.description || "No description available."}
-Mechanism: ${data.mechanism || "No mechanism available."}
-      `.trim();
+        Drug Interaction Report
+        ------------------------
+        Drug 1: ${data.drug1}
+        Drug 2: ${data.drug2}
+        Severity: ${data.severity.toUpperCase()}
+        Description: ${data.description || "No description available."}
+        Mechanism: ${data.mechanism || "No mechanism available."}
+              `.trim();
 
       // Copy both formats to clipboard
       const textToCopy = `${formattedText}\n\n--- CSV Format ---\n${csvLine}`;

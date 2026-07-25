@@ -61,8 +61,8 @@ def sendEmail(to:str, message:str,subject="Default Subject"):
         return "Failed to send email"
 
 def getUserFromSession(session):
-    userId=session['user_id']
     try:
+        userId=session['user_id']
         user=models.Users.objects.get(id=userId)
         return user
     except:
