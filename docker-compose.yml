@@ -1,23 +1,58 @@
 services:
+  db:
+    image: postgres:15
+    container_name: medisafe-db
+    environment:
+      - POSTGRES_DB=medisafe
+      - POSTGRES_USER=capstone
+      - POSTGRES_PASSWORD=capstone
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Map to different port to avoid conflict with host PostgreSQL
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U capstone"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - medisafe-network
+
   medisafe:
     build:
       context: .
       dockerfile: docker/DockerFile
     container_name: medisafe-app
-
     ports:
       - "80:80"
       - "443:443"
-
     volumes:
       - .:/app
-
       - ./staticfiles:/app/staticfiles
       - ./mediafiles:/app/mediafiles
-
+      - ./logs:/var/log/apache2
     environment:
       - DJANGO_SETTINGS_MODULE=capstone.settings
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=medisafe
+      - DB_USER=capstone
+      - DB_PASSWORD=capstone
+      - DB_HOST=db # This points to the db container
+      - DB_PORT=5432 # Internal PostgreSQL port
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
       - .env
-
     restart: unless-stopped
+    networks:
+      - medisafe-network
+
+networks:
+  medisafe-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

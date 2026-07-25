@@ -2,12 +2,14 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
 
-# Install system dependencies
+# Install system dependencies (keeping your original packages)
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     curl \
     wget \
+    sudo \
     && add-apt-repository ppa:deadsnakes/ppa -y \
     && apt-get update \
     && apt-get install -y \
@@ -27,7 +29,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Python 3.14 as default
+# Set Python 3.14 as default (keeping your original setup)
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.14 1
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.14 1
 
@@ -84,16 +86,18 @@ RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.c
     ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load && \
     ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
+# Set working directory
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip3 install --no-cache-dir -r requirements.txt
-
+# Copy project files first
 COPY . /app/
 
-# Copy your configuration files
+# Make scripts executable
+RUN chmod +x /app/install_gpu.sh /app/initDB.py /app/manage.py
+
+# Copy Apache configuration
 COPY docker/apache/django.conf /etc/apache2/sites-available/django.conf
-COPY docker/apache/ssl /etc/apache2/ssl/
+RUN dos2unix /etc/apache2/sites-available/django.conf
 
 # Create static/media directories
 RUN mkdir -p /app/staticfiles /app/mediafiles && \
@@ -104,27 +108,10 @@ RUN mkdir -p /app/staticfiles /app/mediafiles && \
 RUN a2ensite django.conf && \
     a2dissite 000-default.conf 2>/dev/null || true
 
-# Create apache2.conf with WSGIPythonPath globally
-RUN cat > /etc/apache2/apache2.conf << 'EOF'
-ServerName localhost
-User www-data
-Group www-data
-
-# Add Python path globally (outside VirtualHost)
-WSGIPythonPath /app
-
-Include ports.conf
-LoadModule mpm_prefork_module /usr/lib/apache2/modules/mod_mpm_prefork.so
-IncludeOptional mods-enabled/*.load
-IncludeOptional mods-enabled/*.conf
-IncludeOptional sites-enabled/*.conf
-ErrorLog ${APACHE_LOG_DIR}/error.log
-LogLevel warn
-EOF
-
-    
-RUN dos2unix /etc/apache2/sites-available/django.conf
+# Create entrypoint script
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 80 443
 
-CMD ["/bin/bash", "-c", "source /etc/apache2/envvars && apache2ctl -D FOREGROUND"]
+ENTRYPOINT ["/entrypoint.sh"]

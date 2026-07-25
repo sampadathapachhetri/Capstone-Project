@@ -27,7 +27,7 @@ The system is designed to:
 
 ---
 
-# ⚙️ Installation Guide (Development Setup)
+# ⚙️ Installation Guide (Manual Setup)
 
 ### 1. Install Python
 
@@ -77,7 +77,28 @@ pip install -r requirements.txt
 
 ---
 
-### 5. Environment Configuration
+### 5. Install and Configure PostgreSQL
+
+This project requires **PostgreSQL** to be installed locally.
+
+Download and install it from:
+[https://www.postgresql.org/download/](https://www.postgresql.org/download/)
+
+After installing:
+
+1. Create a **database** and a **user** for the project (you can use `psql`, `pgAdmin`, or any Postgres client).
+
+```sql
+CREATE DATABASE your_db_name;
+CREATE USER your_db_user WITH PASSWORD 'your_db_password';
+GRANT ALL PRIVILEGES ON DATABASE your_db_name TO your_db_user;
+```
+
+2. ⚠️ **Important:** The `DB_NAME`, `DB_USER`, and `DB_PASSWORD` (and any other DB-related fields) you set in your `.env` file **must exactly match** the database name and username/password you created above. Mismatched credentials will cause connection errors during migration.
+
+---
+
+### 6. Environment Configuration
 
 Create a `.env` file in the root directory using `.env.example` as a template.
 
@@ -88,7 +109,7 @@ cp .env.example .env
 ⚠️ **Important:**
 
 - Paste your generated **Django SECRET_KEY** into the `.env` file exactly as shown in `.env.example`
-- Fill in all required values (database, debug, etc.)
+- Fill in all required values (database name, database user, database password, debug, etc.) — these must match the PostgreSQL database/user you created in Step 5
 
 #### Generate Django Secret Key
 
@@ -98,7 +119,49 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 ---
 
-### 6. Database Setup (Development)
+### 7. Download Required Data Files
+
+Some CSV data files used by the app are not included in the repository and must be downloaded manually and placed in specific folders.
+
+#### a) Root-level data files
+
+Download the following files from Google Drive (link to be updated):
+
+- `cleaned_drugbank_id_cn_smiles_syno_data.csv` — **https://drive.google.com/file/d/1pJwmww097vjZ6XiIJ2_V25T_yhRWSGJv/view?usp=sharing**
+- `interactions_with_id.csv` — **https://drive.google.com/file/d/1cssECyAEMBEV55wm0Gy90tC5gApTv6Hx/view?usp=sharing**
+
+Place both files directly in the **project root**, at:
+
+```
+capstone/cleaned_drugbank_id_cn_smiles_syno_data.csv
+capstone/interactions_with_id.csv
+```
+
+#### b) OCR module data files
+
+Download the following files from Google Drive (link to be updated):
+
+- `cleaned_drugbank_id_cn_smiles_syno_data.csv` — **https://drive.google.com/file/d/1pJwmww097vjZ6XiIJ2_V25T_yhRWSGJv/view?usp=sharing**
+- `cleaned_synonym_id_cn_data.csv` — **https://drive.google.com/file/d/1x9gepqpJDo1mnA8XetHge_-3wIPs8iT2/view?usp=sharing**
+
+First, create the destination folder if it doesn't already exist:
+
+```bash
+mkdir -p MediSafe/raghav/ocr/data
+```
+
+Then place both files (keeping the **exact same filenames**) at:
+
+```
+capstone/MediSafe/raghav/ocr/data/cleaned_drugbank_id_cn_smiles_syno_data.csv
+capstone/MediSafe/raghav/ocr/data/cleaned_synonym_id_cn_data.csv
+```
+
+> ⚠️ Note: `cleaned_drugbank_id_cn_smiles_syno_data.csv` is required in **both** locations (project root and the OCR data folder) — download/copy it to each path shown above.
+
+---
+
+### 8. Database Migration
 
 ```bash
 python manage.py makemigrations
@@ -107,7 +170,7 @@ python manage.py migrate
 
 ---
 
-### 7. Create Admin User
+### 9. Create Admin User
 
 ```bash
 python manage.py createsuperuser
@@ -154,22 +217,7 @@ capstone/
 ├── docker/
 │   └── apache/
 │       ├── apache2.conf
-│       ├── django.conf
-│       └── ssl/
-│           ├── cert.pem
-│           └── key.pem
-```
-
----
-
-## 🔐 Generate SSL Certificates
-
-The `ssl` directory **must contain** `cert.pem` and `key.pem`.
-
-Run this command from the project root:
-
-```bash
-openssl req -x509 -newkey rsa:4096 -keyout docker/apache/ssl/key.pem -out docker/apache/ssl/cert.pem -days 365 -nodes -subj "/CN=localhost"
+│       └── django.conf
 ```
 
 ---
@@ -225,26 +273,9 @@ docker-compose down
 
 ---
 
-# 🚀 Production Setup (NOT REQUIRED IF RUNNING WITH DOCKER)
-
-### 1. Install Apache with mod_wsgi
-
-[https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/modwsgi/](https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/modwsgi/)
-
-### 2. Install PostgreSQL
-
-[https://www.postgresql.org/download/](https://www.postgresql.org/download/)
-
-### 3. Configure Production
-
-- Update `.env` with production values
-- Use PostgreSQL database
-- Configure Apache + mod_wsgi
-
----
-
 ## 📝 Notes
 
 - This project is for educational purposes only
 - Not intended for real medical decisions
 - Contributions are welcome
+- The manual setup is shown to run in development server, hence make sure to make DEBUG=True in your env file
