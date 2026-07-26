@@ -41,7 +41,7 @@ Download from:
 ### 2. Clone the Repository
 
 ```bash
-git clone "https://github.com/Roshanchg/capstone.git"
+git clone "https://github.com/sampadathapachhetri/Capstone-Project"
 cd capstone
 ```
 
