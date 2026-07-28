@@ -186,7 +186,7 @@
         if (data.success) {
           return [data["commonname"], null];
         } else {
-          return [null, error];
+          return [null, "Unable to find a valid drug name!!"];
         }
       } catch (error) {
         return [null, error];
@@ -222,7 +222,9 @@
           overlay.style.display = "flex";
           [commonname, errorString] = await this.sendFileToServer(file);
           if (errorString != null) {
-            showInvalidInputError(errorString);
+            this.showInvalidInputError(errorString);
+          } else {
+            this.removeInvalidInputError();
           }
           overlay.style.display = "none";
           let drugnameInputBox = document.getElementById("drugnameInputBox");

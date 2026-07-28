@@ -455,8 +455,13 @@ def extractName(request):
     file_path =default_storage.save(unique_filename,ContentFile(file.read()))
     absolute_path = os.path.join(settings.MEDIA_ROOT, file_path)
     name=ocr_service.run_ocr(image_path=absolute_path);
-    foundval=helpers.runFzMatchingForAllWords(value=name)
-    success=True
+    if(len(name)>3):
+        foundval=helpers.runFzMatchingForAllWords(value=name)
+        success=True
+    else:
+        success=False
+        foundval=None
+        
     if (foundval==None):
         success=False
     else:
