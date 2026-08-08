@@ -1,6 +1,7 @@
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 from . import views
 urlpatterns=[
     path('',view=views.index,name='index'),
@@ -40,6 +41,10 @@ urlpatterns=[
     path('export/history/pdf/', views.export_history_pdf, name='export_history_pdf'),
     path('export/interaction/pdf/<int:history_id>/', views.export_interaction_pdf, name='export_interaction_pdf'),
     path('export/history/csv/', views.export_history_csv, name='export_history_csv'),
+    path('favicon.ico', RedirectView.as_view(
+        url='/static/MediSafe/images/favicon.ico',
+        permanent=True
+    )),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

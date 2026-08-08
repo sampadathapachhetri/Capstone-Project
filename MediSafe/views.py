@@ -449,7 +449,11 @@ def extractName(request):
     valid_types=['image/jpeg','image/png','images/jpg']
     if file.content_type not in valid_types:
         return JsonResponse({'error':'Only JPG and PNG allowed'},status=400)
-    
+    MAX_FILE_SIZE = 10 * 1024 * 1024  
+    if file.size > MAX_FILE_SIZE:
+        return JsonResponse({
+            'error': f'File too large. Max size: 10MB',
+        }, status=400)
     file_extension = os.path.splitext(file.name)[1] 
     unique_filename = f"{uuid.uuid4()}{file_extension}"
     file_path =default_storage.save(unique_filename,ContentFile(file.read()))

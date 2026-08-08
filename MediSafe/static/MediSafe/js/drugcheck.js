@@ -182,6 +182,9 @@
           body: formData,
         });
         const data = await response.json();
+        if (data.error) {
+          alert(data.error);
+        }
         console.log(data);
         if (data.success) {
           return [data["commonname"], null];
